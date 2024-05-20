@@ -1,0 +1,40 @@
+{
+  "name": "dentist-appointment-booking",
+  "version": "1.0.0",
+  "description": "dentist appointment booking system nodejs mysql",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon --exec babel-node src/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/trung123-lab/Clinic_Management.git"
+  },
+  "keywords": [
+    "dentist",
+    "appointment",
+    "booking",
+    "system",
+    "nodejs",
+    "mysql",
+    "elasticsearch"
+  ],
+  "author": "Tuyen Nguyen",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/trung123-lab/Clinic_Management/issues"
+  },
+  "homepage": "https://github.com/trung123-lab/Clinic_Management#readme",
+  "dependencies": {
+    "chokidar": "^3.6.0",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "nodemon": "^3.1.0"
+  }
+}
