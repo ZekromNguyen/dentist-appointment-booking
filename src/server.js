@@ -13,7 +13,7 @@ initWebAllRoutes(app);
 
 let port = process.env.PORT;
 
-app.listen(3000, () => {
-  console.log(`App is running at the port ${3000}`);
+app.listen(port, () => {
+  console.log(`App is running at the port ${port}`);
 });
 
