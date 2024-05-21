@@ -16,6 +16,4 @@ let port = process.env.PORT;
 app.listen(3000, () => {
   console.log(`App is running at the port ${3000}`);
 });
-app.get("/login", (req, res) => {
-  res.send("HelloWorld");
-});
+
