@@ -30,7 +30,9 @@
     "chokidar": "^3.6.0",
     "dotenv": "^16.4.5",
     "ejs": "^3.1.10",
-    "express": "^4.19.2"
+    "express": "^4.19.2",
+    "mysql2": "^3.9.8",
+    "sequelize": "^6.37.3"
   },
   "devDependencies": {
     "@babel/cli": "^7.24.5",
