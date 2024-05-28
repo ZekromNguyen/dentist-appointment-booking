@@ -1,6 +1,6 @@
 import TodoList from "./components/TodoList";
 
-function App() {
+function Login() {
   return (
 
     <div className="all">
@@ -27,4 +27,4 @@ function App() {
   );
 }
 
-export default App;
+export default Login;
