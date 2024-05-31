@@ -1,19 +1,28 @@
 import AccountService from "../service/authService";
+<<<<<<< HEAD
 import transporter from "../config/email";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
 import e from "express";
+=======
+
+>>>>>>> 442d12e496e31c03ebeccdb33eb39517b4e2981f
 class AccountController {
   async login(req, res) {
     const { usernameOrEmail, password } = req.body;
     if (!usernameOrEmail || !password) {
       res.status(400).send("UsernameOrPassword are required");
     }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 442d12e496e31c03ebeccdb33eb39517b4e2981f
     try {
       const account = await AccountService.authenticate(
         usernameOrEmail,
         password
       );
+<<<<<<< HEAD
       // if (account) {
       //   res.redirect("/");
       // } else {
@@ -23,6 +32,13 @@ class AccountController {
         return res.render("login", { error: account.error });
       }
       res.redirect("/");
+=======
+      if (account) {
+        res.redirect("/");
+      } else {
+        res.status(401).send("Invalid Username Or Password");
+      }
+>>>>>>> 442d12e496e31c03ebeccdb33eb39517b4e2981f
     } catch (err) {
       console.error("Error excuting query:", err.stack);
       res.status(500).send("Database query error");
@@ -31,13 +47,17 @@ class AccountController {
   async register(req, res) {
     const { username, password, email, phone } = req.body;
     const roleID = 1;
+<<<<<<< HEAD
     const hashedPassword = bcrypt.hashSync(password, 10);
     const verificationToken = crypto.randomBytes(32).toString("hex");
     const verificationLink = `http://localhost:3000/verify?token=${verificationToken}`;
+=======
+>>>>>>> 442d12e496e31c03ebeccdb33eb39517b4e2981f
     try {
       if (!username || !password || !email || !phone) {
         return res.status(400).json({ message: "All fields are required" });
       }
+<<<<<<< HEAD
 
       console.log("Hashed password:", hashedPassword);
       const mailOptions = {
@@ -61,6 +81,15 @@ class AccountController {
         email,
         roleID,
         verificationToken,
+=======
+      console.log("Request body:", req.body);
+      const newAccount = await AccountService.createAccount({
+        username,
+        password,
+        phone,
+        email,
+        roleID,
+>>>>>>> 442d12e496e31c03ebeccdb33eb39517b4e2981f
       });
       console.log("Account create:", newAccount);
       if (newAccount) {
@@ -88,15 +117,20 @@ class AccountController {
     }
   }
   async showLogin(req, res) {
+<<<<<<< HEAD
     res.render("login", {
       usernameOrEmail: "",
       password: "",
     });
+=======
+    res.render("login");
+>>>>>>> 442d12e496e31c03ebeccdb33eb39517b4e2981f
   }
   async showRegister(req, res) {
     res.render("register", {
       error: null,
       username: "",
+<<<<<<< HEAD
       password: "",
       email: "",
       phone: "",
@@ -117,6 +151,11 @@ class AccountController {
       res.status(500).send("Error verifying email: ", error.message);
     }
   }
+=======
+      email: "",
+    });
+  }
+>>>>>>> 442d12e496e31c03ebeccdb33eb39517b4e2981f
 }
 
 module.exports = new AccountController();
