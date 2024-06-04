@@ -108,9 +108,9 @@ class AccountController {
       if (!account) {
         return res.status(400).send("Invalid verification token");
       }
-      account.IsActive = true;
-      account.verificationToken = null;
-      await account.save();
+      // account.IsActive = true;
+      // account.verificationToken = null;
+      // await account.save();
       res.status(200).send("Email has been successfully verified ");
     } catch (error) {
       res.status(500).send("Error verifying email: ", error.message);

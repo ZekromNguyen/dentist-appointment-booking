@@ -99,6 +99,10 @@ class AccountService {
     if (!account) {
       console.log(`Account with verifyToken ${token} not found`);
     }
+    account.IsActive = true;
+    account.verificationToken = null;
+    await account.save();
+    return account;
   }
 }
 
