@@ -22,5 +22,8 @@ class RegisterController {
       res.status(500).send("Internal server error");
     }
   }
+  async registerDentist(req, res) {
+    const {} = req.body;
+  }
 }
 module.exports = new RegisterController();
