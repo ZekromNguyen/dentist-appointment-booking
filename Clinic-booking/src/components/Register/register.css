@@ -1,0 +1,110 @@
+/* reset css lại từ đầu*/
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+.back-ground {
+    background-image: url(../../assets/picture/picture_body_doctor/img_backgroud.png);
+    height: 1000px;
+}
+
+.div-email {
+    display: flex;
+    justify-content: center;
+}
+
+.all-register {
+    height: 600px;
+    margin: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25) inset;
+    width: 500px;
+    box-sizing: border-box;
+    background: white;
+    border-radius: 20px;
+    padding: 20px;
+}
+
+.username {
+    background-color: azure;
+    width: 300px;
+    height: 50px;
+    font-size: 20px;
+    margin-bottom: 20px;
+    font-family: sans-serif;
+    padding: 10px;
+    border-radius: 10px;
+
+    &:hover {
+        background-color: aquamarine;
+    }
+}
+
+.email {
+    background-color: azure;
+    width: 300px;
+    height: 50px;
+    font-size: 20px;
+    margin-bottom: 20px;
+    font-family: sans-serif;
+    padding: 10px;
+    border-radius: 10px;
+
+    &:hover {
+        background-color: aquamarine;
+    }
+}
+
+.div-phone {
+    display: flex;
+    justify-content: center;
+}
+
+
+.phone {
+    background-color: azure;
+    width: 300px;
+    height: 50px;
+    font-size: 20px;
+    margin-bottom: 20px;
+    font-family: sans-serif;
+    padding: 10px;
+    border-radius: 10px;
+
+    &:hover {
+        background-color: aquamarine;
+    }
+}
+
+.div-sign-up {
+    display: flex;
+    justify-content: center;
+}
+
+.account {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.text-gray-600 {
+    margin-right: 5px;
+}
+
+.button {
+    &.active {
+        color: white;
+        background-color: blue;
+    }
+
+}
+
+.icon-open-eye-register {
+    position: absolute;
+    top: 204px;
+    right: 300px;
+    cursor: pointer;
+}

@@ -1,0 +1,33 @@
+/* reset css lại từ đầu*/
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+.back-ground-dentist {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+        sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+    background-image: url(/front-end/Clinic-booking/public/img-background2@2x.png);
+    background-color: aquamarine;
+}
+
+.all-Dentist {
+    margin: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25) inset;
+    width: 500px;
+    height: 500px;
+    box-sizing: border-box;
+    background-color: azure;
+    border-radius: 20px;
+    padding: 20px;
+}

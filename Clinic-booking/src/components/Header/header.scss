@@ -1,0 +1,119 @@
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+
+
+.icon-menu {
+    font-size: 30px;
+    color: gray;
+    cursor: pointer;
+}
+
+.sub {
+    font-size: 12;
+    font-weight: 400;
+    margin-top: 5px;
+}
+
+.home-header-container {
+    height: 80px;
+    width: 100%;
+    padding: 0 20px;
+
+
+    .header-content {
+        width: 100%;
+        height: 100%;
+        display: flex;
+
+        .content-logo {
+            width: 20%;
+            display: flex;
+            align-items: center;
+
+
+            .header-logo {
+                background: url('/clinic.png') center center no-repeat;
+                height: 100%;
+                width: 100%;
+                display: flex;
+                background-size: 90% 50%;
+            }
+        }
+
+        .content-option {
+            width: 50%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+        }
+
+        .content-login {
+            display: flex;
+            align-items: center;
+            margin-left: 10px;
+            width: 7%;
+
+        }
+
+        .seperate {
+            font-weight: 400;
+            font-size: 200%;
+            margin-top: -20%;
+        }
+
+        .Login {
+            margin: 10px;
+        }
+
+        .content-register {
+            width: 5%;
+            display: flex;
+            align-items: center;
+
+        }
+
+        .content-support {
+            width: 20%;
+            display: flex;
+            align-items: center;
+            padding: 8px;
+        }
+
+        .support-child {
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+        .contact-support {
+            cursor: pointer;
+        }
+
+        .translate {
+            margin-left: 10px;
+            cursor: pointer;
+        }
+
+        .languge-vi {
+            cursor: pointer;
+
+            &.active {
+                color: blue;
+            }
+        }
+
+        .languge-en {
+            cursor: pointer;
+
+            &.active {
+                color: green;
+            }
+        }
+    }
+}

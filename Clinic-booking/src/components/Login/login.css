@@ -1,0 +1,171 @@
+/* reset css lại từ đầu*/
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+.back-ground {
+    width: 100% !important;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+    background-image: url('/public/img_backgroud.png');
+    background-color: antiquewhite;
+    background-size: cover;
+    /* Thêm thuộc tính này để đảm bảo hình ảnh phủ đầy */
+    background-position: center;
+    /* Đảm bảo hình ảnh được căn giữa */
+}
+
+
+
+.title {
+    font-size: 30px;
+    display: flex;
+    margin-bottom: 20px;
+    justify-content: center;
+}
+
+.sdt {
+    background-color: azure;
+    width: 300px;
+    height: 50px;
+    font-size: 20px;
+    margin-bottom: 20px;
+    font-family: sans-serif;
+    padding: 10px;
+    border-radius: 10px;
+
+    &:hover {
+        background-color: aquamarine;
+    }
+}
+
+.password {
+    background-color: azure;
+    width: 300px;
+    height: 50px;
+    font-size: 20px;
+    margin-bottom: 20px;
+    font-family: sans-serif;
+    font-weight: 500;
+    padding: 10px;
+    border-radius: 10px;
+
+    &:hover {
+        background-color: aquamarine;
+    }
+}
+
+button {
+    width: 310px;
+    height: 50px;
+    font-size: 20px;
+    color: black;
+    background: white;
+    margin-bottom: 20px;
+
+    &:hover {
+        background-color: blue;
+    }
+
+    &.active {
+        color: white;
+        background-color: blue;
+    }
+
+    button[disabled=disabled],
+    button:disabled {
+        cursor: not-allowed;
+    }
+}
+
+.text-forget {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.create-button {
+    display: flex;
+    justify-content: center;
+    line-height: 40px;
+    font-size: 20px;
+    color: white;
+    background-color: greenyellow;
+    width: 250px;
+    height: 50px;
+
+    &:hover {
+        background-color: aquamarine;
+    }
+
+    &:active {
+        background-color: aqua;
+    }
+}
+
+.button-create-div {
+    display: flex;
+    justify-content: center;
+}
+
+.all {
+    margin: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25) inset;
+    width: 500px;
+    height: 500px;
+    box-sizing: border-box;
+    background: white;
+    border-radius: 20px;
+    padding: 20px;
+}
+
+.div-sdt {
+    display: flex;
+    justify-content: center;
+}
+
+.div-password {
+    display: flex;
+    justify-content: center;
+
+}
+
+.div-login {
+    display: flex;
+    justify-content: center;
+}
+
+.shift {
+    align-items: center;
+    border-bottom: 1px solid #000000;
+    display: flex;
+    margin: 20px 16px;
+    text-align: center;
+}
+
+.buttonitem1 {
+    width: 100%;
+}
+
+.back {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+.icon-arrow-left {
+    margin-top: 3px;
+}
+
+.icon-open-eye {
+    position: absolute;
+    right: 300px;
+    top: 204px;
+    cursor: pointer;
+}

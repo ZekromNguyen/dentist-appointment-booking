@@ -1,0 +1,154 @@
+.body-slider {
+    height: 330px;
+    background: #f5f5f5;
+
+    .body-slider-header {
+        height: 30px;
+        margin-bottom: 55px;
+        padding-top: 20px;
+
+        .title {
+            margin-left: 50px;
+            float: left;
+            font-size: 25px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .btn-title {
+            margin-left: 1100px !important;
+            background-color: aqua !important;
+            font-weight: 200;
+            font-size: 20px;
+            width: 140px;
+            padding: 10px 15px;
+            outline: none;
+            display: block;
+            background: white;
+            color: black;
+            cursor: pointer;
+        }
+    }
+
+    .img {
+        height: 300px;
+        display: flex;
+        text-align: center;
+        padding: 10px;
+
+        .img_slider {
+            height: 200px;
+            width: 100%;
+            background: url('../../assets/picture/picture_body_slider/img_baonam.png');
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-color: #eee;
+        }
+
+        .img_slider-1 {
+            height: 200px;
+            width: 100%;
+            background: url('../../assets/picture/picture_body_slider/img_hoaianh.png');
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-color: #eee;
+        }
+
+        .img_slider-2 {
+            height: 200px;
+            width: 100%;
+            background: url('../../assets/picture/picture_body_slider/img_kim.jpg');
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-color: #eee;
+        }
+
+        .img_slider-3 {
+            height: 200px;
+            width: 100%;
+            background: url('../../assets/picture/picture_body_slider/img_maris.png');
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-color: #eee;
+        }
+
+        .img_slider-4 {
+            height: 200px;
+            width: 100%;
+            background: url('../../assets/picture/picture_body_slider/img_tritam.png');
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-color: #eee;
+        }
+
+        .img_slider-5 {
+            height: 200px;
+            width: 100%;
+            background: url('../../assets/picture/picture_body_slider/img_vinhlong.png');
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-color: #eee;
+        }
+
+    }
+
+}
+
+.body-slider-content {
+    margin: 0 50px;
+
+}
+
+
+
+//reset slick slider css
+.slick-prev {
+    position: relative !important;
+    left: 0 !important;
+    border: solid 1px black !important;
+}
+
+
+
+.slick-arrow,
+slick-next {
+    position: absolute !important;
+    margin-top: -170px !important;
+    z-index: 1000;
+    border: solid 1px black !important;
+}
+
+.slick-arrow,
+slick-prev {
+    position: absolute !important;
+    margin-top: 80px !important;
+    z-index: 1000;
+    cursor: pointer;
+}
+
+.slick-next {
+    margin-top: -215px !important;
+    cursor: pointer;
+}
+
+// .slick-arrow,
+// slick-next {
+//     position: absolute !important;
+//     margin-top: -130px !important;
+//     z-index: 1000;
+// }
+
+.text {
+    margin-top: 10px;
+    cursor: pointer;
+
+    &:hover {
+        color: aqua;
+    }
+}

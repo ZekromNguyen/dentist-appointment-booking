@@ -1,0 +1,122 @@
+/* reset css lại từ đầu*/
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+
+
+.header-banner {
+    background-image: url('img_header.png'), linear-gradient(rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0.25), rgba(255, 255, 255, 0.1));
+    height: 500px;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    flex-direction: column;
+
+    .header-Information {
+        height: 50%;
+
+        .header-title {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 30px;
+            text-shadow: 1px 1px 1px #333;
+            margin-bottom: 5px;
+            color: black;
+        }
+
+        .header-title-content {
+            text-align: center;
+            font-size: 50px;
+            text-shadow: 1px 1px 1px #333;
+            color: black;
+            margin-bottom: 20px;
+        }
+
+        .search {
+            width: fit-content;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            border-radius: 25px;
+            background-color: white;
+            margin: 0 auto;
+            width: 500px;
+
+            input {
+                height: 30px;
+                width: 1000px;
+                background: transparent;
+                border: none;
+                outline: none;
+            }
+
+            .div-search {
+                margin-top: 3px;
+                margin-left: 10px;
+                margin-right: 10px;
+            }
+
+        }
+    }
+
+    .header-detail {
+        background-image: linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 1));
+        margin-top: 20px;
+        height: 50%;
+
+        .option-clinic {
+            display: flex;
+            justify-content: space-around;
+
+
+            .option-child {
+                width: 100px;
+                text-align: center;
+
+                .icon-child {
+                    background: azure;
+                    width: 150px;
+                    height: 150px;
+                    padding: -10px;
+                    border-radius: 50%;
+                    text-align: center;
+                    margin: 0 auto;
+                    font-size: 100px;
+                    color: red;
+                }
+
+                .text-child {
+                    text-shadow: 5px 5px 5px white;
+                    color: black;
+                    font-size: 12px;
+                    margin-left: 40px;
+                    font-weight: 800;
+
+                    &:hover {
+                        color: aqua;
+                        cursor: pointer;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.icon-chuyenkhoa {
+    color: pink;
+}
+
+.icon-yte {
+    color: aquamarine;
+}
+
+.icon-doctor {
+    color: blue;
+}

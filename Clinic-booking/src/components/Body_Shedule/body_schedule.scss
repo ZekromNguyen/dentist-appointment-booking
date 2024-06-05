@@ -1,0 +1,77 @@
+.body_schedule {
+    height: 500px;
+    background-color: #edfffa;
+    padding: 20px;
+    margin: 100px;
+    border-radius: 20px;
+    border: 2px solid black;
+
+    .schedule_header {
+
+        .header-title {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 10px;
+            color: #0728c9;
+            font-weight: 1000;
+        }
+
+        .header-detail {
+            display: flex;
+            justify-content: center;
+            color: #323e79;
+        }
+    }
+
+    .schedule_content {
+        display: flex;
+        margin-top: 70px;
+        margin-left: 40px;
+
+        .content-left {
+            margin-top: -40px;
+            width: 50%;
+
+            .content-header {
+                font-size: 30px;
+                margin-bottom: 10px;
+            }
+
+            .content-title {
+                font-size: 50px;
+                margin-bottom: 10px;
+            }
+
+            .content-slogan {
+                font-size: 30px;
+                margin-bottom: 10px;
+            }
+
+            .btn-booking {
+                margin-top: 30px;
+                background-color: blue;
+                color: white;
+                size: 50px;
+                height: 60px;
+                border-radius: 10px;
+            }
+        }
+
+        .content-right {
+            width: 50%;
+
+            .img {
+                background: url('../../assets/picture/picture_body_schedule/img_bacsi.png');
+                background-repeat: no-repeat;
+                background-size: cover;
+                height: 450px;
+                width: 70%;
+            }
+        }
+    }
+}
+
+.right {
+    margin-top: -150px;
+    margin-left: 150px;
+}
