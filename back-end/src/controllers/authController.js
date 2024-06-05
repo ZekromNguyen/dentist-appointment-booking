@@ -21,20 +21,46 @@ class AccountController {
       if (account.error) {
         return res.render("login", { error: account.error });
       }
-      res.redirect("/");
+      req.session.userId = account.AccountID;
+      return res.redirect("/showAccount");
     } catch (err) {
       console.error("Error excuting query:", err.stack);
       res.status(500).send("Database query error");
     }
   }
+  async showHomeAccount(req, res) {
+    const id = req.session.userId;
+
+    if (!id) {
+      //return res.status(400).send("Account ID is required");
+      return res.redirect("/login");
+    }
+
+    try {
+      const account1 = await AccountService.getAccount(id);
+      const customer1 = await AccountService.getCustomer(id);
+
+      if (!account1) {
+        return res.status(404).send("Account not found");
+      }
+
+      return res.render("homeAccount", {
+        account: account1,
+        customer: customer1,
+      });
+    } catch (err) {
+      console.error("Error fetching account details:", err.stack);
+      return res.status(500).send("Internal server error");
+    }
+  }
   async register(req, res) {
-    const { username, password, email, phone } = req.body;
+    const { username, password, email, phone, name } = req.body;
     const roleID = 1;
     const hashedPassword = bcrypt.hashSync(password, 10);
     const verificationToken = crypto.randomBytes(32).toString("hex");
     const verificationLink = `http://localhost:3000/verify?token=${verificationToken}`;
     try {
-      if (!username || !password || !email || !phone) {
+      if (!username || !password || !email || !phone || !name) {
         return res.status(400).json({ message: "All fields are required" });
       }
 
@@ -60,6 +86,7 @@ class AccountController {
         email,
         roleID,
         verificationToken,
+        name,
       });
       console.log("Account create:", newAccount);
       if (newAccount) {
@@ -73,6 +100,7 @@ class AccountController {
           username: username,
           email: email,
           phone: phone,
+          name: name,
         });
       }
       if (err.message === "Username already exists") {
@@ -81,6 +109,7 @@ class AccountController {
           username: username,
           email: email,
           phone: phone,
+          name: name,
         });
       }
       res.status(500).send("Database insert error");
@@ -99,6 +128,7 @@ class AccountController {
       password: "",
       email: "",
       phone: "",
+      name: "",
     });
   }
   async verifyEmail(req, res) {

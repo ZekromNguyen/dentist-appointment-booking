@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Slot Booking</title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="booking-table">
+            <h2>Available Slots</h2>
+            <table border="1">
+                <tr>
+                    <th>SlotID</th>
+                    <th>Time</th>
+                </tr>
+                <% if (bookings.length> 0) { %>
+                    <% bookings.forEach(function(booking) { %>
+                        <tr>
+                            <td>
+                                <%= booking.SlotID %>
+                            </td>
+                            <td>
+                                <%= booking.Time %>
+                            </td>
+                        </tr>
+                        <% }); %>
+                            <% } else { %>
+                                <tr>
+                                    <td colspan="2">No slots available</td>
+                                </tr>
+                                <% } %>
+            </table>
+        </div>
+    </div>
+</body>
+
+</html>

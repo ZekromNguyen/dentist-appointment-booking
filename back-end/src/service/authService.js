@@ -1,6 +1,6 @@
 import { Sequelize } from "sequelize";
 import Account from "../model/account";
-
+import Customer from "../model/customer";
 import bcrypt from "bcrypt";
 
 class AccountService {
@@ -11,6 +11,7 @@ class AccountService {
     email,
     roleID,
     verificationToken,
+    name,
   }) {
     try {
       console.log("Creating account with data:", {
@@ -42,6 +43,10 @@ class AccountService {
         IsActive: false,
         RoleID: roleID,
         verificationToken: verificationToken,
+      });
+      const newCustomer = await Customer.create({
+        CustomerName: name,
+        AccountID: newAccount.AccountID,
       });
       return newAccount;
     } catch (error) {
@@ -103,6 +108,27 @@ class AccountService {
     account.verificationToken = null;
     await account.save();
     return account;
+  }
+  async createCustomer({ name, accountId }) {
+    const newCustomer = await Customer.create({
+      CustomerName: name,
+      AccountID: accountId,
+    });
+    return newCustomer;
+  }
+  async getCustomer(id) {
+    const getCustomer = await Customer.findOne({ where: { AccountID: id } });
+    if (!getCustomer) {
+      console.log(`Customer with AccountID ${id} not found`);
+    }
+    return getCustomer;
+  }
+  async getAccount(id) {
+    const getAccount = await Account.findOne({ where: { AccountID: id } });
+    if (!getAccount) {
+      console.log(`Account with AccountID ${id} not found`);
+    }
+    return getAccount;
   }
 }
 
