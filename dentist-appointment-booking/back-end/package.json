@@ -1,0 +1,48 @@
+{
+  "name": "dentist-appointment-booking",
+  "version": "1.0.0",
+  "description": "dentist appointment booking system nodejs mysql",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon --exec babel-node src/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ZekromNguyen/dentist-appointment-booking.git"
+  },
+  "keywords": [
+    "dentist",
+    "appointment",
+    "booking",
+    "system",
+    "nodejs",
+    "mysql",
+    "elasticsearch"
+  ],
+  "author": "Tuyen Nguyen",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ZekromNguyen/dentist-appointment-booking/issues"
+  },
+  "homepage": "https://github.com/ZekromNguyen/dentist-appointment-booking#readme",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "chokidar": "^3.6.0",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.19.2",
+    "mysql2": "^3.9.8",
+    "nodemailer": "^6.9.13",
+    "sequelize": "^6.37.3"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.24.5",
+    "@babel/core": "^7.24.5",
+    "@babel/node": "^7.23.9",
+    "@babel/preset-env": "^7.24.5",
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^0.0.0",
+    "nodemon": "^3.1.0"
+  }
+}
