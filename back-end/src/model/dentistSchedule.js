@@ -7,9 +7,13 @@ DentistSchedule.init(
   {
     ScheduleID: {
       type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+      allowNull: false,
     },
     DentistID: {
       type: DataTypes.INTEGER,
+      allowNull: false,
       references: {
         model: "Dentist",
         key: "DentistID",
@@ -17,12 +21,15 @@ DentistSchedule.init(
     },
     DayOfWeek: {
       type: DataTypes.ENUM,
+      allowNull: false,
     },
     StartTime: {
       type: DataTypes.TIME,
+      allowNull: false,
     },
     EndTime: {
       type: DataTypes.TIME,
+      allowNull: false,
     },
   },
   {

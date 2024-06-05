@@ -7,15 +7,21 @@ Booking.init(
   {
     BookingID: {
       type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+      allowNull: false,
     },
     Status: {
       type: DataTypes.ENUM,
+      allowNull: false,
     },
     TotalPrice: {
       type: DataTypes.DECIMAL,
+      allowNull: false,
     },
     CustomerID: {
       type: DataTypes.INTEGER,
+      allowNull: false,
       references: {
         model: "Customer",
         key: "CustomerID",

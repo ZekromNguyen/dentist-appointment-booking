@@ -7,15 +7,21 @@ Dentist.init(
   {
     DentistID: {
       type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+      allowNull: false,
     },
     DentistName: {
       type: DataTypes.STRING,
+      allowNull: false,
     },
     Description: {
       type: DataTypes.STRING,
+      allowNull: false,
     },
     AccountID: {
       type: DataTypes.INTEGER,
+      allowNull: false,
       references: {
         model: "Account",
         key: "AccountID",
@@ -23,6 +29,7 @@ Dentist.init(
     },
     ClinicID: {
       type: DataTypes.INTEGER,
+      allowNull: false,
       references: {
         model: "Clinic",
         key: "ClinicID",

@@ -7,21 +7,29 @@ Clinic.init(
   {
     ClinicID: {
       type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+      allowNull: false,
     },
     ClinicName: {
       type: DataTypes.STRING,
+      allowNull: false,
     },
     Address: {
       type: DataTypes.STRING,
+      allowNull: false,
     },
     OpenTime: {
       type: DataTypes.TIME,
+      allowNull: false,
     },
     CloseTime: {
       type: DataTypes.TIME,
+      allowNull: false,
     },
     LocationID: {
       type: DataTypes.INTEGER,
+      allowNull: false,
       references: {
         model: "Location",
         key: "LocationID",

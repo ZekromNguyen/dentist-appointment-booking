@@ -7,9 +7,13 @@ ClinicOwner.init(
   {
     ClinicOwnerID: {
       type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+      allowNull: false,
     },
     ClinicID: {
       type: DataTypes.INTEGER,
+      allowNull: false,
       references: {
         model: "Clinic",
         key: "ClinicID",
@@ -17,9 +21,11 @@ ClinicOwner.init(
     },
     ClinicOWnerName: {
       type: DataTypes.STRING,
+      allowNull: false,
     },
     AccountID: {
       type: DataTypes.INTEGER,
+      allowNull: false,
       references: {
         model: "Account",
         key: "AccountID",

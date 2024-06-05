@@ -7,9 +7,13 @@ Location.init(
   {
     LocationID: {
       type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+      allowNull: false,
     },
     LocationName: {
       type: DataTypes.STRING,
+      allowNull: false,
     },
   },
   {

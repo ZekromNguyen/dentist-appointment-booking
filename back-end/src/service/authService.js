@@ -44,7 +44,7 @@ class AccountService {
         RoleID: roleID,
         verificationToken: verificationToken,
       });
-      const newCustomer = await Customer.create({
+      await Customer.create({
         CustomerName: name,
         AccountID: newAccount.AccountID,
       });
