@@ -5,7 +5,7 @@ class BookingDetail extends Model {}
 
 BookingDetail.init(
   {
-    BookingIDDetail: {
+    BookingDetailID: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,

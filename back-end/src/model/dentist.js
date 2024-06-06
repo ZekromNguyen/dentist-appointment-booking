@@ -16,8 +16,7 @@ Dentist.init(
       allowNull: false,
     },
     Description: {
-      type: DataTypes.STRING,
-      allowNull: false,
+      type: DataTypes.TEXT,
     },
     AccountID: {
       type: DataTypes.INTEGER,

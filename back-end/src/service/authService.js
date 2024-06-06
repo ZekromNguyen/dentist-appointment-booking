@@ -2,7 +2,7 @@ import { Sequelize } from "sequelize";
 import Account from "../model/account";
 import Customer from "../model/customer";
 import bcrypt from "bcrypt";
-
+import Dentist from "../model/dentist";
 class AccountService {
   async createAccount({
     username,
@@ -11,7 +11,6 @@ class AccountService {
     email,
     roleID,
     verificationToken,
-    name,
   }) {
     try {
       console.log("Creating account with data:", {
@@ -44,9 +43,47 @@ class AccountService {
         RoleID: roleID,
         verificationToken: verificationToken,
       });
-      await Customer.create({
-        CustomerName: name,
-        AccountID: newAccount.AccountID,
+      return newAccount;
+    } catch (error) {
+      console.error("Error inserting into the database:", error);
+      throw error;
+    }
+  }
+  async createAccountDentist({
+    username,
+    hashedPassword,
+    phone,
+    email,
+    roleID,
+  }) {
+    try {
+      console.log("Creating account with data:", {
+        username,
+        hashedPassword,
+        phone,
+        email,
+        roleID,
+      });
+      const existingAccount = await Account.findOne({
+        where: {
+          [Sequelize.Op.or]: [{ Email: email }, { UserName: username }],
+        },
+      });
+      if (existingAccount) {
+        if (existingAccount.UserName === username) {
+          throw new Error("Username already exists");
+        }
+        if (existingAccount.Email === email) {
+          throw new Error("Email already exists");
+        }
+      }
+      const newAccount = await Account.create({
+        UserName: username,
+        Password: hashedPassword,
+        Phone: phone,
+        Email: email,
+        IsActive: true,
+        RoleID: roleID,
       });
       return newAccount;
     } catch (error) {
@@ -115,6 +152,27 @@ class AccountService {
       AccountID: accountId,
     });
     return newCustomer;
+  }
+  async createDentist({ dentistName, accountId, clinicID }) {
+    try {
+      console.log("Creating dentist with data:", {
+        dentistName,
+        accountId,
+        clinicID,
+      });
+
+      const newDentist = await Dentist.create({
+        DentistName: dentistName,
+        AccountID: accountId,
+        ClinicID: clinicID,
+      });
+
+      console.log(newDentist);
+      return newDentist;
+    } catch (error) {
+      console.error("Error inserting dentist into the database:", error);
+      throw error;
+    }
   }
   async getCustomer(id) {
     const getCustomer = await Customer.findOne({ where: { AccountID: id } });

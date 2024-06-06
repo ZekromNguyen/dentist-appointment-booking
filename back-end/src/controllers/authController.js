@@ -53,32 +53,15 @@ class AccountController {
       return res.status(500).send("Internal server error");
     }
   }
-  async register(req, res) {
-    const { username, password, email, phone, name } = req.body;
-    const roleID = 1;
-    const hashedPassword = bcrypt.hashSync(password, 10);
-    const verificationToken = crypto.randomBytes(32).toString("hex");
-    const verificationLink = `http://localhost:3000/verify?token=${verificationToken}`;
+  async registerCustomer(req, res) {
+    const { username, password, email, phone, roleID, name } = req.body;
+    console.log("Request body:", req.body);
     try {
       if (!username || !password || !email || !phone || !name) {
         return res.status(400).json({ message: "All fields are required" });
       }
-
-      console.log("Hashed password:", hashedPassword);
-      const mailOptions = {
-        from: process.env.EMAIL_APP_GMAIL,
-        to: email,
-        subject: "Email Verification",
-        text: `Please verify your email by clicking the following link: ${verificationLink}`,
-        html: `<p>Please verify your email by clicking the following link: <a href="${verificationLink}">Verify Email</a></p>`,
-      };
-      console.log("Request body:", req.body);
-      transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-          res.status(500).send(error.toString());
-        }
-        res.status(200).send("A verification email has been sent to:", email);
-      });
+      const hashedPassword = bcrypt.hashSync(password, 10);
+      const verificationToken = crypto.randomBytes(32).toString("hex");
       const newAccount = await AccountService.createAccount({
         username,
         hashedPassword,
@@ -86,14 +69,32 @@ class AccountController {
         email,
         roleID,
         verificationToken,
-        name,
       });
+      const newCustomer = await AccountService.createCustomer({
+        name,
+        accountId: newAccount.AccountID,
+      });
+      if (newAccount.verificationToken && newCustomer) {
+        const verificationLink = `http://localhost:3000/verify?token=${verificationToken}`;
+        const mailOptions = {
+          from: process.env.EMAIL_APP_GMAIL,
+          to: email,
+          subject: "Email Verification",
+          text: `Please verify your email by clicking the following link: ${verificationLink}`,
+          html: `<p>Please verify your email by clicking the following link: <a href="${verificationLink}">Verify Email</a></p>`,
+        };
+        transporter.sendMail(mailOptions, (error, info) => {
+          if (error) {
+            res.status(500).send(error.toString());
+          }
+          res.status(200).send("A verification email has been sent to:", email);
+        });
+      }
       console.log("Account create:", newAccount);
       if (newAccount) {
         res.redirect("/login");
       }
     } catch (err) {
-      //console.error("Error inserting into the database:", err.stack);
       if (err.message === "Email already exists") {
         return res.render("register", {
           error: "Email already taken",
@@ -115,6 +116,113 @@ class AccountController {
       res.status(500).send("Database insert error");
     }
   }
+  async registerDentist(req, res) {
+    const { username, password, email, phone, roleID, dentistName, clinicID } =
+      req.body;
+    try {
+      const hashedPassword = bcrypt.hashSync(password, 10);
+      const newAccount = await AccountService.createAccountDentist({
+        username,
+        hashedPassword,
+        phone,
+        email,
+        roleID,
+      });
+      const newDentist = await AccountService.createDentist({
+        dentistName,
+        accountId: newAccount.AccountID,
+        clinicID,
+      });
+      if (newDentist) {
+        return res.redirect("/login");
+      } else {
+        throw new Error("Dentist creation failed");
+      }
+    } catch (err) {
+      if (err.message === "Email already exists") {
+        return res.render("register", {
+          error: "Email already taken",
+          username: username,
+          email: email,
+          phone: phone,
+          dentistName: dentistName,
+        });
+      }
+      if (err.message === "Username already exists") {
+        return res.render("register", {
+          error: "Username already taken",
+          username: username,
+          email: email,
+          phone: phone,
+          dentistName: dentistName,
+        });
+      }
+      res.status(500).send("Database insert error");
+    }
+  }
+
+  // async register(req, res) {
+  //   const { username, password, email, phone, name } = req.body;
+  //   const roleID = 1;
+  //   const hashedPassword = bcrypt.hashSync(password, 10);
+  //   const verificationToken = crypto.randomBytes(32).toString("hex");
+  //   const verificationLink = `http://localhost:3000/verify?token=${verificationToken}`;
+  //   try {
+  //     if (!username || !password || !email || !phone || !name) {
+  //       return res.status(400).json({ message: "All fields are required" });
+  //     }
+
+  //     console.log("Hashed password:", hashedPassword);
+  //     const mailOptions = {
+  //       from: process.env.EMAIL_APP_GMAIL,
+  //       to: email,
+  //       subject: "Email Verification",
+  //       text: `Please verify your email by clicking the following link: ${verificationLink}`,
+  //       html: `<p>Please verify your email by clicking the following link: <a href="${verificationLink}">Verify Email</a></p>`,
+  //     };
+  //     console.log("Request body:", req.body);
+  //     transporter.sendMail(mailOptions, (error, info) => {
+  //       if (error) {
+  //         res.status(500).send(error.toString());
+  //       }
+  //       res.status(200).send("A verification email has been sent to:", email);
+  //     });
+  //     const newAccount = await AccountService.createAccount({
+  //       username,
+  //       hashedPassword,
+  //       phone,
+  //       email,
+  //       roleID,
+  //       verificationToken,
+  //       name,
+  //     });
+  //     console.log("Account create:", newAccount);
+  //     if (newAccount) {
+  //       res.redirect("/login");
+  //     }
+  //   } catch (err) {
+  //     //console.error("Error inserting into the database:", err.stack);
+  //     if (err.message === "Email already exists") {
+  //       return res.render("register", {
+  //         error: "Email already taken",
+  //         username: username,
+  //         email: email,
+  //         phone: phone,
+  //         name: name,
+  //       });
+  //     }
+  //     if (err.message === "Username already exists") {
+  //       return res.render("register", {
+  //         error: "Username already taken",
+  //         username: username,
+  //         email: email,
+  //         phone: phone,
+  //         name: name,
+  //       });
+  //     }
+  //     res.status(500).send("Database insert error");
+  //   }
+  // }
   async showLogin(req, res) {
     res.render("login", {
       usernameOrEmail: "",
