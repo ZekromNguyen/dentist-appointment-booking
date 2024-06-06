@@ -104,6 +104,16 @@ class AccountService {
     await account.save();
     return account;
   }
+  async getAccountById(id) {
+    const account = await Account.findOne({
+      where: { AccountID: id },
+    });
+
+    if (!account) {
+      console.log(`Account with ID ${id} not found`);
+    }
+    return account;
+  }
 }
 
 module.exports = new AccountService();

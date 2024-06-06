@@ -21,7 +21,8 @@ class AccountController {
       if (account.error) {
         return res.render("login", { error: account.error });
       }
-      res.redirect("/");
+      req.session.userID = account.AccountID;
+      res.redirect("/updatePassword");
     } catch (err) {
       console.error("Error excuting query:", err.stack);
       res.status(500).send("Database query error");
@@ -115,6 +116,42 @@ class AccountController {
     } catch (error) {
       res.status(500).send("Error verifying email: ", error.message);
     }
+  }
+  async updatePassword(req, res) {
+    const { currentPassword, newPassword } = req.body;
+    const AccountId = req.session.userID; // Assuming you have userId from session or JWT token
+
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ message: "Current and new password are required" });
+    }
+
+    try {
+      const account = await AccountService.getAccountById(AccountId);
+      if (!account) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      const isMatch = await bcrypt.compareSync(currentPassword, account.Password);
+      console.log(isMatch);
+      if (!isMatch) {
+        return res.status(400).json({ message: "Current password is incorrect" });
+      }
+
+      const hashedNewPassword = bcrypt.hashSync(newPassword, 10);
+      account.Password = hashedNewPassword;
+      await account.save();
+
+      res.status(200).json({ message: "Password updated successfully" });
+    } catch (error) {
+      res.status(500).json({ message: "Error updating password: " + error.message });
+    }
+  }
+
+  async showupdatePassword(req, res) {
+    res.render("updatePassword", {
+      currentPassword: "",
+      newPassword: "",
+    });
   }
 }
 

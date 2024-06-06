@@ -13,6 +13,8 @@ let initAllWebRoutes = (app) => {
   router.get("/register", AccountController.showRegister);
   router.post("/register", AccountController.register);
   router.get("/verify", AccountController.verifyEmail);
+  router.get("/updatePassword", AccountController.showupdatePassword);
+  router.post("/updatePassword", AccountController.updatePassword);
   return app.use("/", router);
 };
 
