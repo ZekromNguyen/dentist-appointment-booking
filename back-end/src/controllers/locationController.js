@@ -11,4 +11,4 @@ class LocationController {
     }
   }
 }
-module.exports = new LocationController();
+export default new LocationController();

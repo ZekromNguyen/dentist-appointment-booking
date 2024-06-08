@@ -10,4 +10,4 @@ class ClinicController {
     }
   }
 }
-module.exports = new ClinicController();
+export default new ClinicController();

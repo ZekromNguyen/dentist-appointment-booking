@@ -12,4 +12,4 @@ class ClinicService {
     }
   }
 }
-module.exports = new ClinicService();
+export default new ClinicService();

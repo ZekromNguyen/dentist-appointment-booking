@@ -3,7 +3,7 @@ import homepageController from "../controllers/homepageController";
 import AccountController from "../controllers/authController";
 import BookingController from "../controllers/bookingController";
 import LocationController from "../controllers/locationController";
-import RegisterController from "../controllers/registerController";
+import RegisterController from "../controllers/RegisterController";
 import ClinicController from "../controllers/clinicController";
 // init all web routes
 

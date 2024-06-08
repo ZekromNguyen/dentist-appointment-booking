@@ -18,4 +18,4 @@ class RegisterService {
   }
 }
 
-module.exports = new RegisterService();
+export default new RegisterService();

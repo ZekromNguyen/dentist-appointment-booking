@@ -190,4 +190,4 @@ class AccountService {
   }
 }
 
-module.exports = new AccountService();
+export default new AccountService();

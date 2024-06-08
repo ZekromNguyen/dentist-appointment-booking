@@ -14,4 +14,4 @@ class BookingService {
     }
   }
 }
-module.exports = new BookingService();
+export default new BookingService();

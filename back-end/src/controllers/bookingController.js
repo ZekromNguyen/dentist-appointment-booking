@@ -12,4 +12,4 @@ class BookingController {
     }
   }
 }
-module.exports = new BookingController();
+export default new BookingController();

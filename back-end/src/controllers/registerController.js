@@ -26,4 +26,4 @@ class RegisterController {
     const {} = req.body;
   }
 }
-module.exports = new RegisterController();
+export default new RegisterController();

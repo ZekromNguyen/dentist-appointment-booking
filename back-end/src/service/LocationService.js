@@ -13,4 +13,4 @@ class LocationService {
   }
 }
 
-module.exports = new LocationService();
+export default new LocationService();

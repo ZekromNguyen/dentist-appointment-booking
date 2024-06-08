@@ -256,4 +256,4 @@ class AccountController {
   }
 }
 
-module.exports = new AccountController();
+export default new AccountController();
