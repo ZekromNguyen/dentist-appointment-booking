@@ -4,7 +4,6 @@ import bcrypt from "bcrypt";
 import crypto from "crypto";
 class AccountController {
   async login(req, res) {
-    console.log(AccountService);
     const { usernameOrEmail, password } = req.body;
     if (!usernameOrEmail || !password) {
       res.status(400).send("UsernameOrPassword are required");
@@ -14,16 +13,25 @@ class AccountController {
         usernameOrEmail,
         password
       );
-      // if (account) {
-      //   res.redirect("/");
-      // } else {
-      //   res.status(401).send("Invalid Username Or Password");
-      // }
       if (account.error) {
         return res.render("login", { error: account.error });
       }
-      req.session.userID = account.AccountID;
-      res.redirect("/updatePassword");
+      const role = account.RoleID;
+      switch (role) {
+        case 1:
+          req.session.userID = account.AccountID;
+          res.redirect("/updatePassword");
+          break;
+        case 2:
+          res.redirect("/pageDentist");
+          break;
+        case 3:
+          res.redirect("/pageOwner");
+          break;
+        case 4:
+          res.redirect("/pageAdmin");
+          break;
+      }
     } catch (err) {
       console.error("Error excuting query:", err.stack);
       res.status(500).send("Database query error");
@@ -55,7 +63,7 @@ class AccountController {
         }
         res.status(200).send("A verification email has been sent to:", email);
       });
-      const newAccount = await AccountService.createAccount({
+      const newAccount = await AccountService.createAccountCustomer({
         username,
         hashedPassword,
         phone,
@@ -110,9 +118,6 @@ class AccountController {
       if (!account) {
         return res.status(400).send("Invalid verification token");
       }
-      // account.IsActive = true;
-      // account.verificationToken = null;
-      // await account.save();
       res.status(200).send("Email has been successfully verified ");
     } catch (error) {
       res.status(500).send("Error verifying email: ", error.message);
@@ -215,6 +220,49 @@ class AccountController {
       console.log(`Not found account with id ${id}`);
     }
     res.status(200).json({ message: "Reset password successfully" });
+  }
+  async showPageAdmin(req, res) {
+    res.render("admin");
+  }
+  async addAccountFromAdmin(req, res) {
+    const { username, password, email, phone, roleID } = req.body;
+    const hashedPassword = bcrypt.hashSync(password, 10);
+    try {
+      const newAccount = await AccountService.createAccountDentistOrOwner({
+        username,
+        hashedPassword,
+        phone,
+        email,
+        roleID,
+      });
+      if (newAccount) {
+        res.status(200).json({ message: "Create Account Successfully" });
+      }
+    } catch (err) {
+      if (err.message === "Email already exists") {
+        return res.render("register", {
+          error: "Email already taken",
+          username: username,
+          email: email,
+          phone: phone,
+        });
+      }
+      if (err.message === "Username already exists") {
+        return res.render("register", {
+          error: "Username already taken",
+          username: username,
+          email: email,
+          phone: phone,
+        });
+      }
+      res.status(500).send("Database insert error");
+    }
+  }
+  async showOwnerPage(req, res) {
+    res.render("owner");
+  }
+  async showDentistPage(req, res) {
+    res.render("dentist");
   }
 }
 

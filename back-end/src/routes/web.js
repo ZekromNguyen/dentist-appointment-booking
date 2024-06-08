@@ -19,6 +19,10 @@ let initAllWebRoutes = (app) => {
   router.post("/forgotPassword", AccountController.forgotPassword);
   router.get("/resetPassword", AccountController.showresetPassword);
   router.post("/resetPassword", AccountController.resetPassword);
+  router.get("/pageAdmin", AccountController.showPageAdmin);
+  router.post("/pageAdmin", AccountController.addAccountFromAdmin);
+  router.get("/pageOwner", AccountController.showOwnerPage);
+  router.get("/pageDentist", AccountController.showDentistPage);
   return app.use("/", router);
 };
 

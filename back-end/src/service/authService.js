@@ -4,7 +4,7 @@ import Account from "../model/account";
 import bcrypt from "bcrypt";
 
 class AccountService {
-  async createAccount({
+  async createAccountCustomer({
     username,
     hashedPassword,
     phone,
@@ -49,6 +49,48 @@ class AccountService {
       throw error;
     }
   }
+  async createAccountDentistOrOwner({
+    username,
+    hashedPassword,
+    phone,
+    email,
+    roleID,
+  }) {
+    try {
+      console.log("Creating account with data:", {
+        username,
+        hashedPassword,
+        phone,
+        email,
+        roleID,
+      });
+      const existingAccount = await Account.findOne({
+        where: {
+          [Sequelize.Op.or]: [{ Email: email }, { UserName: username }],
+        },
+      });
+      if (existingAccount) {
+        if (existingAccount.UserName === username) {
+          throw new Error("Username already exists");
+        }
+        if (existingAccount.Email === email) {
+          throw new Error("Email already exists");
+        }
+      }
+      const newAccount = await Account.create({
+        UserName: username,
+        Password: hashedPassword,
+        Phone: phone,
+        Email: email,
+        IsActive: true,
+        RoleID: roleID,
+      });
+      return newAccount;
+    } catch (error) {
+      console.error("Error inserting into the database:", error);
+      throw error;
+    }
+  }
   async getAccountByUserNameOrEmail(usernameOrEmail) {
     const account = await Account.findOne({
       where: {
@@ -79,7 +121,7 @@ class AccountService {
     if (!bcrypt.compareSync(password, account.Password)) {
       return { error: "Incorrect password" };
     }
-    if (!account.IsActive === true) {
+    if (account.roleID === 1 && !account.IsActive === true) {
       return { error: "Account is not active" };
     }
     // if (

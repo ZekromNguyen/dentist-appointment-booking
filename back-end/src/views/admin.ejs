@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Page</title>
+</head>
+
+<body>
+    <h1>Admin Page</h1>
+    <form id="add-account-form" action="/pageAdmin" method="POST">
+        <div>
+            <input type="text" id="username" name="username" placeholder="Enter Username" required>
+        </div>
+        <div>
+            <input type="password" id="password" name="password" placeholder="Enter Password" required>
+        </div>
+        <div>
+            <input type="text" id="password" name="email" placeholder="Enter Email" required>
+        </div>
+        <div>
+            <input type="text" id="phone" name="phone" placeholder="Enter Phone" required>
+        </div>
+        <div>
+            <label for="role">Role:</label>
+            <select id="role" name="roleID" required>
+                <option value="2">Dentist</option>
+                <option value="3">Clinic Owner</option>
+            </select>
+        </div>
+        <button type="submit">Add Account</button>
+    </form>
+</body>
+
+</html>
