@@ -114,6 +114,31 @@ class AccountService {
     }
     return account;
   }
+  async createResetToken(email, token) {
+    const account = await this.getAccountByUserNameOrEmail(email);
+    if (!account) {
+      console.log("Not found account in service");
+    }
+    account.verificationToken = token;
+    await account.save();
+    return account;
+  }
+  async getResetToken(token) {
+    const account = await Account.findOne({
+      where: { verificationToken: token },
+    });
+    if (!account) {
+      console.log(`Not found token ${token}`);
+    }
+    return account;
+  }
+  async saveNewPassword(id, hashedpassword) {
+    const account = await this.getAccountById(id);
+    account.Password = hashedpassword;
+    await account.save();
+    return account;
+  }
+  async resetNewPassword() {}
 }
 
-module.exports = new AccountService();
+export default new AccountService();

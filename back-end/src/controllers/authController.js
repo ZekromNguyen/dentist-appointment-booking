@@ -4,6 +4,7 @@ import bcrypt from "bcrypt";
 import crypto from "crypto";
 class AccountController {
   async login(req, res) {
+    console.log(AccountService);
     const { usernameOrEmail, password } = req.body;
     if (!usernameOrEmail || !password) {
       res.status(400).send("UsernameOrPassword are required");
@@ -122,7 +123,9 @@ class AccountController {
     const AccountId = req.session.userID; // Assuming you have userId from session or JWT token
 
     if (!currentPassword || !newPassword) {
-      return res.status(400).json({ message: "Current and new password are required" });
+      return res
+        .status(400)
+        .json({ message: "Current and new password are required" });
     }
 
     try {
@@ -131,10 +134,15 @@ class AccountController {
         return res.status(404).json({ message: "User not found" });
       }
 
-      const isMatch = await bcrypt.compareSync(currentPassword, account.Password);
+      const isMatch = await bcrypt.compareSync(
+        currentPassword,
+        account.Password
+      );
       console.log(isMatch);
       if (!isMatch) {
-        return res.status(400).json({ message: "Current password is incorrect" });
+        return res
+          .status(400)
+          .json({ message: "Current password is incorrect" });
       }
 
       const hashedNewPassword = bcrypt.hashSync(newPassword, 10);
@@ -143,7 +151,9 @@ class AccountController {
 
       res.status(200).json({ message: "Password updated successfully" });
     } catch (error) {
-      res.status(500).json({ message: "Error updating password: " + error.message });
+      res
+        .status(500)
+        .json({ message: "Error updating password: " + error.message });
     }
   }
 
@@ -153,6 +163,59 @@ class AccountController {
       newPassword: "",
     });
   }
+  async showForgotPassword(req, res) {
+    res.render("forgotPassword");
+  }
+  async forgotPassword(req, res) {
+    const { email } = req.body;
+    console.log(email);
+    const verificationToken = crypto.randomBytes(32).toString("hex");
+    const verificationLink = `http://localhost:3000/resetPassword?token=${verificationToken}`;
+    const account = await AccountService.createResetToken(
+      email,
+      verificationToken
+    );
+    if (!account) {
+      console.log("Not found account in controller");
+    }
+    const mailOptions = {
+      from: process.env.EMAIL_APP_GMAIL,
+      to: email,
+      subject: "Email ResetPassword",
+      text: `Please resetPassword your account by clicking the following link: ${verificationLink}`,
+      html: `<p>Please resetPassword your account by clicking the following link: <a href="${verificationLink}">Verify ResetPassword</a></p>`,
+    };
+    console.log("Request body:", req.body);
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        res.status(500).send(error.toString());
+      }
+      res.status(200).send(`A resetPassword email has been sent to: ${email}`);
+    });
+  }
+  async showresetPassword(req, res) {
+    const { token } = req.query;
+    const account = await AccountService.getResetToken(token);
+    if (!account) {
+      res.status(400).json({ message: "Invalid reset token" });
+    }
+    const id = account.AccountID;
+    res.render("resetPassword", { id });
+  }
+  async resetPassword(req, res) {
+    const { password, confirmPassword, id } = req.body;
+    if (password !== confirmPassword) {
+      res
+        .status(400)
+        .json({ message: "Password and corfim Password not same" });
+    }
+    const hasedpassword = bcrypt.hashSync(password, 10);
+    const account = await AccountService.saveNewPassword(id, hasedpassword);
+    if (!account) {
+      console.log(`Not found account with id ${id}`);
+    }
+    res.status(200).json({ message: "Reset password successfully" });
+  }
 }
 
-module.exports = new AccountController();
+export default new AccountController();

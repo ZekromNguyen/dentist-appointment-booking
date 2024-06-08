@@ -15,6 +15,10 @@ let initAllWebRoutes = (app) => {
   router.get("/verify", AccountController.verifyEmail);
   router.get("/updatePassword", AccountController.showupdatePassword);
   router.post("/updatePassword", AccountController.updatePassword);
+  router.get("/forgotPassword", AccountController.showForgotPassword);
+  router.post("/forgotPassword", AccountController.forgotPassword);
+  router.get("/resetPassword", AccountController.showresetPassword);
+  router.post("/resetPassword", AccountController.resetPassword);
   return app.use("/", router);
 };
 

@@ -19,9 +19,6 @@ app.use(
     }, // Set to true if using HTTPS
   })
 );
-app.get("/api/data", (req, res) => {
-  res.json({ message: "Hello from the backend!" });
-});
 //config view engine
 configViewEngine(app);
 
