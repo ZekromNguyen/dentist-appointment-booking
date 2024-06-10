@@ -23,6 +23,8 @@ let initAllWebRoutes = (app) => {
   router.post("/pageAdmin", AccountController.addAccountFromAdmin);
   router.get("/pageOwner", AccountController.showOwnerPage);
   router.get("/pageDentist", AccountController.showDentistPage);
+  router.get("/schedule", AccountController.showSchedule);
+  router.post("/schedule", AccountController.schedule);
   return app.use("/", router);
 };
 

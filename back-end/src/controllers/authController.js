@@ -264,6 +264,35 @@ class AccountController {
   async showDentistPage(req, res) {
     res.render("dentist");
   }
+
+  async showSchedule(req, res) {
+    res.render("schedule", {
+      day: "",
+      stime: "",
+      etime: "",
+    });
+  }
+
+  async schedule(req, res) {
+    const { day, stime, etime, dentistId } = req.body; // Đảm bảo rằng dentistId được lấy từ req.body
+    const DentistID = req.session.userID || dentistId; // Sử dụng dentistId từ request body hoặc session
+    if (!DentistID) {
+      return res.status(400).send("DentistID is required");
+    }
+    try {
+      const newSchedule = await AccountService.createSchedule({
+        DentistID,
+        day,
+        stime,
+        etime
+      });
+      res.status(200).send("Schedule added successfully", newSchedule);
+    } catch (error) {
+      res.status(500).send("Error adding schedule: " + error.message);
+    }
+  }
+
+
 }
 
 export default new AccountController();
