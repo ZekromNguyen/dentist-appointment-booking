@@ -174,6 +174,12 @@ class AccountController {
   async forgotPassword(req, res) {
     const { email } = req.body;
     console.log(email);
+    const newAccount = await AccountService.getAccountByUserNameOrEmail(email);
+    if (!newAccount) {
+      return res
+        .status(400)
+        .json({ message: `Not found account with email ${email}` });
+    }
     const verificationToken = crypto.randomBytes(32).toString("hex");
     const verificationLink = `http://localhost:3000/resetPassword?token=${verificationToken}`;
     const account = await AccountService.createResetToken(
