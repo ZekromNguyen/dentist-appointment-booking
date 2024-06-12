@@ -8,8 +8,11 @@
 }
 
 .back-ground {
-    background-image: url(../../assets/picture/picture_body_doctor/img_backgroud.png);
-    height: 1000px;
+    background-image: url(../../assets/picture/picuture_imgDoctor/clinic.webp);
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 700px;
+    width: 100%;
 }
 
 .div-email {
@@ -23,7 +26,8 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25) inset;
     width: 500px;
     box-sizing: border-box;
-    background: white;
+    background-color: rgba(255, 255, 255, 0.5);
+    /* Màu trắng trong suốt */
     border-radius: 20px;
     padding: 20px;
 }
@@ -80,6 +84,7 @@
 }
 
 .div-sign-up {
+    cursor: pointer;
     display: flex;
     justify-content: center;
 }
@@ -95,6 +100,8 @@
 }
 
 .button {
+    cursor: pointer;
+
     &.active {
         color: white;
         background-color: blue;
@@ -105,6 +112,6 @@
 .icon-open-eye-register {
     position: absolute;
     top: 204px;
-    right: 300px;
+    right: 230px;
     cursor: pointer;
 }

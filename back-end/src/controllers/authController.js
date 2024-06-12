@@ -3,40 +3,57 @@ import transporter from "../config/email";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
 class AccountController {
+  // async login(req, res) {
+  //   const { email, password } = req.body;
+  //   if (!email || !password) {
+  //     return res.status(400).send("Email and password are required");
+  //   }
+  //   try {
+  //     const account = await AccountService.authenticate(email, password);
+  //     if (account.error) {
+  //       return res.render("login", { error: account.error });
+  //     }
+
+  //     // Xác định role và chuyển hướng tương ứng
+  //     const role = account.RoleID;
+  //     req.session.userID = account.AccountID; // Đặt userID vào session
+  //     switch (role) {
+  //       case 1:
+  //         return res.redirect("/updatePassword");
+  //       case 2:
+  //         return res.redirect("/pageDentist");
+  //       case 3:
+  //         return res.redirect("/pageOwner");
+  //       case 4:
+  //         return res.redirect("/pageAdmin");
+  //       default:
+  //         return res.status(200).json({ message: "Login successfully", account });
+  //     }
+  //   } catch (err) {
+  //     console.error("Error executing query:", err.stack);
+  //     return res.status(500).send("Database query error");
+  //   }
+  // }
   async login(req, res) {
-    const { usernameOrEmail, password } = req.body;
-    if (!usernameOrEmail || !password) {
-      res.status(400).send("UsernameOrPassword are required");
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return res.status(400).send("Email and password are required");
     }
     try {
       const account = await AccountService.authenticate(
-        usernameOrEmail,
+        email,
         password
       );
       if (account.error) {
         return res.render("login", { error: account.error });
       }
-      const role = account.RoleID;
-      switch (role) {
-        case 1:
-          req.session.userID = account.AccountID;
-          res.redirect("/updatePassword");
-          break;
-        case 2:
-          res.redirect("/pageDentist");
-          break;
-        case 3:
-          res.redirect("/pageOwner");
-          break;
-        case 4:
-          res.redirect("/pageAdmin");
-          break;
-      }
+      res.status(200).json({ message: "Login successfully" });
     } catch (err) {
-      console.error("Error excuting query:", err.stack);
+      console.error("Error executing query:", err.stack);
       res.status(500).send("Database query error");
     }
   }
+
   async register(req, res) {
     const { username, password, email, phone } = req.body;
     const roleID = 1;
@@ -181,7 +198,7 @@ class AccountController {
         .json({ message: `Not found account with email ${email}` });
     }
     const verificationToken = crypto.randomBytes(32).toString("hex");
-    const verificationLink = `http://localhost:3000/resetPassword?token=${verificationToken}`;
+    const verificationLink = `http://localhost:5173/ResetPassword?token=${verificationToken}`;
     const account = await AccountService.createResetToken(
       email,
       verificationToken
@@ -204,6 +221,7 @@ class AccountController {
       res.status(200).send(`A resetPassword email has been sent to: ${email}`);
     });
   }
+
   async showresetPassword(req, res) {
     const { token } = req.query;
     const account = await AccountService.getResetToken(token);
@@ -213,6 +231,7 @@ class AccountController {
     const id = account.AccountID;
     res.render("resetPassword", { id });
   }
+
   async resetPassword(req, res) {
     const { password, confirmPassword, id } = req.body;
     if (password !== confirmPassword) {

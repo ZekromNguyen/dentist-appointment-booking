@@ -1,84 +1,116 @@
 import { useState } from "react";
-import "./login.css"
+import "./login.css";
+import Footer from '../../components/Footer/Footer';
+import Header from '../../components/Header/Header';
 import { FaChevronLeft } from "react-icons/fa6";
-import { FaEye } from "react-icons/fa";
-import { FaEyeSlash } from "react-icons/fa";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { toast } from 'react-toastify';
+import { useNavigate } from "react-router-dom";
+import { login } from "../../Service/userService";
 
+export default function Login(props) {
+    let navigate = useNavigate();
 
-// class Login extends Component {
-//     constructor(props) {
-//         super(props);
-//     }
-// }
-
-// const handleLogin = async () => {
-//     if (!email || !password) {
-//         toast.error("email/password is required!");
-//         return;
-//     }
-
-//     let res = await loginApi("eve.holt@reqres.in", password)
-//     console.log("check login :", res)
-// }
-
-
-export default function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [isShowPassword, setIsShowPassword] = useState(false);
+    const defaultValidInputLogin = {
+        isValidEmail: true,
+        isValidPassword: true
+    };
+    const [checkInputLogin, setCheckInputLogin] = useState(defaultValidInputLogin);
+
+    const handleLogin = async () => {
+        setCheckInputLogin(defaultValidInputLogin);
+
+        if (!email) {
+            setCheckInputLogin({ ...defaultValidInputLogin, isValidEmail: false });
+            toast.error("Vui lòng nhập email của bạn");
+            return;
+        }
+        if (!password) {
+            setCheckInputLogin({ ...defaultValidInputLogin, isValidPassword: false });
+            toast.error("Vui lòng nhập mật khẩu của bạn");
+            return;
+        }
+
+        try {
+            let response = await login(email, password);
+            console.log(">>check response", response);
+
+            if (response && response.data && response.data.message === "Login successfully") {
+                toast.success("Chúc mừng bạn đăng nhập thành công")
+                navigate("/");
+            } else if (response && response.data && response.data.error) {
+                toast.error(response.data.error);
+            } else {
+                toast.error("nhập sai tài khoản hoặc mật khẩu. Vui lòng thử lại.");
+            }
+        } catch (error) {
+            toast.error("lỗi ngoài.");
+        }
+    };
+
     return (
-        <div className="back-ground col-12 col-sm-4">
-            <div className="all">
-                <div><h3 className="title">Login Page</h3></div>
-                <div className="div-email">
-                    <input type="text" className="email" placeholder="Enter your email..."
-                        value={email}
-                        onChange={(event) => setEmail(event.target.value)} />
-                </div>
-                <div className="div-password">
-                    <input type={isShowPassword ? 'text' : 'password'}
-                        className="password" placeholder="Enter your password"
-                        value={password}
-                        onChange={(event) => setPassword(event.target.value)} />
-                    <div onClick={() => setIsShowPassword(!isShowPassword)} className="icon-container">
-                        {isShowPassword ? (
-                            <FaEye className="icon-open-eye col-12 col-sm-4" />
-                        ) : (
-                            <FaEyeSlash className="icon-open-eye col-12 col-sm-4" />
-                        )}
+        <div className="body">
+            <div className="back-ground col-12 col-sm-4">
+                <div className="all">
+                    <div><h3 className="title">Trang đăng nhập</h3></div>
+
+                    {/* email */}
+                    <div className="div-email">
+                        <input type="text" className={checkInputLogin.isValidEmail ? 'email form-control' : 'is-invalid email form-control'} placeholder="Nhập địa chỉ email của bạn..."
+                            value={email}
+                            onChange={(event) => setEmail(event.target.value)} />
                     </div>
 
+                    {/* password */}
+                    <div className="div-password">
+                        <input type={isShowPassword ? 'text' : 'password'}
+                            className={checkInputLogin.isValidPassword ? 'password form-control' : 'is-invalid password form-control'} placeholder="Nhập mật khẩu của bạn"
+                            value={password}
+                            onChange={(event) => setPassword(event.target.value)} />
+                        <div onClick={() => setIsShowPassword(!isShowPassword)} className="icon-container">
+                            {isShowPassword ? (
+                                <FaEye className="icon-open-eye col-12 col-sm-4" />
+                            ) : (
+                                <FaEyeSlash className="icon-open-eye col-12 col-sm-4" />
+                            )}
+                        </div>
+                    </div>
 
-                </div>
+                    {/* button login */}
+                    <div className="div-login">
+                        <button className="btn btn-primary" onClick={handleLogin}>
+                            Đăng nhập
+                        </button>
+                    </div>
 
-                <div className="div-login ">
-                    <button
-                        className={email && password ? "active" : ""}
-                        disabled={email && password ? false : true}
-                        onClick={() => handleLogin()}
-                    >
-                        Login</button>
-                </div>
-                <div className="shift"></div>
-                <div>
-                    <a className="text-forget" href="">Forgoten password ?</a>
-                </div>
-                <div className="button-create-div">
-                    <div className="create-button">
-                        <Link to='/Register'>
-                            Create new account
+                    <div className="shift"></div>
+
+                    {/* forget password */}
+                    <div>
+                        <a className="text-forget" href="/forgotPassword">Đã quên mật khẩu?</a>
+                    </div>
+
+                    {/* button create account */}
+                    <div className="button-create-div">
+                        <div className="create-button">
+                            <Link to='/Register'>Tạo tài khoản</Link>
+                        </div>
+                    </div>
+
+                    {/* button back home */}
+                    <div className="back">
+                        <Link to='/'>
+                            <FaChevronLeft className="icon-arrow-left" />
+                            Go back
                         </Link>
                     </div>
                 </div>
-                <div className="back" >
-                    <Link to='/'>
-                        <FaChevronLeft className="icon-arrow-left" />
-                        Go back </Link>
-                </div>
-
             </div>
+            <Footer />
         </div>
-    )
+    );
 }
