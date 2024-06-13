@@ -9,10 +9,10 @@ const register = async (username, password, email, phone) => {
             email,
             phone
         });
-        return response.data; // Trả về dữ liệu từ phản hồi
+        return response;
     } catch (error) {
-        console.error('Lỗi trong quá trình đăng ký:', error);
-        throw error; // Ném lỗi để xử lý ở nơi gọi hàm
+        console.error('Error during registration:', error);
+        throw error;
     }
 }
 
@@ -20,13 +20,13 @@ const register = async (username, password, email, phone) => {
 const login = async (email, password) => {
     try {
         const response = await axios.post('http://localhost:3000/login', {
-            email,
-            password,
+            email: email,
+            password: password,
         });
-        return response.data; // Trả về dữ liệu từ phản hồi
+        return response;
     } catch (error) {
-        console.error('Lỗi trong quá trình đăng nhập:', error);
-        throw error.response.data; // Ném lỗi để xử lý ở nơi gọi hàm
+        console.error('Error during login:', error);
+        return error.response;
     }
 };
 
@@ -43,11 +43,12 @@ const forgotPassword = async (email) => {
 // Đặt lại mật khẩu
 const resetPassword = async (token, password, confirmPassword) => {
     try {
-        const id = await getIdFromToken(token); // Xác minh token và lấy id
+        //const id = await getIdFromToken(token); // Xác minh token và lấy id
+
         const response = await axios.post('http://localhost:3000/resetPassword', {
-            id,
             password,
             confirmPassword,
+            token
         });
         return response.data; // Trả về dữ liệu từ phản hồi
     } catch (error) {
@@ -62,6 +63,18 @@ const verifyEmail = async (token) => {
             throw new Error('Invalid token');
         }
         const response = await axios.get(`http://localhost:3000/verify?token=${token}`);
+        return response.data.id; // Trả về id từ dữ liệu phản hồi
+    } catch (error) {
+        throw new Error('Error verifying email: ' + error.message); // Ném lỗi để xử lý ở nơi gọi hàm
+    }
+};
+
+const resetEmail = async (token) => {
+    try {
+        if (!token) {
+            throw new Error('Invalid token');
+        }
+        const response = await axios.get(`http://localhost:5173/ResetPassword?token=${token}`);
         return response.data.id; // Trả về id từ dữ liệu phản hồi
     } catch (error) {
         throw new Error('Error verifying email: ' + error.message); // Ném lỗi để xử lý ở nơi gọi hàm

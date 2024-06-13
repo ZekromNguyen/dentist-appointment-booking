@@ -64,8 +64,9 @@ export default function Register(props) {
             try {
                 const response = await register(username, password, email, phone);
                 if (response && response.status === 200) {
-                    toast.success("Đăng ký thành công, vui lòng kiểm tra email của bạn để xác minh.");
                     navigate("/login");
+                    toast.success(response.data.message);
+                    toast.success("Đăng ký thành công, vui lòng kiểm tra email của bạn để xác minh mới có thể đăng nhập.");
                 } else if (response && response.data && response.data.message) {
                     toast.error(response.data.message);
                 } else {

@@ -12,7 +12,7 @@
 //     const [password, setPassword] = useState('');
 //     const [confirmPassword, setConfirmPassword] = useState('');
 
-//     useEffect(() => {
+//     ugitseEffect(() => {
 //         const fetchIdFromToken = async () => {
 //             try {
 //                 if (!token) return;

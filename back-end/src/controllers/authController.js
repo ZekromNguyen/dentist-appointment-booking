@@ -229,20 +229,20 @@ class AccountController {
       res.status(400).json({ message: "Invalid reset token" });
     }
     const id = account.AccountID;
-    res.render("resetPassword", { id });
+    res.status(200).json({ id });
   }
 
   async resetPassword(req, res) {
-    const { password, confirmPassword, id } = req.body;
+    const { password, confirmPassword, token } = req.body;
     if (password !== confirmPassword) {
       res
         .status(400)
         .json({ message: "Password and corfim Password not same" });
     }
     const hasedpassword = bcrypt.hashSync(password, 10);
-    const account = await AccountService.saveNewPassword(id, hasedpassword);
+    const account = await AccountService.saveNewPassword(token, hasedpassword);
     if (!account) {
-      console.log(`Not found account with id ${id}`);
+      console.log(`Not found account with token ${token}`);
     }
     res.status(200).json({ message: "Reset password successfully" });
   }

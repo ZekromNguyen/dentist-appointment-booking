@@ -175,9 +175,10 @@ class AccountService {
     }
     return account;
   }
-  async saveNewPassword(id, hashedpassword) {
-    const account = await this.getAccountById(id);
+  async saveNewPassword(token, hashedpassword) {
+    const account = await this.getResetToken(token);
     account.Password = hashedpassword;
+    account.verificationToken = null;
     await account.save();
     return account;
   }
