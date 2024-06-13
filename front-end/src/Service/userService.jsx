@@ -9,10 +9,10 @@ const register = async (username, password, email, phone) => {
             email,
             phone
         });
-        return response.data; // Trả về dữ liệu từ phản hồi
+        return response;
     } catch (error) {
-        console.error('Lỗi trong quá trình đăng ký:', error);
-        throw error; // Ném lỗi để xử lý ở nơi gọi hàm
+        console.error('Error during registration:', error);
+        throw error;
     }
 }
 
@@ -20,13 +20,13 @@ const register = async (username, password, email, phone) => {
 const login = async (email, password) => {
     try {
         const response = await axios.post('http://localhost:3000/login', {
-            email,
-            password,
+            email: email,
+            password: password,
         });
-        return response.data; // Trả về dữ liệu từ phản hồi
+        return response;
     } catch (error) {
-        console.error('Lỗi trong quá trình đăng nhập:', error);
-        throw error.response.data; // Ném lỗi để xử lý ở nơi gọi hàm
+        console.error('Error during login:', error);
+        return error.response;
     }
 };
 

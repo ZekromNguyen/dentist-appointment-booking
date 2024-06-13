@@ -41,7 +41,7 @@ export default function Login(props) {
 
             if (response && response.data && response.data.message === "Login successfully") {
                 toast.success("Chúc mừng bạn đăng nhập thành công")
-                navigate("/");
+                navigate("/Admin");
             } else if (response && response.data && response.data.error) {
                 toast.error(response.data.error);
             } else {
