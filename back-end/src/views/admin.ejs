@@ -4,11 +4,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Page</title>
+    <title>Admin Account Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        table {
+            margin: auto;
+            border-collapse: collapse;
+            width: 80%;
+        }
+
+        th,
+        td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        form {
+            max-width: 300px;
+            margin: 20px auto;
+        }
+
+        input,
+        select,
+        button {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            margin-bottom: 15px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
 </head>
 
 <body>
-    <h1>Admin Page</h1>
+    <h1>Admin Account Management</h1>
     <form id="add-account-form" action="/pageAdmin" method="POST">
         <div>
             <input type="text" id="username" name="username" placeholder="Enter Username" required>
@@ -17,10 +70,10 @@
             <input type="password" id="password" name="password" placeholder="Enter Password" required>
         </div>
         <div>
-            <input type="text" id="password" name="email" placeholder="Enter Email" required>
+            <input type="email" id="email" name="email" placeholder="Enter Email" required>
         </div>
         <div>
-            <input type="text" id="phone" name="phone" placeholder="Enter Phone" required>
+            <input type="tel" id="phone" name="phone" placeholder="Enter Phone" required>
         </div>
         <div>
             <label for="role">Role:</label>

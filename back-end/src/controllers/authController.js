@@ -298,6 +298,47 @@ class AccountController {
     }
   }
 
+  async getAccountsPage(req, res) {
+    try {
+      const accounts = await AccountService.getAllAccounts();
+      res.render("accountManager", { accounts });
+    } catch (error) {
+      console.error("Error fetching accounts:", error);
+      res.status(500).send("Internal Server Error");
+    }
+  };
+
+  async activateAccount(req, res) {
+    try {
+      const accountId = req.params.id;
+      const account = await AccountService.getAccountById(accountId);
+      if (!account) {
+        return res.status(404).send("Account not found");
+      }
+      account.IsActive = !account.IsActive;
+      await account.save();
+      res.redirect("/accounts");
+    } catch (error) {
+      console.error("Error activating account:", error);
+      res.status(500).send("Internal Server Error");
+    }
+  };
+
+  async deleteAccount(req, res) {
+    try {
+      const accountId = req.params.id;
+      const account = await AccountService.getAccountById(accountId);
+      if (!account) {
+        return res.status(404).send("Account not found");
+      }
+      await account.destroy();
+      res.redirect("/accounts");
+    } catch (error) {
+      console.error("Error deleting account:", error);
+      res.status(500).send("Internal Server Error");
+    }
+  };
+
 
 }
 

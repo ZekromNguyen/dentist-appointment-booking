@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Page</title>
+</head>
+
+<body>
+    <h1>Admin Page</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Account ID</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Active</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% accounts.forEach(account=> { %>
+                <tr>
+                    <td>
+                        <%= account.AccountID %>
+                    </td>
+                    <td>
+                        <%= account.UserName %>
+                    </td>
+                    <td>
+                        <%= account.Email %>
+                    </td>
+                    <td>
+                        <%= account.Phone %>
+                    </td>
+                    <td>
+                        <%= account.IsActive ? 'Active' : 'Inactive' %>
+                    </td>
+                    <td>
+                        <form action="/pageAdmin/activate/<%= account.AccountID %>" method="POST">
+                            <button type="submit">Activate/Deactivate</button>
+                        </form>
+                        <form action="/pageAdmin/delete/<%= account.AccountID %>" method="POST">
+                            <button type="submit">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                <% }) %>
+        </tbody>
+    </table>
+</body>
+
+</html>

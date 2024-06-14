@@ -198,6 +198,16 @@ class AccountService {
       throw error;
     }
   }
+
+  async getAllAccounts() {
+    try {
+      const accounts = await Account.findAll();
+      return accounts;
+    } catch (error) {
+      console.error('Error fetching accounts:', error);
+      throw error;
+    }
+  }
 }
 
 export default new AccountService();
