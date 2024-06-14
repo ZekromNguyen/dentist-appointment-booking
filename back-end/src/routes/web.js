@@ -25,6 +25,8 @@ let initAllWebRoutes = (app) => {
   router.get("/schedule", AccountController.showSchedule);
   router.post("/schedule", AccountController.schedule);
   router.get("/accountManager", AccountController.getAccountsPage);
+  router.post("/accountManager/activate/:id", AccountController.activateAccount);
+  router.post("/accountManager", AccountController.deleteAccount);
   return app.use("/", router);
 };
 

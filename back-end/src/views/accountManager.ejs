@@ -38,12 +38,12 @@
                         <%= account.IsActive ? 'Active' : 'Inactive' %>
                     </td>
                     <td>
-                        <form action="/pageAdmin/activate/<%= account.AccountID %>" method="POST">
+                        <form action="/accountManager/activate/<%= account.AccountID %>" method="POST">
                             <button type="submit">Activate/Deactivate</button>
                         </form>
-                        <form action="/pageAdmin/delete/<%= account.AccountID %>" method="POST">
+                        <!-- <form action="/accountManager/delete/<%= account.AccountID %>" method="POST">
                             <button type="submit">Delete</button>
-                        </form>
+                        </form> -->
                     </td>
                 </tr>
                 <% }) %>

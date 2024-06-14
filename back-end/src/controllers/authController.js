@@ -317,7 +317,7 @@ class AccountController {
       }
       account.IsActive = !account.IsActive;
       await account.save();
-      res.redirect("/accounts");
+      res.redirect("/accountManager"); // Corrected redirect path
     } catch (error) {
       console.error("Error activating account:", error);
       res.status(500).send("Internal Server Error");
@@ -332,7 +332,7 @@ class AccountController {
         return res.status(404).send("Account not found");
       }
       await account.destroy();
-      res.redirect("/accounts");
+      res.redirect("accountManager");
     } catch (error) {
       console.error("Error deleting account:", error);
       res.status(500).send("Internal Server Error");
