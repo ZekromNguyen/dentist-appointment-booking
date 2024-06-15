@@ -98,7 +98,6 @@ export default function ResetPassword() {
             toast.error('Có lỗi xảy ra khi cập nhật mật khẩu. Vui lòng thử lại sau.');
         }
     };
-
     return (
         <div className="reset-password-container"> {/* Match class name with CSS */}
             <input
@@ -117,3 +116,4 @@ export default function ResetPassword() {
         </div>
     );
 }
+

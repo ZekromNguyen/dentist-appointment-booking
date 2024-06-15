@@ -7,8 +7,13 @@ import LoginDentist from './components/LoginDentist/LoginDentist';
 import ForgotPassword from './components/ForgotPassword/ForgotPassword';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
 // import VerifyEmailPage from './components/ForgotPassword/VerifyEmailPage';
 import ResetPassword from './components/ForgotPassword/ResetPassword';
+import Admin from './pages/Admin/Admin';
+import UserManage from './System/UserManage';
+import ProductManage from './System/ProductManage';
+import RegisterPackageGroupOrAcc from './System/RegisterPackageGroupOrAcc';
 
 function App() {
   return (
@@ -22,6 +27,12 @@ function App() {
           <Route path="/forgotPassword" element={<ForgotPassword />}></Route>
           {/* <Route path="/VerifyEmailPage" element={<VerifyEmailPage />}></Route> */}
           <Route path="/ResetPassword" element={<ResetPassword />}></Route>
+          <Route path="/Admin" element={<Admin />}></Route>
+          <Route path="/system/user-manage" element={UserManage} />
+          <Route path="/system/product-manage" element={ProductManage} />
+          <Route path="/system/register-package-group-or-account" element={RegisterPackageGroupOrAcc} />
+          <Route component={() => { return (<Redirect to={systemMenuPath} />) }} />
+
         </Routes>
       </div>
       <ToastContainer

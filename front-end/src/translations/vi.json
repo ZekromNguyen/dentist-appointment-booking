@@ -1,0 +1,46 @@
+{
+  "menu": {
+    "system": {
+      "header": "Hệ thống",
+      "system-administrator": {
+        "header": "Quản trị hệ thống",
+        "user-manage": "Quản lý người sử dụng",
+        "product-manage": "Quản lý gói"
+      },
+      "system-parameter": {
+        "header": "Tham số hệ thống"
+      }
+    },
+    "admin": {
+      "User": "Người dùng",
+      "User-Redux": "Thêm mới người dùng",
+      "manage-doctor": "Quản lý bác sĩ",
+      "manage-admin": "Quản lý admin",
+      "CRUD-user": "Bản tạm",
+      "clinic": "Phòng khám",
+      "manage-clinic": "Quản lý phòng khám",
+      "specialty": "Chuyên khoa",
+      "manage-specialty": "Quản lý chuyên khoa",
+      "handbook": "Cẩm nang",
+      "manage-handbook": "Quản lý cẩm nang"
+    
+  },
+  "doctor": {
+    "manage-schedule": "Quản lý lịch khám bệnh"
+  }
+  },
+  "manager-user": {
+    "add": "Thêm mới người dùng",
+    "email": "Email",
+    "password": "Mật khẩu",
+    "first-name": "Tên",
+    "last-name": "Họ",
+    "phone-number": "Số điện thoại",
+    "address": "Địa chỉ",
+    "position": "Chức danh",
+    "image": "Ảnh",
+    "gender": "Giới tính",
+    "role": "Chức vụ",
+    "save": "Lưu"
+  }
+  }

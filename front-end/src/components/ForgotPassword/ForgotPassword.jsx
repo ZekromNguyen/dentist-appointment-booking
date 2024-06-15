@@ -64,7 +64,7 @@
 // //     );
 // // }
 
-import React, { useState } from 'react';
+/*import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 import { forgotPassword } from '../../Service/userService';
 import "./forgotpassword.scss";
@@ -120,4 +120,64 @@ export default function ForgotPassword() {
             </div>
         </div>
     );
+}*/
+import React, { useState } from 'react';
+import { toast } from 'react-toastify';
+import { forgotPassword } from '../../Service/userService';
+import "./forgotpassword.scss";
+
+export default function ForgotPassword() {
+    const [email, setEmail] = useState("");
+    const [isValidEmail, setIsValidEmail] = useState(true);
+
+    const handleForgot = async () => {
+        if (!email) {
+            toast.error("Vui lòng nhập email của bạn");
+            setIsValidEmail(false);
+            return;
+        }
+
+        // Kiểm tra tính hợp lệ của địa chỉ email
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailPattern.test(email)) {
+            toast.error("Địa chỉ email không hợp lệ");
+            setIsValidEmail(false);
+            return;
+        }
+
+        try {
+            const response = await forgotPassword(email);
+            if (response.status === 200) {
+                toast.success("Email xác nhận đã được gửi đến địa chỉ email của bạn");
+            } else {
+                toast.error("Có lỗi xảy ra. Vui lòng thử lại sau.");
+            }
+        } catch (error) {
+            toast.error("Không thể gửi yêu cầu. Vui lòng thử lại sau.");
+        }
+    };
+
+    return (
+        <div className='background-forgot'>
+            <div className='box-forgot'>
+                <div className='forgot-title'>Quên mật khẩu</div>
+                <div className='forgot-input'>
+                    <input
+                        type='email'
+                        className={`form-control forgot ${!isValidEmail ? 'is-invalid' : ''}`}
+                        placeholder='Nhập email của bạn...'
+                        value={email}
+                        onChange={(event) => {
+                            setEmail(event.target.value);
+                            setIsValidEmail(true); // Reset trạng thái hợp lệ của email khi người dùng thay đổi nội dung
+                        }}
+                    />
+                </div>
+                <div className='btn-forgot'>
+                    <button className='button-forgot' onClick={handleForgot}>Gửi</button>
+                </div>
+            </div>
+        </div>
+    );
 }
+

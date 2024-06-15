@@ -166,7 +166,7 @@ button {
 
 .icon-open-eye {
     position: absolute;
-    right: 230px;
+    right: 500px !important;
     top: 204px;
     cursor: pointer;
 }
