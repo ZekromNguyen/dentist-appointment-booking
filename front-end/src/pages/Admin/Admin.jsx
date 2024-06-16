@@ -16,14 +16,14 @@
 
 import React from 'react';
 import { Outlet, Link } from 'react-router-dom';
-import HeaderSystem from '../../components/HeaderSystem/HeaderSystem';
+import HeaderSystemAdmin from '../../components/HeaderSystem/HeaderSystemAdmin';
 import "./admin.scss";
 
 function Admin() {
   return (
     <div className='Admin-page'>
       <div className='header'>
-        <HeaderSystem />
+        <HeaderSystemAdmin />
         <nav>
           <Link to="/admin/system/user-manage"></Link>
         </nav>

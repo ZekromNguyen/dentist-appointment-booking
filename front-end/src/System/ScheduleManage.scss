@@ -1,0 +1,38 @@
+.manage-schedule-container{
+    .m-s-title{
+
+        margin-top: 15px;
+        font-weight :600;
+        margin-bottom: 15px;
+        font-size: 20px;
+        text-align: center;
+    }
+    .pick-hour-container{
+        height: 150px;
+        border: 1px solid red;
+    }
+    .btn-primary {
+        display: inline-block;
+        padding: 10px 20px;
+        font-size: 16px;
+        font-weight: bold;
+        color: #ffffff;
+        text-align: center;
+        text-decoration: none;
+        background-color: #007bff; /* Màu nền nút */
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      
+        &:hover {
+          background-color: #0056b3; /* Màu nền khi hover */
+        }
+      
+        &:focus {
+          outline: none;
+          box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.5); /* Hiệu ứng outline */
+        }
+      }
+      
+}

@@ -132,6 +132,7 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify';
 import { login } from "../../Service/userService";
+import { loginSuccess, setUserRole } from "../../store/actions";
 
 export default function Login(props) {
     let navigate = useNavigate();
@@ -166,9 +167,13 @@ export default function Login(props) {
             if (response && response.data && response.data.message === "Login successfully") {
                 const Role = response.data.account.RoleID;
                 console.log('check role', Role);
+
                 if (Role == 1) {
                     toast.success("Chúc mừng bạn đăng nhập thành công");
                     navigate("/");
+                }else if(Role == 2){
+                    toast.success("Chúc mừng bạn đăng nhập thành công");
+                    navigate("/Doctor");
                 } else if (Role == 4) {
                     toast.success("Chúc mừng bạn đăng nhập thành công");
                     navigate("/Admin");

@@ -60,10 +60,11 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ResetPassword from './components/ForgotPassword/ResetPassword';
 import Admin from './pages/Admin/Admin';
-
 import System from './routes/System';
+import Doctor from './pages/Doctor/Doctor';
 
 function App() {
+
   return (
     <Router>
       <div className="App">
@@ -74,9 +75,14 @@ function App() {
           <Route path="/loginDentist" element={<LoginDentist />} />
           <Route path="/forgotPassword" element={<ForgotPassword />} />
           <Route path="/ResetPassword" element={<ResetPassword />} />
+          
           <Route path="/admin/*" element={<Admin />}>
             <Route path="system/*" element={<System />} />
           </Route>
+          <Route path="/doctor/*" element={<Doctor />}>
+            <Route path="system/*" element={<System />} />
+          </Route>
+
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </div>

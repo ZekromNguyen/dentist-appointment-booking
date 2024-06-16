@@ -2,20 +2,19 @@
   "menu": {
 
     "admin": {
-      "User": "Người dùng",
+      "User": "Manage",
       "user-manage": "Add new user",
-      "manage-doctor": "Quản lý bác sĩ",
-      "manage-admin": "Quản lý admin",
-      "clinic": "Phòng khám",
-      "manage-clinic": "Quản lý phòng khám",
-      "specialty": "Chuyên khoa",
-      "manage-specialty": "Quản lý chuyên khoa",
-      "handbook": "Cẩm nang",
-      "manage-handbook": "Quản lý cẩm nang"
+      "manage-doctor": "Manage Doctor",
+      "clinic": "Clinic",
+      "manage-clinic": "Manage Clinic",
+      "specialty": "Specialty",
+      "manage-specialty": "Manage Specialty",
+      "handbook": "Handbook",
+      "manage-handbook": "Manage Handbook"
     
   },
   "doctor": {
-    "manage-schedule": "Quản lý lịch khám "
+    "manage-schedule": "Manage Schedule "
   }
   },
   "manager-user": {
@@ -27,5 +26,9 @@
     "image": "Image",
     "role": "Role",
     "save": "Lưu"
+  },
+
+  "manage-schedule" :{
+    "title":"Manage doctor's schedule"
   }
   }
