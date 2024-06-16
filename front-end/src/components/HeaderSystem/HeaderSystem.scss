@@ -1,32 +1,27 @@
-/* HeaderSystem.scss */
+@import "../../styles/common.scss";
 
 .header-container {
+    z-index: 99;
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    background-color: #333; /* Màu nền header */
-    color: #fff; /* Màu chữ */
-    padding: 10px 20px; /* Khoảng cách nội dung với viền */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Đổ bóng cho header */
+    background-color: $colormain;
+    color: $common-text-color;
+    height: 40px;
+    position: relative;
+    .btn-logout {
+        color: $common-text-color;
+        line-height: 40px;
+        height: 40px;
+        padding: 0 10px;
+        &:hover {
+            background-color: darken($colormain, 5);
+        }
+        i {
+            font-size: $base-size + 1px;
+        }
+    }
 }
-
-.header-tabs-container {
-    display: flex;
-    align-items: center;
-}
-
-.btn-logout {
-    cursor: pointer;
-    color: #fff;
-    font-size: 16px;
-    transition: color 0.3s;
-    margin-left: 10px; /* Khoảng cách giữa nút logout và nội dung header */
-}
-
-.btn-logout:hover {
-    color: #ffcc00; /* Màu khi hover */
-}
-
-.btn-logout i {
-    margin-right: 5px;
+.Welcome{
+    margin-top :10px;
+    margin-right:190px;
 }
