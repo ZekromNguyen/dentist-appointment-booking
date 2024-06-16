@@ -14,10 +14,12 @@ import Admin from './pages/Admin/Admin';
 import UserManage from './System/UserManage';
 import ProductManage from './System/ProductManage';
 import RegisterPackageGroupOrAcc from './System/RegisterPackageGroupOrAcc';
+import { history } from '../src/ServiceSystem/redux'
+
 
 function App() {
   return (
-    <Router>
+    <Router history={history}>
       <div className="App">
         <Routes>
           <Route path="/" element={<Home />} />

@@ -18,7 +18,8 @@ const reduxStateSyncConfig = {
     ]
 };
 
-//export const history = createBrowserHistory({ basename: process.env.REACT_APP_ROUTER_BASE_NAME });
+//export const history = createBrowserHistory({ basename: process.env.REACT_APP_ROUTER_BASE_NAME === "Clinic" });
+export const history = createBrowserHistory();
 
 const persistConfig = {
     key: 'root',
