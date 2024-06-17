@@ -37,6 +37,7 @@ export default function Banner() {
                             <div className='icon-child'><FaUserDoctor className='icon-doctor' /></div>
                             <div className='text-child'>Bác sĩ</div>
                         </div>
+
                     </div>
                 </div>
             </div>

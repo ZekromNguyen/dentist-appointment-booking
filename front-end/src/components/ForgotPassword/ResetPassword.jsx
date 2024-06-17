@@ -65,20 +65,33 @@
 //                 onChange={(e) => setConfirmPassword(e.target.value)}
 //             />
 //             <button onClick={handleResetPassword}>Submit</button>
-//         </div>
+//         </div
 //     );
 // }
 
-import React, { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { resetPassword } from '../../Service/userService';
+import { resetPassword, } from '../../Service/userService';
 import "./ResetPassword.scss"
+
 export default function ResetPassword() {
-    const { token } = useParams();
+    const location = useLocation();
+    const [token, setToken] = useState('');
     const navigate = useNavigate();
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+
+    useEffect(() => {
+        const queryParams = new URLSearchParams(location.search);
+        const tokenFromUrl = queryParams.get('token');
+        if (tokenFromUrl) {
+            setToken(tokenFromUrl);
+        } else {
+            toast.error('Invalid or missing token');
+            navigate('/'); // Redirect to home or some error page
+        }
+    }, [location, navigate]);
 
     const handleResetPassword = async () => {
         if (password !== confirmPassword) {

@@ -40,10 +40,7 @@ class AccountController {
       return res.status(400).send("Email and password are required");
     }
     try {
-      const account = await AccountService.authenticate(
-        email,
-        password
-      );
+      const account = await AccountService.authenticate(email, password);
       if (account.error) {
         return res.render("login", { error: account.error });
       }
@@ -234,6 +231,9 @@ class AccountController {
 
   async resetPassword(req, res) {
     const { password, confirmPassword, token } = req.body;
+    console.log(password);
+    console.log(confirmPassword);
+    console.log(token);
     if (password !== confirmPassword) {
       res
         .status(400)
@@ -309,7 +309,7 @@ class AccountController {
         DentistID,
         day,
         stime,
-        etime
+        etime,
       });
       res.status(200).send("Schedule added successfully", newSchedule);
     } catch (error) {
@@ -318,21 +318,20 @@ class AccountController {
   }
 
   async handleGetAllUser(req, res) {
-
     let AccountID = req.query.AccountID; // All, id
     if (!AccountID) {
       return res.status(200).json({
         errCode: 1,
-        errMessage: 'Missing required patameter',
-        account: []
+        errMessage: "Missing required patameter",
+        account: [],
       });
     }
     let account = await AccountService.getAllUsers(AccountID);
 
     return res.status(200).json({
       errCode: 0,
-      errMessage: 'OK',
-      account
+      errMessage: "OK",
+      account,
     });
   }
 
@@ -340,11 +339,11 @@ class AccountController {
     if (!req.body.AccountID) {
       return res.status(500).json({
         errCode: 1,
-        errMessage: "Missing required parameter"
-      })
+        errMessage: "Missing required parameter",
+      });
     }
-    let message = await AccountService.deleteUser(req.body.AccountID)
-    return res.status(200).json(message)
+    let message = await AccountService.deleteUser(req.body.AccountID);
+    return res.status(200).json(message);
   }
 
   async handleEditUser(req, res) {
@@ -355,7 +354,7 @@ class AccountController {
       if (!data.AccountID) {
         return res.status(400).json({
           errCode: 2,
-          errMessage: 'ID người dùng không được cung cấp'
+          errMessage: "ID người dùng không được cung cấp",
         });
       }
 
@@ -371,17 +370,14 @@ class AccountController {
       // Trả về kết quả thành công nếu không có lỗi
       return res.status(200).json(message);
     } catch (error) {
-      console.error('Error in handleEditUser:', error);
+      console.error("Error in handleEditUser:", error);
       // Trả về lỗi nếu có lỗi xảy ra trong quá trình xử lý
       return res.status(500).json({
         errCode: 1,
-        errMessage: 'Có lỗi xảy ra, vui lòng thử lại sau'
+        errMessage: "Có lỗi xảy ra, vui lòng thử lại sau",
       });
     }
   }
-
-
-
 }
 
 export default new AccountController();

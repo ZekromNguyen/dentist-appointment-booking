@@ -5,7 +5,6 @@ import AccountControl from "../controllers/authController";
 import DentistSchedule from "../model/dentistSchedule";
 
 import bcrypt from "bcrypt";
-import { resolve } from "scripts";
 
 class AccountService {
   async createAccountCustomer({
@@ -185,7 +184,7 @@ class AccountService {
     await account.save();
     return account;
   }
-  async resetNewPassword() { }
+  async resetNewPassword() {}
 
   async createSchedule({ DentistID, day, stime, etime }) {
     try {
@@ -193,7 +192,7 @@ class AccountService {
         DentistID,
         DayOfWeek: day,
         StartTime: stime,
-        EndTime: etime
+        EndTime: etime,
       });
 
       return newSchedule;
@@ -206,18 +205,33 @@ class AccountService {
   // lấy tất cả người dùng
   async getAllUsers(AccountID) {
     try {
-      let account = '';
-      if (AccountID === 'ALL') {
+      let account = "";
+      if (AccountID === "ALL") {
         account = await Account.findAll({
           raw: true, // Trả về dữ liệu thuần túy
-          attributes: ['AccountID', 'UserName', 'Phone', 'Email', 'IsActive', 'RoleID', 'verificationToken']
+          attributes: [
+            "AccountID",
+            "UserName",
+            "Phone",
+            "Email",
+            "IsActive",
+            "RoleID",
+            "verificationToken",
+          ],
         });
-
       } else if (AccountID) {
         account = await Account.findOne({
           where: { AccountID: AccountID },
           raw: true, // Trả về dữ liệu thuần túy
-          attributes: ['AccountID', 'UserName', 'Phone', 'Email', 'IsActive', 'RoleID', 'verificationToken']
+          attributes: [
+            "AccountID",
+            "UserName",
+            "Phone",
+            "Email",
+            "IsActive",
+            "RoleID",
+            "verificationToken",
+          ],
         });
       }
 
@@ -226,20 +240,18 @@ class AccountService {
       }
       return account;
     } catch (e) {
-      console.error('Error in getAllUsers:', e);
+      console.error("Error in getAllUsers:", e);
       throw e;
     }
   }
-
 
   //băm mật khẩu
   async hashUserPassword(password) {
     try {
       const hashedPassword = bcrypt.hashSync(password, 10);
       return hashedPassword;
-    }
-    catch (e) {
-      console.error('Error in hashPassword:', e);
+    } catch (e) {
+      console.error("Error in hashPassword:", e);
       throw e;
     }
   }
@@ -250,31 +262,31 @@ class AccountService {
       if (!id) {
         return {
           errCode: 2,
-          errMessage: 'ID không được cung cấp'
-        }
+          errMessage: "ID không được cung cấp",
+        };
       }
 
       // Tìm kiếm người dùng với AccountID được cung cấp
       let user = await Account.findOne({
-        where: { AccountID: id }
+        where: { AccountID: id },
       });
 
       // Kiểm tra xem người dùng có tồn tại hay không
       if (!user) {
         return {
           errCode: 2,
-          errMessage: 'Người dùng không tồn tại'
-        }
+          errMessage: "Người dùng không tồn tại",
+        };
       }
 
       // Xóa người dùng
       await user.destroy();
       return {
         errCode: 0,
-        message: "Người dùng đã được xóa"
-      }
+        message: "Người dùng đã được xóa",
+      };
     } catch (e) {
-      console.error('Lỗi khi xóa người dùng:', e);
+      console.error("Lỗi khi xóa người dùng:", e);
       throw e;
     }
   }
@@ -285,20 +297,20 @@ class AccountService {
       if (!data.AccountID) {
         return {
           errCode: 2,
-          errMessage: 'ID người dùng không được cung cấp'
+          errMessage: "ID người dùng không được cung cấp",
         };
       }
 
       // Tìm kiếm người dùng với AccountID được cung cấp
       let user = await Account.findOne({
-        where: { AccountID: data.AccountID }
+        where: { AccountID: data.AccountID },
       });
 
       // Kiểm tra xem người dùng có tồn tại hay không
       if (!user) {
         return {
           errCode: 2,
-          errMessage: 'Người dùng không tồn tại'
+          errMessage: "Người dùng không tồn tại",
         };
       }
 
@@ -306,7 +318,8 @@ class AccountService {
       user.UserName = data.UserName || user.UserName; // Nếu không có giá trị mới, giữ nguyên giá trị cũ
       user.Phone = data.Phone || user.Phone;
       user.Email = data.Email || user.Email;
-      user.IsActive = data.IsActive !== undefined ? data.IsActive : user.IsActive; // Đảm bảo kiểm tra undefined
+      user.IsActive =
+        data.IsActive !== undefined ? data.IsActive : user.IsActive; // Đảm bảo kiểm tra undefined
       user.RoleID = data.RoleID || user.RoleID;
 
       // Lưu các thay đổi vào cơ sở dữ liệu
@@ -314,17 +327,13 @@ class AccountService {
 
       return {
         errCode: 0,
-        message: 'Cập nhật người dùng thành công'
+        message: "Cập nhật người dùng thành công",
       };
     } catch (e) {
-      console.error('Lỗi khi cập nhật người dùng:', e);
+      console.error("Lỗi khi cập nhật người dùng:", e);
       throw e;
     }
   }
-
-
-
-
 }
 
 export default new AccountService();
