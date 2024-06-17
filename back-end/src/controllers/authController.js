@@ -44,7 +44,11 @@ class AccountController {
       if (account.error) {
         return res.status(400).json({ error: account.error });
       }
-      req.session.user = account;
+      req.session.user = {
+        user: account.UserName,
+        id: account.AccountID,
+        RoleID: account.RoleID,
+      };
       if (req.session.user) {
         res
           .status(200)

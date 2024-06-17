@@ -1,7 +1,7 @@
-import React from 'react';
+// import React from 'react';
 import "./home.scss";
-import Container from 'react-bootstrap/Container';
-import { Row } from 'react-bootstrap';
+// import Container from 'react-bootstrap/Container';
+// import { Row } from 'react-bootstrap';
 import Header from '../../components/Header/Header';
 import Banner from '../../components/Banner/Banner';
 import Body_Infor from '../../components/Body_Infor/Body_Infor';

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import './header.scss';
 import { IoMenuOutline } from "react-icons/io5";
 import { FaUser } from "react-icons/fa";
@@ -7,7 +7,7 @@ import { FaUserClock } from "react-icons/fa";
 import { TfiHeadphoneAlt } from "react-icons/tfi";
 import { MdGTranslate } from "react-icons/md";
 import { checkSession, logout } from '../../Service/userService';
-import { FormattedMessage } from 'react-intl';
+// import { FormattedMessage } from 'react-intl';
 export default function Header() {
     const [user, setUser] = useState(null);
     const navigate = useNavigate();
@@ -59,7 +59,7 @@ export default function Header() {
                 <div className="content-login-register">
                     {user ? (
                         <div className="logged-in">
-                            <span>Xin chào, {user.UserName}</span>
+                            <span>Xin chào, {user.user}</span>
                             <button onClick={handleLogout}>Logout</button>
                         </div>
                     ) : (
@@ -92,9 +92,9 @@ export default function Header() {
     );
 }
 
-const mapStateToProps = state => {
-    return {
-        lang: state.app.languge,
-        contentOfConfirmModal: state.app.contentOfConfirmModal
-    }
-}
+// const mapStateToProps = state => {
+//     return {
+//         lang: state.app.languge,
+//         contentOfConfirmModal: state.app.contentOfConfirmModal
+//     }
+// }
