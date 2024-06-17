@@ -22,7 +22,7 @@ const login = async (email, password) => {
         const response = await axios.post("http://localhost:3000/login", {
             email: email,
             password: password,
-        });
+        }, { withCredentials: true });
         return response;
     } catch (error) {
         console.error("Error during login:", error);
@@ -99,7 +99,26 @@ const resetEmail = async (token) => {
         );
     }
 };
+// Hàm để kiểm tra session
+const checkSession = async () => {
+    try {
+        const response = await axios.get('http://localhost:3000/get-session', { withCredentials: true });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching session:', error);
+        return null;
+    }
+};
 
+// Hàm để xử lý logout
+const logout = async () => {
+    try {
+        await axios.post('http://localhost:3000/logout', {}, { withCredentials: true });
+    } catch (error) {
+        console.error('Error during logout:', error);
+        throw error;
+    }
+};
 // const ResetPassword = () => {
 //     const location = useLocation();
 //     const queryParams = new URLSearchParams(location.search);
@@ -138,5 +157,7 @@ export {
     getIdFromToken,
     getAllUSer,
     resetEmail,
-    forgotPassword
+    forgotPassword,
+    checkSession,
+    logout
 };

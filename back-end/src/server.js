@@ -6,11 +6,15 @@ import session from "express-session";
 // import authRoutes from "./routes/authRoutes";
 import cors from "cors"; // Import cors
 
-
 let app = express();
 
 // Enable CORS for all routes
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:5173", // URL của ứng dụng React
+    credentials: true,
+  })
+);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -18,10 +22,10 @@ app.use(
   session({
     secret: "swp391",
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
     cookie: {
       secure: false,
-      maxAge: 1 * 60 * 1000, // 1 minutes
+      // maxAge: 24 * 60 * 60 * 1000, // 1 minutes
     }, // Set to true if using HTTPS
   })
 );

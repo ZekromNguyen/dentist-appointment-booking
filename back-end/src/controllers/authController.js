@@ -42,15 +42,37 @@ class AccountController {
     try {
       const account = await AccountService.authenticate(email, password);
       if (account.error) {
-        return res.render("login", { error: account.error });
+        return res.status(400).json({ error: account.error });
       }
-      res.status(200).json({ message: "Login successfully", account });
+      req.session.user = account;
+      if (req.session.user) {
+        res
+          .status(200)
+          .json({ message: "Login successfully", user: req.session.user });
+      } else {
+        res.status(500).json({ message: "Failed to set session" });
+      }
     } catch (err) {
       console.error("Error executing query:", err.stack);
       res.status(500).send("Database query error");
     }
   }
-
+  async logout(req, res) {
+    req.session.destroy((err) => {
+      if (err) {
+        return res.status(500).json({ message: "Logout failed" });
+      }
+      res.clearCookie("connect.sid"); // Tên cookie có thể khác tùy theo cấu hình của bạn
+      res.status(200).json({ message: "Logout successfully" });
+    });
+  }
+  async getSession(req, res) {
+    if (req.session.user) {
+      res.status(200).json(req.session.user);
+    } else {
+      res.status(401).json({ message: "No session found" });
+    }
+  }
   async register(req, res) {
     const { username, password, email, phone } = req.body;
     const roleID = 1;

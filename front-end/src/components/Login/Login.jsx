@@ -126,15 +126,15 @@
 import { useState } from "react";
 import "./login.css";
 import Footer from '../../components/Footer/Footer';
-import Header from '../../components/Header/Header';
+// import Header from '../../components/Header/Header';
 import { FaChevronLeft } from "react-icons/fa6";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify';
 import { login } from "../../Service/userService";
-import { loginSuccess, setUserRole } from "../../store/actions";
+// import { loginSuccess, setUserRole } from "../../store/actions";
 
-export default function Login(props) {
+export default function Login() {
     let navigate = useNavigate();
 
     const [email, setEmail] = useState("");
@@ -165,20 +165,17 @@ export default function Login(props) {
             console.log(">>check response", response.data.message);
 
             console.log(">>check response 2", response.data);
-            //if (response && response.data && response.data.message === "Login successfully") {
-            if (true) {
-                const Role = response.data.account.RoleID;
+            if (response && response.data && response.data.message === "Login successfully") {
+                const Role = response.data.user.RoleID; // Đảm bảo rằng `RoleID` tồn tại trong đối tượng user
                 console.log('check role', Role);
 
-                if (Role == 1) {
-                    console.log(">>check response 2", response.data);
+                if (Role === 1) {
                     toast.success("Chúc mừng bạn đăng nhập thành công");
-                    console.log(">>check response 3", response.data);
                     navigate("/");
-                } else if (Role == 2) {
+                } else if (Role === 2) {
                     toast.success("Chúc mừng bạn đăng nhập thành công");
                     navigate("/Doctor");
-                } else if (Role == 4) {
+                } else if (Role === 4) {
                     toast.success("Chúc mừng bạn đăng nhập thành công");
                     navigate("/Admin");
                 }
