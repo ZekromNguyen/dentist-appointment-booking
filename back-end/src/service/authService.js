@@ -50,6 +50,7 @@ class AccountService {
       throw error;
     }
   }
+
   async createAccountDentistOrOwner({
     username,
     hashedPassword,
@@ -92,6 +93,7 @@ class AccountService {
       throw error;
     }
   }
+
   async getAccountByUserNameOrEmail(usernameOrEmail) {
     const account = await Account.findOne({
       where: {
@@ -115,26 +117,15 @@ class AccountService {
 
   async authenticate(usernameOrEmail, password) {
     const account = await this.getAccountByUserNameOrEmail(usernameOrEmail);
-    //console.log("hasedpassword database:", account.Password);
     if (!account) {
       return { error: "Account is not found" };
     }
     if (!bcrypt.compareSync(password, account.Password)) {
       return { error: "Incorrect password" };
     }
-    if (account.roleID === 1 && !account.IsActive === true) {
-      return { error: "Account is not active" };
-    }
-    // if (
-    //   account &&
-    //   bcrypt.compareSync(password, account.Password) &&
-    //   account.IsActive === true
-    // ) {
-    //   return account;
-    // }
-    // return null;
     return account;
   }
+
   async getTokenVerify(token) {
     const account = await Account.findOne({
       where: { verificationToken: token },
@@ -147,6 +138,7 @@ class AccountService {
     await account.save();
     return account;
   }
+
   async getAccountById(id) {
     const account = await Account.findOne({
       where: { AccountID: id },
@@ -157,6 +149,7 @@ class AccountService {
     }
     return account;
   }
+
   async createResetToken(email, token) {
     const account = await this.getAccountByUserNameOrEmail(email);
     if (!account) {
@@ -166,6 +159,7 @@ class AccountService {
     await account.save();
     return account;
   }
+
   async getResetToken(token) {
     const account = await Account.findOne({
       where: { verificationToken: token },
@@ -175,12 +169,15 @@ class AccountService {
     }
     return account;
   }
+
   async saveNewPassword(id, hashedpassword) {
     const account = await this.getAccountById(id);
     account.Password = hashedpassword;
+    account.IsActive = true; // Reactivate account after resetting password
     await account.save();
     return account;
   }
+
   async resetNewPassword() { }
 
   async createSchedule({ DentistID, day, stime, etime }) {
@@ -189,7 +186,7 @@ class AccountService {
         DentistID,
         DayOfWeek: day,
         StartTime: stime,
-        EndTime: etime
+        EndTime: etime,
       });
 
       return newSchedule;

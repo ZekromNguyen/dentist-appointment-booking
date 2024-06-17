@@ -2,40 +2,114 @@ import AccountService from "../service/authService";
 import transporter from "../config/email";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
+import Account from "../model/account";
 class AccountController {
+  // async login(req, res) {
+  //   const { usernameOrEmail, password } = req.body;
+  //   if (!usernameOrEmail || !password) {
+  //     res.status(400).send("UsernameOrPassword are required");
+  //   }
+  //   try {
+  //     const account = await AccountService.authenticate(
+  //       usernameOrEmail,
+  //       password
+  //     );
+  //     if (account.error) {
+  //       return res.render("login", { error: account.error });
+  //     }
+  //     const role = account.RoleID;
+  //     req.session.userID = account.AccountID;
+  //     switch (role) {
+  //       case 1:
+  //         res.redirect("/updatePassword");
+  //         break;
+  //       case 2:
+  //         res.redirect("/pageDentist");
+  //         break;
+  //       case 3:
+  //         res.redirect("/pageOwner");
+  //         break;
+  //       case 4:
+  //         res.redirect("/accountManager");
+  //         break;
+  //     }
+  //   } catch (err) {
+  //     console.error("Error excuting query:", err.stack);
+  //     res.status(500).send("Database query error");
+  //   }
+  // }
   async login(req, res) {
     const { usernameOrEmail, password } = req.body;
     if (!usernameOrEmail || !password) {
-      res.status(400).send("UsernameOrPassword are required");
+      return res.status(400).send("UsernameOrPassword are required");
     }
     try {
-      const account = await AccountService.authenticate(
-        usernameOrEmail,
-        password
-      );
+      const account = await AccountService.authenticate(usernameOrEmail, password);
       if (account.error) {
         return res.render("login", { error: account.error });
       }
-      const role = account.RoleID;
-      switch (role) {
-        case 1:
-          req.session.userID = account.AccountID;
-          res.redirect("/updatePassword");
-          break;
-        case 2:
-          res.redirect("/pageDentist");
-          break;
-        case 3:
-          res.redirect("/pageOwner");
-          break;
-        case 4:
-          res.redirect("/pageAdmin");
-          break;
+
+      if (!account.IsActive) {
+        // Generate reset token
+        const verificationToken = crypto.randomBytes(32).toString("hex");
+        await AccountService.createResetToken(account.Email, verificationToken);
+        const verificationLink = `http://localhost:3000/resetPassword?token=${verificationToken}`;
+
+        // Send email to reset password
+        const mailOptions = {
+          from: process.env.EMAIL_APP_GMAIL,
+          to: account.Email,
+          subject: "Reactivate Your Account",
+          text: `Your account is inactive. Please reset your password to reactivate your account by clicking the following link: ${verificationLink}`,
+          html: `<p>Your account is inactive. Please reset your password to reactivate your account by clicking the following link: <a href="${verificationLink}">Reset Password</a></p>`,
+        };
+
+        transporter.sendMail(mailOptions, (error, info) => {
+          if (error) {
+            return res.status(500).send(error.toString());
+          }
+          res.status(200).send(`Your account is inactive. A reset password email has been sent to: ${account.Email}`);
+        });
+
+        return;
       }
+
+      req.session.userID = account.AccountID;
+      req.session.save(err => {
+        if (err) {
+          console.error("Session save error:", err);
+          return res.status(500).send("Internal server error");
+        }
+        const role = account.RoleID;
+        switch (role) {
+          case 1:
+            return res.redirect("/updatePassword");
+          case 2:
+            return res.redirect("/pageDentist");
+          case 3:
+            return res.redirect("/pageOwner");
+          case 4:
+            return res.redirect("/accountManager");
+          default:
+            return res.status(400).send("Invalid role");
+        }
+      });
     } catch (err) {
-      console.error("Error excuting query:", err.stack);
-      res.status(500).send("Database query error");
+      console.error("Error executing query:", err.stack);
+      return res.status(500).send("Database query error");
     }
+  }
+
+  // Other methods...
+
+  logout(req, res) {
+    req.session.destroy(err => {
+      if (err) {
+        return res.status(500).send('Logout failed');
+      }
+      res.clearCookie('connect.sid', { path: '/' });
+      return res.redirect('/login');
+    });
   }
   async register(req, res) {
     const { username, password, email, phone } = req.body;
@@ -337,7 +411,16 @@ class AccountController {
       console.error("Error deleting account:", error);
       res.status(500).send("Internal Server Error");
     }
-  };
+  }
+  logout(req, res) {
+    req.session.destroy(err => {
+      if (err) {
+        return res.status(500).send('Logout failed');
+      }
+      res.clearCookie('connect.sid', { path: '/' });
+      res.redirect('/login');
+    });
+  }
 
 
 }
