@@ -16,12 +16,13 @@ class HeaderSystemDoctor extends Component {
                 <div className="header-tabs-container">
                     <Navigator menus={doctorMenu} />
                 </div>
-                <div className="btn btn-logout" onClick={processLogout}>
-                    <i className="fas fa-sign-out-alt">
-                        <a href='/login'>
-                            <IoLogOutSharp />
-                        </a>
-                    </i>
+                <div className="btn btn-logout">
+                    <a href="/login">
+                        <i className="fas fa-sign-out-alt">
+                        </i>
+                        <IoLogOutSharp size={20} />
+                        <span>Logout</span>
+                    </a>
                 </div>
             </div>
         );

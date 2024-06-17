@@ -28,6 +28,8 @@ let initAllWebRoutes = (app) => {
   router.get("/getAllUser", AccountController.handleGetAllUser);
   router.put("/editUser", AccountController.handleEditUser);
   router.delete("/deleteUser", AccountController.handleDeleteUser);
+
+  router.get('/getAllDentists', AccountController.handleGetAllDentists);
   return app.use("/", router);
 };
 

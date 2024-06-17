@@ -1,6 +1,6 @@
 import { Sequelize } from "sequelize";
 import Account from "../model/account";
-
+import Dentist from "../model/dentist";
 import AccountControl from "../controllers/authController";
 import DentistSchedule from "../model/dentistSchedule";
 
@@ -334,6 +334,27 @@ class AccountService {
       throw e;
     }
   }
+
+
+  async  getAllDentists(DentistID) {
+  try {
+    const dentists = await Dentist.findAll({
+  //    attributes: ['DentistID', 'DentistName', 'AccountID', 'ClinicID', 'Description'],
+    });
+    console.log('ftbtbhbyhbhn',dentists)
+    return dentists;
+  } catch (error) {
+    console.error('Error in getAllDentists:', error);
+    throw error;
+  }
 }
+
+
+
+
+
+}
+
+
 
 export default new AccountService();

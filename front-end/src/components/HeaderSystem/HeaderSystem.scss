@@ -1,27 +1,105 @@
-@import "../../styles/common.scss";
+// @import "../../styles/common.scss";
+
+// .header-container {
+//     z-index: 99;
+//     display: flex;
+//     justify-content: space-between;
+//     background-color: $colormain;
+//     color: $common-text-color;
+//     height: 40px;
+//     position: relative;
+//     .btn-logout {
+//         color: $common-text-color;
+//         line-height: 40px;
+//         height: 40px;
+//         padding: 0 10px;
+//         &:hover {
+//             background-color: darken($colormain, 5);
+//         }
+//         i {
+//             font-size: $base-size + 1px;
+//         }
+//     }
+// }
+// .Welcome{
+//     margin-top :10px;
+//     margin-right:190px;
+// }
+// Variables for consistent theming
+// Variables for consistent theming
+// Variables for vibrant theming
+$primary-color: #6200ea;
+$secondary-color: #03dac6;
+$text-color: #ffffff;
+$background-color: #121212;
+$hover-background-color: blue;
+$border-color: #1a0d2a;
+$border-radius: 10px;
+$transition-time: 0.3s;
+$gradient: linear-gradient(135deg, $primary-color 0%, $secondary-color 100%);
+$highlight-color: blue; 
 
 .header-container {
-    z-index: 99;
     display: flex;
     justify-content: space-between;
-    background-color: $colormain;
-    color: $common-text-color;
-    height: 40px;
-    position: relative;
-    .btn-logout {
-        color: $common-text-color;
-        line-height: 40px;
-        height: 40px;
-        padding: 0 10px;
-        &:hover {
-            background-color: darken($colormain, 5);
-        }
-        i {
-            font-size: $base-size + 1px;
+    align-items: center;
+    padding: 15px 15px;
+    background: $gradient;
+    color: $text-color;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    font-family: 'Roboto', sans-serif;
+    height: 65px;
+
+    .header-tabs-container {
+        flex-grow: 1;
+
+        .navigator {
+            display: flex;
+            align-items: center;
+
+            .menu-item {
+                margin: 0 15px;
+                padding: 12px 25px;
+                font-size: 16px;
+                color: $text-color;
+                text-decoration: none;
+                border-radius: $border-radius;
+                transition: background-color $transition-time ease, transform $transition-time ease;
+
+                &:hover {
+                    background-color: $hover-background-color;
+                    transform: translateY(-5px);
+                    color: $text-color;
+                }
+            }
         }
     }
-}
-.Welcome{
-    margin-top :10px;
-    margin-right:190px;
+
+    
+    .btn-logout {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        padding: 12px 25px;
+        font-size: 16px;
+        color: $highlight-color; // Bright text color for logout
+        border: 1px solid $border-color;
+        background: transparent;
+        border-radius: $border-radius;
+        transition: background-color $transition-time ease, transform $transition-time ease, color $transition-time ease;
+
+        &:hover {
+            background-color: $hover-background-color;
+            transform: translateY(-5px);
+            color: $secondary-color;
+        }
+
+        svg {
+            margin-right: 10px;
+        }
+
+        span {
+            font-weight: 600;
+        }
+    }
 }

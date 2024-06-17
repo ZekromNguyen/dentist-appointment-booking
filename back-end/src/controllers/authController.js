@@ -2,6 +2,7 @@ import AccountService from "../service/authService";
 import transporter from "../config/email";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
+import authService from "../service/authService";
 class AccountController {
   // async login(req, res) {
   //   const { email, password } = req.body;
@@ -378,6 +379,28 @@ class AccountController {
       });
     }
   }
+
+
+  // Trong AuthController.js
+
+
+async  handleGetAllDentists(req, res) {
+  try {
+    const dentists = await authService.getAllDentists();
+
+    if (!dentists || dentists.length === 0) {
+      return res.status(404).json({ message: 'No dentists found' });
+    }
+
+    res.status(200).json({ message: 'Success', dentists });
+  } catch (error) {
+    console.error('Error in handleGetAllDentists:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+}
+
+
+
 }
 
 export default new AccountController();
