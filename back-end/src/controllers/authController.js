@@ -139,11 +139,7 @@ class AccountController {
         return res.status(404).json({ message: "User not found" });
       }
 
-      const isMatch = await bcrypt.compareSync(
-        currentPassword,
-        account.Password
-      );
-      console.log(isMatch);
+      const isMatch = bcrypt.compareSync(currentPassword, account.Password);
       if (!isMatch) {
         return res
           .status(400)
@@ -290,15 +286,15 @@ class AccountController {
         DentistID,
         day,
         stime,
-        etime
+        etime,
       });
-      res.status(200).send("Schedule added successfully", newSchedule);
+      res
+        .status(200)
+        .json({ message: "Schedule added successfully", newSchedule });
     } catch (error) {
       res.status(500).send("Error adding schedule: " + error.message);
     }
   }
-
-
 }
 
 export default new AccountController();

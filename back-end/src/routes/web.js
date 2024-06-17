@@ -1,7 +1,7 @@
 import express from "express";
 import homepageController from "../controllers/homepageController";
 import AccountController from "../controllers/authController";
-
+import BookingController from "../controllers/dentistController";
 // init all web routes
 
 let router = express.Router();
@@ -25,6 +25,11 @@ let initAllWebRoutes = (app) => {
   router.get("/pageDentist", AccountController.showDentistPage);
   router.get("/schedule", AccountController.showSchedule);
   router.post("/schedule", AccountController.schedule);
+  router.get("/datlich", BookingController.getAvailableSlot);
+  router.post("/datlich", BookingController.schedule);
+  router.get("/booking", BookingController.getDentistSchedules);
+  router.get("/slotsByDate", BookingController.getSlotsByDate);
+  router.post("/booking", BookingController.createBooking);
   return app.use("/", router);
 };
 

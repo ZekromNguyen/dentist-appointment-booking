@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schedule Page</title>
+</head>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+        background-color: #f4f4f9;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .form-control,
+    input[type="date"],
+    button {
+        width: 100%;
+        padding: 8px;
+        margin-top: 5px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+    .slot-container {
+        margin-bottom: 10px;
+    }
+
+    .slot-button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        cursor: pointer;
+        border-radius: 4px;
+        padding: 10px;
+        margin: 5px;
+        flex: 1 1 calc(15% - 10px);
+        /* Calculate width for 2 columns */
+        box-sizing: border-box;
+    }
+
+    .slot-button:hover {
+        background-color: #0056b3;
+    }
+
+    .slot-list {
+        display: flex;
+        flex-wrap: wrap;
+        margin: -5px;
+        /* Adjust margin to account for flex item spacing */
+    }
+
+    h1 {
+        margin-top: 30px;
+        color: #333;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        background-color: white;
+        border: 1px solid #ccc;
+        /* Add border to the table */
+    }
+
+    th,
+    td {
+        padding: 10px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+        border: 1px solid #ccc;
+        /* Add border to table cells */
+    }
+
+    th {
+        background-color: #f2f2f2;
+    }
+
+    .form-group button[type="submit"] {
+        background-color: #28a745;
+        color: white;
+        border: none;
+        cursor: pointer;
+        border-radius: 4px;
+        padding: 10px;
+    }
+
+    .form-group button[type="submit"]:hover {
+        background-color: #218838;
+    }
+</style>
+
+<body>
+    <form action="/datlich" method="post" id="appointmentForm">
+        <div class="form-group">
+            <label for="dentistId" class="label-cell">Dentist ID</label>
+            <input type="text" class="form-control" id="dentistId" name="dentistId" required>
+        </div>
+        <div class="form-group">
+            <label for="date">Day:</label>
+            <input type="date" id="date" name="date" required />
+        </div>
+
+        <!-- Hidden input to store selected SlotID -->
+        <input type="hidden" id="slotId" name="slotId" />
+        <div class="form-group">
+            <h1>Available Slots</h1>
+            <div class="slot-list">
+                <% slots.forEach(slot=> { %>
+                    <button type="button" class="slot-button" data-slotid="<%= slot.SlotID %>"
+                        data-time="<%= slot.Time %>">
+                        <%= slot.Time %>
+                    </button>
+                    <% }); %>
+            </div>
+        </div>
+
+        <!-- Submit button -->
+        <div class="form-group">
+            <button type="submit">Submit</button>
+        </div>
+    </form>
+
+    <h1>Dentist Schedules</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Schedule ID</th>
+                <th>Dentist ID</th>
+                <th>Slot ID</th>
+                <th>Date</th>
+                <th>Day of Week</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% schedules.forEach(schedule=> { %>
+                <tr>
+                    <td>
+                        <%= schedule.ScheduleID1 %>
+                    </td>
+                    <td>
+                        <%= schedule.DentistID %>
+                    </td>
+                    <td>
+                        <%= schedule.AvailableSlot.Time %>
+                    </td>
+                    <td>
+                        <%= schedule.Date %>
+                    </td>
+                    <td>
+                        <%= schedule.DayOfWeek %>
+                    </td>
+                </tr>
+                <% }); %>
+        </tbody>
+    </table>
+</body>
+<script>
+    document.querySelectorAll('.slot-button').forEach(button => {
+        button.addEventListener('click', () => {
+            const slotId = button.getAttribute('data-slotid');
+            // const time = button.getAttribute('data-time');
+            // const day = document.getElementById('date').value;
+            const form = document.getElementById('appointmentForm');
+            const hiddenSlotInput = document.getElementById('slotId');
+            hiddenSlotInput.value = slotId;
+            // if (day) {
+            //     alert('Selected Slot ID: ' + slotId + '\nTime: ' + time + '\nDay: ' + day);
+            // } else {
+            //     alert('Please select a day first.');
+            // }
+        });
+    });
+</script>
+
+</html>

@@ -3,6 +3,8 @@ import express from "express";
 import configViewEngine from "./config/viewEngine";
 import initWebAllRoutes from "./routes/web";
 import session from "express-session";
+import { sequelize } from "./model/model";
+
 // import authRoutes from "./routes/authRoutes";
 
 let app = express();

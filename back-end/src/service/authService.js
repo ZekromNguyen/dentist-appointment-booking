@@ -125,14 +125,6 @@ class AccountService {
     if (account.roleID === 1 && !account.IsActive === true) {
       return { error: "Account is not active" };
     }
-    // if (
-    //   account &&
-    //   bcrypt.compareSync(password, account.Password) &&
-    //   account.IsActive === true
-    // ) {
-    //   return account;
-    // }
-    // return null;
     return account;
   }
   async getTokenVerify(token) {
@@ -181,7 +173,7 @@ class AccountService {
     await account.save();
     return account;
   }
-  async resetNewPassword() { }
+  async resetNewPassword() {}
 
   async createSchedule({ DentistID, day, stime, etime }) {
     try {
@@ -189,7 +181,7 @@ class AccountService {
         DentistID,
         DayOfWeek: day,
         StartTime: stime,
-        EndTime: etime
+        EndTime: etime,
       });
 
       return newSchedule;
