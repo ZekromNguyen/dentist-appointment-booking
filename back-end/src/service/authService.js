@@ -1,8 +1,11 @@
 import { Sequelize } from "sequelize";
 import Account from "../model/account";
+
+import AccountControl from "../controllers/authController";
 import DentistSchedule from "../model/dentistSchedule";
 
 import bcrypt from "bcrypt";
+import { resolve } from "scripts";
 
 class AccountService {
   async createAccountCustomer({
@@ -199,6 +202,129 @@ class AccountService {
       throw error;
     }
   }
+
+  // lấy tất cả người dùng
+  async getAllUsers(AccountID) {
+    try {
+      let account = '';
+      if (AccountID === 'ALL') {
+        account = await Account.findAll({
+          raw: true, // Trả về dữ liệu thuần túy
+          attributes: ['AccountID', 'UserName', 'Phone', 'Email', 'IsActive', 'RoleID', 'verificationToken']
+        });
+
+      } else if (AccountID) {
+        account = await Account.findOne({
+          where: { AccountID: AccountID },
+          raw: true, // Trả về dữ liệu thuần túy
+          attributes: ['AccountID', 'UserName', 'Phone', 'Email', 'IsActive', 'RoleID', 'verificationToken']
+        });
+      }
+
+      if (!account) {
+        console.log(`Account with ID ${AccountID} not found`);
+      }
+      return account;
+    } catch (e) {
+      console.error('Error in getAllUsers:', e);
+      throw e;
+    }
+  }
+
+
+  //băm mật khẩu
+  async hashUserPassword(password) {
+    try {
+      const hashedPassword = bcrypt.hashSync(password, 10);
+      return hashedPassword;
+    }
+    catch (e) {
+      console.error('Error in hashPassword:', e);
+      throw e;
+    }
+  }
+
+  async deleteUser(id) {
+    try {
+      // Kiểm tra sự tồn tại của id trước
+      if (!id) {
+        return {
+          errCode: 2,
+          errMessage: 'ID không được cung cấp'
+        }
+      }
+
+      // Tìm kiếm người dùng với AccountID được cung cấp
+      let user = await Account.findOne({
+        where: { AccountID: id }
+      });
+
+      // Kiểm tra xem người dùng có tồn tại hay không
+      if (!user) {
+        return {
+          errCode: 2,
+          errMessage: 'Người dùng không tồn tại'
+        }
+      }
+
+      // Xóa người dùng
+      await user.destroy();
+      return {
+        errCode: 0,
+        message: "Người dùng đã được xóa"
+      }
+    } catch (e) {
+      console.error('Lỗi khi xóa người dùng:', e);
+      throw e;
+    }
+  }
+
+  async handleUpdateUser(data) {
+    try {
+      // Kiểm tra nếu data không tồn tại hoặc AccountID không tồn tại trong data
+      if (!data.AccountID) {
+        return {
+          errCode: 2,
+          errMessage: 'ID người dùng không được cung cấp'
+        };
+      }
+
+      // Tìm kiếm người dùng với AccountID được cung cấp
+      let user = await Account.findOne({
+        where: { AccountID: data.AccountID }
+      });
+
+      // Kiểm tra xem người dùng có tồn tại hay không
+      if (!user) {
+        return {
+          errCode: 2,
+          errMessage: 'Người dùng không tồn tại'
+        };
+      }
+
+      // Cập nhật thông tin người dùng
+      user.UserName = data.UserName || user.UserName; // Nếu không có giá trị mới, giữ nguyên giá trị cũ
+      user.Phone = data.Phone || user.Phone;
+      user.Email = data.Email || user.Email;
+      user.IsActive = data.IsActive !== undefined ? data.IsActive : user.IsActive; // Đảm bảo kiểm tra undefined
+      user.RoleID = data.RoleID || user.RoleID;
+
+      // Lưu các thay đổi vào cơ sở dữ liệu
+      await user.save();
+
+      return {
+        errCode: 0,
+        message: 'Cập nhật người dùng thành công'
+      };
+    } catch (e) {
+      console.error('Lỗi khi cập nhật người dùng:', e);
+      throw e;
+    }
+  }
+
+
+
+
 }
 
 export default new AccountService();

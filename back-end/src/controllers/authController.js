@@ -47,7 +47,7 @@ class AccountController {
       if (account.error) {
         return res.render("login", { error: account.error });
       }
-      res.status(200).json({ message: "Login successfully" });
+      res.status(200).json({ message: "Login successfully", account });
     } catch (err) {
       console.error("Error executing query:", err.stack);
       res.status(500).send("Database query error");
@@ -316,6 +316,70 @@ class AccountController {
       res.status(500).send("Error adding schedule: " + error.message);
     }
   }
+
+  async handleGetAllUser(req, res) {
+
+    let AccountID = req.query.AccountID; // All, id
+    if (!AccountID) {
+      return res.status(200).json({
+        errCode: 1,
+        errMessage: 'Missing required patameter',
+        account: []
+      });
+    }
+    let account = await AccountService.getAllUsers(AccountID);
+
+    return res.status(200).json({
+      errCode: 0,
+      errMessage: 'OK',
+      account
+    });
+  }
+
+  async handleDeleteUser(req, res) {
+    if (!req.body.AccountID) {
+      return res.status(500).json({
+        errCode: 1,
+        errMessage: "Missing required parameter"
+      })
+    }
+    let message = await AccountService.deleteUser(req.body.AccountID)
+    return res.status(200).json(message)
+  }
+
+  async handleEditUser(req, res) {
+    try {
+      let data = req.body;
+
+      // Kiểm tra xem AccountID có tồn tại và không phải là undefined
+      if (!data.AccountID) {
+        return res.status(400).json({
+          errCode: 2,
+          errMessage: 'ID người dùng không được cung cấp'
+        });
+      }
+
+      // Gọi service để thực hiện cập nhật thông tin người dùng
+      let message = await AccountService.handleUpdateUser(data);
+
+      // Kiểm tra kết quả từ service
+      if (message.errCode !== undefined && message.errCode !== 0) {
+        // Nếu có lỗi từ service thì trả về lỗi
+        return res.status(400).json(message);
+      }
+
+      // Trả về kết quả thành công nếu không có lỗi
+      return res.status(200).json(message);
+    } catch (error) {
+      console.error('Error in handleEditUser:', error);
+      // Trả về lỗi nếu có lỗi xảy ra trong quá trình xử lý
+      return res.status(500).json({
+        errCode: 1,
+        errMessage: 'Có lỗi xảy ra, vui lòng thử lại sau'
+      });
+    }
+  }
+
 
 
 }

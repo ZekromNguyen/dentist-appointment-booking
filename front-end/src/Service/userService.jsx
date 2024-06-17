@@ -92,5 +92,16 @@ const getIdFromToken = async (token) => {
     }
 };
 
+const getAllUSer = async (AccountID) => {
+    try {
+        const response = await axios.get(`http://localhost:3000/getAllUser?id=${AccountID}`, {
+            params: { AccountID: AccountID }
+        });
+        return response.data; // Return the data from the response
+    } catch (error) {
+        throw new Error('Error getting AccountID from account: ' + error.message);
+    }
+};
 
-export { register, login, forgotPassword, verifyEmail, resetPassword, getIdFromToken };
+
+export { register, login, forgotPassword, verifyEmail, resetPassword, getIdFromToken, getAllUSer };

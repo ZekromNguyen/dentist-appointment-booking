@@ -8,19 +8,20 @@
     color: $common-text-color;
     height: 40px;
     position: relative;
-
     .btn-logout {
         color: $common-text-color;
         line-height: 40px;
         height: 40px;
         padding: 0 10px;
-
         &:hover {
             background-color: darken($colormain, 5);
         }
-
         i {
             font-size: $base-size + 1px;
         }
     }
+}
+.Welcome{
+    margin-top :10px;
+    margin-right:190px;
 }

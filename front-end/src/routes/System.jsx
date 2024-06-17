@@ -1,9 +1,47 @@
+// import React, { Component } from 'react';
+// import { connect } from "react-redux";
+// import { Redirect, Route, Switch } from 'react-router-dom';
+// import UserManage from '../System/UserManage';
+// import ManageDoctor from '../System/ManageDoctor';
+
+
+// class System extends Component {
+//     render() {
+//         const { systemMenuPath } = this.props;
+//         return (
+//             <div className="system-container">
+//                 <div className="system-list">
+//                     <Switch>
+//                         <Route path="system/user-manage" element={UserManage} />
+//                         <Route path="system/manage-doctor" element={ManageDoctor} />
+//                         <Route component={() => { return (<Redirect to={systemMenuPath} />) }} />
+//                     </Switch>
+//                 </div>
+//             </div>
+//         );
+//     }
+// }
+
+// const mapStateToProps = state => {
+//     return {
+//         systemMenuPath: state.app.systemMenuPath
+//     };
+// };
+
+// const mapDispatchToProps = dispatch => {
+//     return {
+//     };
+// };
+
+// export default connect(mapStateToProps, mapDispatchToProps)(System);
 import React, { Component } from 'react';
 import { connect } from "react-redux";
-import { Redirect, Route, Switch } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import UserManage from '../System/UserManage';
-import ProductManage from '../System/ProductManage';
-import RegisterPackageGroupOrAcc from '../System/RegisterPackageGroupOrAcc';
+import DoctorManage from '../System/DoctorManage';
+import ScheduleManage from '../System/ScheduleManage'
+
+
 
 class System extends Component {
     render() {
@@ -11,11 +49,12 @@ class System extends Component {
         return (
             <div className="system-container">
                 <div className="system-list">
-                    <Switch>
-                        <Route path="/system/user-manage" element={UserManage} />
-                        <Route path="/system/product-manage" element={ProductManage} />
-                        <Route path="/system/register-package-group-or-account" element={RegisterPackageGroupOrAcc} />
-                    </Switch>
+                    <Routes>
+                        <Route path="user-manage" element={<UserManage />} />
+                        <Route path="doctor-manage" element={<DoctorManage />} />
+                        <Route path="manage-schedule" element={<ScheduleManage />} />
+                        <Route path="*" element={<Navigate to={systemMenuPath} />} />
+                    </Routes>
                 </div>
             </div>
         );
@@ -29,8 +68,7 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = dispatch => {
-    return {
-    };
+    return {};
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(System);
