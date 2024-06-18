@@ -5,48 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Booking</title>
-    <script>
-        async function updateSlots() {
-            const date = document.getElementById('date').value;
-            document.getElementById('hiddenDate').value = date;
-            if (date) {
-                try {
-                    const response = await fetch(`/slotsByDate?date=${date}`);
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    const slots = await response.json();
-                    const slotsDiv = document.getElementById('slots');
-                    slotsDiv.innerHTML = '';
-
-                    if (slots.length === 0) {
-                        const noSlotsMessage = document.createElement('p');
-                        noSlotsMessage.textContent = 'No available slots';
-                        slotsDiv.appendChild(noSlotsMessage);
-                    } else {
-                        slots.forEach(slot => {
-                            const button = document.createElement('button');
-                            button.type = 'button';
-                            button.textContent = slot.AvailableSlot.Time;
-                            button.classList.add('slot-button');
-                            button.dataset.slotId = slot.ScheduleID;
-                            button.addEventListener('click', () => {
-                                document.getElementById('selectedSlot').value = slot.ScheduleID;
-                                document.querySelectorAll('.slot-button').forEach(btn => btn.classList.remove('selected'));
-                                button.classList.add('selected');
-                            });
-                            slotsDiv.appendChild(button);
-                        });
-                    }
-                } catch (error) {
-                    console.error('Error fetching slots:', error);
-                    const slotsDiv = document.getElementById('slots');
-                    slotsDiv.innerHTML = '<p>Error fetching slots. Please try again later.</p>';
-                }
-            }
-        }
-
-    </script>
     <style>
         .slot-button {
             margin: 5px;
@@ -72,21 +30,78 @@
         <label for="typeBook">Type Book:</label>
         <input type="text" id="typeBook" name="typeBook" required>
         <br>
+        <label for="dentist">Select Dentist:</label>
+        <select id="dentistID" name="dentistID" required>
+            <option value="" disabled selected>Select a dentist</option>
+            <% dentists.forEach(dentist=> { %>
+                <option value="<%= dentist.DentistID %>">
+                    <%= dentist.DentistName %>
+                </option>
+                <% }) %>
+        </select>
+        <br>
         <label for="date">Date:</label>
-        <input type="date" id="date" name="date" required onchange="updateSlots()">
+        <input type="date" id="date" name="date" required>
         <br>
         <label for="slots">Available Slots:</label>
         <div id="slots">
-            <p>Select a date first</p>
+            <p>Select a date and dentist first</p>
         </div>
         <br>
         <input type="hidden" id="selectedSlot" name="slotId" required>
-        <input type="hidden" name="dentistId" value="1"> <!-- Assuming a dentist ID of 1 -->
         <input type="hidden" name="price" value="50">
         <input type="hidden" name="status" value="Pending">
         <input type="hidden" id="hiddenDate" name="hiddenDate">
         <button type="submit">Schedule</button>
     </form>
 </body>
+<script>
+    document.getElementById('date').addEventListener('change', updateSlots);
+    document.getElementById('dentistID').addEventListener('change', updateSlots);
+
+    async function updateSlots() {
+        const date = document.getElementById('date').value;
+        const dentistID = document.getElementById('dentistID').value;
+        document.getElementById('hiddenDate').value = date;
+
+        if (date && dentistID) {
+            try {
+                const response = await fetch(`/slotsByDate?date=${date}&dentistID=${dentistID}`);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const slots = await response.json();
+                const slotsDiv = document.getElementById('slots');
+                slotsDiv.innerHTML = '';
+
+                if (slots.length === 0) {
+                    const noSlotsMessage = document.createElement('p');
+                    noSlotsMessage.textContent = 'No available slots';
+                    slotsDiv.appendChild(noSlotsMessage);
+                } else {
+                    slots.forEach(slot => {
+                        const button = document.createElement('button');
+                        button.type = 'button';
+                        button.textContent = slot.AvailableSlot.Time;
+                        button.classList.add('slot-button');
+                        button.dataset.slotId = slot.ScheduleID;
+                        button.addEventListener('click', () => {
+                            document.getElementById('selectedSlot').value = slot.ScheduleID;
+                            document.querySelectorAll('.slot-button').forEach(btn => btn.classList.remove('selected'));
+                            button.classList.add('selected');
+                        });
+                        slotsDiv.appendChild(button);
+                    });
+                }
+            } catch (error) {
+                console.error('Error fetching slots:', error);
+                const slotsDiv = document.getElementById('slots');
+                slotsDiv.innerHTML = '<p>Error fetching slots. Please try again later.</p>';
+            }
+        } else {
+            document.getElementById('slots').innerHTML = '<p>Select a date and dentist first</p>';
+        }
+    }
+</script>
 
 </html>

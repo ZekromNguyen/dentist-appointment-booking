@@ -7,7 +7,7 @@ import BookingDetail from "../model/bookingDetail";
 import DentistService from "./dentistService";
 class BookingService {
   //Hàm get các lịch dentist đã tạo
-  async getSlotsByDateService(date) {
+  async getSlotsByDateByDentistService(date, dentistId) {
     try {
       // Lấy các slot đã được đặt từ BookingDetail1
       const bookedSlots = await BookingDetail.findAll({
@@ -22,6 +22,7 @@ class BookingService {
           ScheduleID: {
             [Sequelize.Op.notIn]: bookedScheduleIDs,
           },
+          DentistID: dentistId,
         },
         include: {
           model: AvailableSlot,

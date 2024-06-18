@@ -1,11 +1,21 @@
 import { Sequelize } from "sequelize";
 // import AvailableSlot from "../model/availableSlot";
 // import DentistSchedule1 from "../model/dentistSchedule1";
-import { AvailableSlot, DentistSchedule } from "../model/model";
+import { AvailableSlot, DentistSchedule, Dentist } from "../model/model";
 import Booking from "../model/booking";
 import BookingDetail from "../model/bookingDetail";
 
 class DentistService {
+  async getDentist() {
+    try {
+      const dentists = await Dentist.findAll();
+      const plainDentists = dentists.map((dentist) => dentist.toJSON());
+      return plainDentists;
+    } catch (error) {
+      console.error("Error fetching dentists from database:", error);
+      throw error;
+    }
+  }
   //Hàm lấy các slot có sẵn của phòng khám
   async getAvailableSlot() {
     try {

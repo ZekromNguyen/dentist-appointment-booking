@@ -1,19 +1,26 @@
 import BookingService from "../service/bookingService";
+import DentistService from "../service/dentistService";
 class BookingController {
   //Hàm lấy lịch dentist đã tạo cho customer book
   async getDentistSchedules(req, res) {
     try {
-      res.render("booking", { schedules: [] });
+      const dentists = await DentistService.getDentist();
+      res.render("booking", { dentists, schedules: [] });
     } catch (error) {
       console.error("Error fetching dentist schedules:", error);
       res.status(500).send("Internal Server Error");
     }
   }
   //Hàm get các slot khám theo ngày
-  async getSlotsByDate(req, res) {
+  async getSlotsByDateByDentistService(req, res) {
     try {
-      const { date } = req.query;
-      const slots = await BookingService.getSlotsByDateService(date);
+      const { date, dentistID } = req.query;
+      console.log(date);
+      console.log(dentistID);
+      const slots = await BookingService.getSlotsByDateByDentistService(
+        date,
+        dentistID
+      );
       res.json(slots);
     } catch (error) {
       console.error("Error fetching1 slots by date:", error);

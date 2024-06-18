@@ -32,7 +32,7 @@ let initAllWebRoutes = (app) => {
   router.post("/logout", AccountController.logout);
   router.get("/get-session", AccountController.getSession);
   router.get("/booking", BookingController.getDentistSchedules);
-  router.get("/slotsByDate", BookingController.getSlotsByDate);
+  router.get("/slotsByDate", BookingController.getSlotsByDateByDentistService);
   router.post("/booking", BookingController.createBooking);
   return app.use("/", router);
 };
