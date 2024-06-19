@@ -48,6 +48,7 @@ class AccountController {
         user: account.UserName,
         id: account.AccountID,
         RoleID: account.RoleID,
+        IsActive: account.IsActive,
       };
       if (req.session.user) {
         res
