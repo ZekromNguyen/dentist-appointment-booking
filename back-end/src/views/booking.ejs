@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking</title>
+    <script>
+        async function updateSlots() {
+            const date = document.getElementById('date').value;
+            document.getElementById('hiddenDate').value = date;
+            if (date) {
+                try {
+                    const response = await fetch(`/slotsByDate?date=${date}`);
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    const slots = await response.json();
+                    const slotsDiv = document.getElementById('slots');
+                    slotsDiv.innerHTML = '';
+
+                    if (slots.length === 0) {
+                        const noSlotsMessage = document.createElement('p');
+                        noSlotsMessage.textContent = 'No available slots';
+                        slotsDiv.appendChild(noSlotsMessage);
+                    } else {
+                        slots.forEach(slot => {
+                            const button = document.createElement('button');
+                            button.type = 'button';
+                            button.textContent = slot.AvailableSlot.Time;
+                            button.classList.add('slot-button');
+                            button.dataset.slotId = slot.ScheduleID;
+                            button.addEventListener('click', () => {
+                                document.getElementById('selectedSlot').value = slot.ScheduleID;
+                                document.querySelectorAll('.slot-button').forEach(btn => btn.classList.remove('selected'));
+                                button.classList.add('selected');
+                            });
+                            slotsDiv.appendChild(button);
+                        });
+                    }
+                } catch (error) {
+                    console.error('Error fetching slots:', error);
+                    const slotsDiv = document.getElementById('slots');
+                    slotsDiv.innerHTML = '<p>Error fetching slots. Please try again later.</p>';
+                }
+            }
+        }
+
+    </script>
+    <style>
+        .slot-button {
+            margin: 5px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            cursor: pointer;
+        }
+
+        .slot-button.selected {
+            background-color: #007bff;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Booking</h1>
+    <form action="/booking" method="POST">
+        <label for="customerId">Customer ID:</label>
+        <input type="text" id="customerId" name="customerId" required>
+        <br>
+        <label for="typeBook">Type Book:</label>
+        <input type="text" id="typeBook" name="typeBook" required>
+        <br>
+        <label for="date">Date:</label>
+        <input type="date" id="date" name="date" required onchange="updateSlots()">
+        <br>
+        <label for="slots">Available Slots:</label>
+        <div id="slots">
+            <p>Select a date first</p>
+        </div>
+        <br>
+        <input type="hidden" id="selectedSlot" name="slotId" required>
+        <input type="hidden" name="dentistId" value="1"> <!-- Assuming a dentist ID of 1 -->
+        <input type="hidden" name="price" value="50">
+        <input type="hidden" name="status" value="Pending">
+        <input type="hidden" id="hiddenDate" name="hiddenDate">
+        <button type="submit">Schedule</button>
+    </form>
+</body>
+
+</html>

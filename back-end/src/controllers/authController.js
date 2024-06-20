@@ -4,40 +4,6 @@ import bcrypt from "bcrypt";
 import crypto from "crypto";
 import Account from "../model/account";
 class AccountController {
-  // async login(req, res) {
-  //   const { usernameOrEmail, password } = req.body;
-  //   if (!usernameOrEmail || !password) {
-  //     res.status(400).send("UsernameOrPassword are required");
-  //   }
-  //   try {
-  //     const account = await AccountService.authenticate(
-  //       usernameOrEmail,
-  //       password
-  //     );
-  //     if (account.error) {
-  //       return res.render("login", { error: account.error });
-  //     }
-  //     const role = account.RoleID;
-  //     req.session.userID = account.AccountID;
-  //     switch (role) {
-  //       case 1:
-  //         res.redirect("/updatePassword");
-  //         break;
-  //       case 2:
-  //         res.redirect("/pageDentist");
-  //         break;
-  //       case 3:
-  //         res.redirect("/pageOwner");
-  //         break;
-  //       case 4:
-  //         res.redirect("/accountManager");
-  //         break;
-  //     }
-  //   } catch (err) {
-  //     console.error("Error excuting query:", err.stack);
-  //     res.status(500).send("Database query error");
-  //   }
-  // }
   async login(req, res) {
     const { usernameOrEmail, password } = req.body;
     if (!usernameOrEmail || !password) {
@@ -412,17 +378,29 @@ class AccountController {
       res.status(500).send("Internal Server Error");
     }
   }
-  logout(req, res) {
-    req.session.destroy(err => {
-      if (err) {
-        return res.status(500).send('Logout failed');
-      }
-      res.clearCookie('connect.sid', { path: '/' });
-      res.redirect('/login');
-    });
+
+  async showPaymentPage(req, res) {
+    const { bookingId } = req.params;
+    res.render("payment", { bookingId });
   }
 
+  async processPayment(req, res) {
+    const { bookingId, paymentMethod } = req.body;
 
+    try {
+      const booking = await Booking.findById(bookingId);
+      if (!booking) {
+        return res.status(404).send("Booking not found");
+      }
+      booking.status = true;
+      await booking.save();
+
+      res.status(200).send("Payment processed successfully");
+    } catch (error) {
+      console.error("Error processing payment:", error);
+      res.status(500).send("Internal Server Error");
+    }
+  }
 }
 
 export default new AccountController();
