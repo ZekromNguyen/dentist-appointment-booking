@@ -3,37 +3,6 @@ import transporter from "../config/email";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
 class AccountController {
-  // async login(req, res) {
-  //   const { email, password } = req.body;
-  //   if (!email || !password) {
-  //     return res.status(400).send("Email and password are required");
-  //   }
-  //   try {
-  //     const account = await AccountService.authenticate(email, password);
-  //     if (account.error) {
-  //       return res.render("login", { error: account.error });
-  //     }
-
-  //     // Xác định role và chuyển hướng tương ứng
-  //     const role = account.RoleID;
-  //     req.session.userID = account.AccountID; // Đặt userID vào session
-  //     switch (role) {
-  //       case 1:
-  //         return res.redirect("/updatePassword");
-  //       case 2:
-  //         return res.redirect("/pageDentist");
-  //       case 3:
-  //         return res.redirect("/pageOwner");
-  //       case 4:
-  //         return res.redirect("/pageAdmin");
-  //       default:
-  //         return res.status(200).json({ message: "Login successfully", account });
-  //     }
-  //   } catch (err) {
-  //     console.error("Error executing query:", err.stack);
-  //     return res.status(500).send("Database query error");
-  //   }
-  // }
   async login(req, res) {
     const { email, password } = req.body;
     if (!email || !password) {
@@ -43,6 +12,30 @@ class AccountController {
       const account = await AccountService.authenticate(email, password);
       if (account.error) {
         return res.status(400).json({ error: account.error });
+      }
+      if (!account.IsActive) {
+        // Generate reset token
+        const verificationToken = crypto.randomBytes(32).toString("hex");
+        await AccountService.createResetToken(account.Email, verificationToken);
+        const verificationLink = `http://localhost:5173/ResetPassword?token=${verificationToken}`;
+
+        // Send email to reset password
+        const mailOptions = {
+          from: process.env.EMAIL_APP_GMAIL,
+          to: account.Email,
+          subject: "Reactivate Your Account",
+          text: `Your account is inactive. Please reset your password to reactivate your account by clicking the following link: ${verificationLink}`,
+          html: `<p>Your account is inactive. Please reset your password to reactivate your account by clicking the following link: <a href="${verificationLink}">Reset Password</a></p>`,
+        };
+
+        transporter.sendMail(mailOptions, (error, info) => {
+          if (error) {
+            return res.status(500).send(error.toString());
+          }
+          res.status(200).send(`Your account is inactive. A reset password email has been sent to: ${account.Email}`);
+        });
+
+        return;
       }
       req.session.user = {
         user: account.UserName,
@@ -312,20 +305,25 @@ class AccountController {
 
   async resetPassword(req, res) {
     const { password, confirmPassword, token } = req.body;
-    console.log(password);
-    console.log(confirmPassword);
-    console.log(token);
+
     if (password !== confirmPassword) {
-      res
-        .status(400)
-        .json({ message: "Password and corfim Password not same" });
+      return res.status(400).json({ message: "Password and confirm password do not match" });
     }
-    const hasedpassword = bcrypt.hashSync(password, 10);
-    const account = await AccountService.saveNewPassword(token, hasedpassword);
-    if (!account) {
-      console.log(`Not found account with token ${token}`);
+
+    const hashedPassword = bcrypt.hashSync(password, 10);
+
+    try {
+      const updatedAccount = await AccountService.saveNewPasswordAndActivate(token, hashedPassword);
+
+      if (!updatedAccount) {
+        return res.status(400).json({ message: `No account found with token ${token}` });
+      }
+
+      res.status(200).json({ message: "Password reset successfully" });
+    } catch (error) {
+      console.error("Error resetting password:", error);
+      res.status(500).json({ message: "Error resetting password" });
     }
-    res.status(200).json({ message: "Reset password successfully" });
   }
   async showPageAdmin(req, res) {
     res.render("admin");

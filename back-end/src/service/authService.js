@@ -149,17 +149,6 @@ class AccountService {
     if (!bcrypt.compareSync(password, account.Password)) {
       return { error: "Incorrect password" };
     }
-    if (account.roleID === 1 && !account.IsActive === true) {
-      return { error: "Account is not active" };
-    }
-    // if (
-    //   account &&
-    //   bcrypt.compareSync(password, account.Password) &&
-    //   account.IsActive === true
-    // ) {
-    //   return account;
-    // }
-    // return null;
     return account;
   }
   async getTokenVerify(token) {
@@ -209,7 +198,7 @@ class AccountService {
     await account.save();
     return account;
   }
-  async resetNewPassword() {}
+  async resetNewPassword() { }
 
   // lấy tất cả người dùng
   async getAllUsers(AccountID) {
@@ -341,6 +330,28 @@ class AccountService {
     } catch (e) {
       console.error("Lỗi khi cập nhật người dùng:", e);
       throw e;
+    }
+  }
+
+  async saveNewPasswordAndActivate(token, hashedPassword) {
+    try {
+      const account = await Account.findOne({
+        where: { verificationToken: token },
+      });
+
+      if (!account) {
+        return null;
+      }
+
+      account.Password = hashedPassword;
+      account.IsActive = true;  // Cập nhật IsActive thành true
+      account.verificationToken = null;
+      await account.save();
+
+      return account;
+    } catch (error) {
+      console.error("Error saving new password and activating account:", error);
+      throw error;
     }
   }
 }
