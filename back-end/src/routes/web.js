@@ -12,7 +12,8 @@ let initAllWebRoutes = (app) => {
   router.get("/login", AccountController.showLogin);
   router.post("/login", AccountController.login);
   router.get("/register", AccountController.showRegister);
-  router.post("/register", AccountController.register);
+  router.post("/register", AccountController.registerCustomer);
+  router.post("/registerDentist", AccountController.registerDentist);
   router.get("/verify", AccountController.verifyEmail);
   router.get("/updatePassword", AccountController.showupdatePassword);
   router.post("/updatePassword", AccountController.updatePassword);

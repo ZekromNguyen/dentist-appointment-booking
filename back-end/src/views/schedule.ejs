@@ -107,8 +107,16 @@
 <body>
     <form action="/schedule" method="post" id="appointmentForm">
         <div class="form-group">
-            <label for="dentistId" class="label-cell">Dentist ID</label>
-            <input type="text" class="form-control" id="dentistId" name="dentistId" required>
+            <label for="dentist">Select Dentist:</label>
+            <select id="dentistId" name="dentistId" required>
+                <option value="" disabled selected>Select a dentist</option>
+                <% dentists.forEach(dentist=> { %>
+                    <option value="<%= dentist.DentistID %>">
+                        <%= dentist.DentistName %>
+                    </option>
+                    <% }) %>
+            </select>
+            <br>
         </div>
         <div class="form-group">
             <label for="date">Day:</label>

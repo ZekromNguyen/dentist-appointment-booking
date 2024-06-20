@@ -1,20 +1,17 @@
 import { Sequelize } from "sequelize";
 import Account from "../model/account";
-
-import AccountControl from "../controllers/authController";
-import DentistSchedule from "../model/dentistSchedule";
-
 import bcrypt from "bcrypt";
-
+import Dentist from "../model/dentist";
+import Customer from "../model/customer";
 class AccountService {
-  async createAccountCustomer({
+  async createAccountCustomer(
     username,
     hashedPassword,
     phone,
     email,
     roleID,
-    verificationToken,
-  }) {
+    verificationToken
+  ) {
     try {
       console.log("Creating account with data:", {
         username,
@@ -52,13 +49,13 @@ class AccountService {
       throw error;
     }
   }
-  async createAccountDentistOrOwner({
+  async createAccountDentistOrOwner(
     username,
     hashedPassword,
     phone,
     email,
-    roleID,
-  }) {
+    roleID
+  ) {
     try {
       console.log("Creating account with data:", {
         username,
@@ -91,6 +88,34 @@ class AccountService {
       return newAccount;
     } catch (error) {
       console.error("Error inserting into the database:", error);
+      throw error;
+    }
+  }
+  async createCustomer(name, accountId) {
+    const newCustomer = await Customer.create({
+      CustomerName: name,
+      AccountID: accountId,
+    });
+    return newCustomer;
+  }
+  async createDentist(dentistName, accountId, clinicID) {
+    try {
+      console.log("Creating dentist with data:", {
+        dentistName,
+        accountId,
+        clinicID,
+      });
+
+      const newDentist = await Dentist.create({
+        DentistName: dentistName,
+        AccountID: accountId,
+        ClinicID: clinicID,
+      });
+
+      console.log(newDentist);
+      return newDentist;
+    } catch (error) {
+      console.error("Error inserting dentist into the database:", error);
       throw error;
     }
   }
@@ -185,22 +210,6 @@ class AccountService {
     return account;
   }
   async resetNewPassword() {}
-
-  async createSchedule({ DentistID, day, stime, etime }) {
-    try {
-      const newSchedule = await DentistSchedule.create({
-        DentistID,
-        DayOfWeek: day,
-        StartTime: stime,
-        EndTime: etime,
-      });
-
-      return newSchedule;
-    } catch (error) {
-      console.error("Error in createSchedule method: ", error);
-      throw error;
-    }
-  }
 
   // lấy tất cả người dùng
   async getAllUsers(AccountID) {
