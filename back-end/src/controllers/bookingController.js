@@ -63,5 +63,37 @@ class BookingController {
       res.status(500).send("Internal Server Error");
     }
   }
+  async showPaymentPage(req, res) {
+    try {
+      const { bookingId } = req.params;
+      const booking = await BookingService.getBookingById(bookingId);
+      if (!booking) {
+        return res.status(404).send("Booking not found");
+      }
+      res.render("payment", { booking });
+    } catch (error) {
+      console.error("Error displaying payment page:", error);
+      res.status(500).send("Internal Server Error");
+    }
+  }
+
+  async processPayment(req, res) {
+    try {
+      const { bookingId, paymentMethod } = req.body;
+      const booking = await BookingService.getBookingById(bookingId);
+      if (!booking) {
+        return res.status(404).send("Booking not found");
+      }
+
+      // Tạo bản ghi thanh toán và cập nhật trạng thái booking
+      const payment = await BookingService.createPayment(bookingId, paymentMethod, true);
+      const updatedBooking = await BookingService.updateBookingStatus(bookingId, "Completed");
+
+      res.status(200).json({ message: "Payment processed successfully", payment });
+    } catch (error) {
+      console.error("Error processing payment:", error);
+      res.status(500).send("Internal Server Error");
+    }
+  }
 }
 export default new BookingController();
