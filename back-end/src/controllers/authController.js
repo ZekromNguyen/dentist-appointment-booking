@@ -72,7 +72,8 @@ class AccountController {
     }
   }
   async registerCustomer(req, res) {
-    const { username, password, email, phone, roleID, name } = req.body;
+    const { username, password, email, phone, name } = req.body;
+    const roleID = 1; // Đặt roleID cố định là 1
     try {
       if (!username || !password || !email || !phone || !name) {
         return res.status(400).json({ message: "All fields are required" });

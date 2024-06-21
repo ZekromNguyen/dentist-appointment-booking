@@ -1,13 +1,15 @@
 import axios from "axios";
 
 // Đăng ký tài khoản
-const register = async (username, password, email, phone) => {
+
+const register = async (username, password, email, phone, name) => {
     try {
         const response = await axios.post("http://localhost:3000/register", {
             username,
             password,
             email,
             phone,
+            name
         });
         return response;
     } catch (error) {
@@ -149,6 +151,57 @@ const getAllUSer = async (AccountID) => {
     }
 };
 
+const deleteUser = (id) => {
+    return axios.delete(`http://localhost:3000/deleteUser`,
+        {
+            data: { AccountID: id }
+        }
+    )
+}
+
+const handelAddUser = async ({ username, password, email, phone }) => {
+    try {
+        const response = await axios.post("http://localhost:3000/handleCreateUser", {
+            username,
+            password,
+            email,
+            phone,
+        });
+        return response.data; // Assuming the backend returns appropriate data
+    } catch (error) {
+        console.error("Error during registration:", error);
+        throw error;
+    }
+};
+
+const handleEditUser = async (userData) => {
+    try {
+        const response = await axios.put('http://localhost:3000/editUser', userData);
+        return response.data; // Assuming backend returns a JSON response
+    } catch (error) {
+        throw error; // Propagate the error for handling in the calling code
+    }
+};
+
+// Đăng ký tài khoản
+const registerDentist = async (username, password, email, phone, dentistName, clinicID, roleID) => {
+    try {
+        const response = await axios.post("http://localhost:3000/registerDentist", {
+            username,
+            password,
+            email,
+            phone,
+            dentistName,
+            clinicID,
+            roleID // Include roleID in the request body
+        });
+        return response;
+    } catch (error) {
+        console.error("Error during registration:", error);
+        throw error;
+    }
+};
+
 export {
     register,
     login,
@@ -159,5 +212,11 @@ export {
     resetEmail,
     forgotPassword,
     checkSession,
-    logout
+    logout,
+    deleteUser,
+    handelAddUser,
+    handleEditUser,
+    registerDentist
 };
+
+
