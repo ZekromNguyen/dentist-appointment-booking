@@ -32,8 +32,19 @@ let initAllWebRoutes = (app) => {
   router.post("/logout", AccountController.logout);
   router.get("/get-session", AccountController.getSession);
   router.get("/booking", BookingController.getDentistSchedules);
-  router.get("/slotsByDate", BookingController.getSlotsByDateByDentistService);
   router.post("/booking", BookingController.createBooking);
+  router.get("/slotsByDate", BookingController.getSlotsByDateByDentistService);
+  
+  /**************************Nam New API***************/
+  router.get("/getAllDentists", AccountController.handleGetAllDentists);
+  router.get("/scheduleSlot", DentistController.getAvailableSlotN);
+  router.get("/scheduleDentist", DentistController.getDentistSchedules);
+  router.get("/getCustomerId", AccountController.getCustomerId);
+
+
+
+
+  
   return app.use("/", router);
 };
 

@@ -62,6 +62,7 @@ import ResetPassword from './components/ForgotPassword/ResetPassword';
 import Admin from './pages/Admin/Admin';
 import System from './routes/System';
 import Doctor from './pages/Doctor/Doctor';
+import Booking from './components/Booking/Booking';
 
 function App() {
 
@@ -75,6 +76,7 @@ function App() {
           <Route path="/loginDentist" element={<LoginDentist />} />
           <Route path="/forgotPassword" element={<ForgotPassword />} />
           <Route path="/ResetPassword" element={<ResetPassword />} />
+          <Route path="/booking" element={<Booking />} />
 
           <Route path="/admin/*" element={<Admin />}>
             <Route path="system/*" element={<System />} />

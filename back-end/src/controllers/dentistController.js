@@ -21,9 +21,6 @@ class DentistController {
   //Hàm tạo lịch làm việc cho dentist
   async createScheduleForDentist(req, res) {
     const { date, slotId, dentistId } = req.body; // Đảm bảo rằng dentistId được lấy từ req.body
-    console.log(date);
-    console.log(slotId);
-    console.log(dentistId);
     const DentistID = req.session.userID || dentistId; // Sử dụng dentistId từ request body hoặc session
     if (!DentistID) {
       return res.status(400).send("DentistID is required");
@@ -41,5 +38,37 @@ class DentistController {
       res.status(500).send("Error adding schedule: " + error.message);
     }
   }
+//**************************** ADD New API***********************************************/
+
+  async getAvailableSlotN(req, res) {
+    try {
+      const slots = await DentistService.getAvailableSlot();
+      res.json(slots); // Hoặc res.render nếu bạn muốn render vào một template
+    } catch (err) {
+      console.error("Error fetching available slots:", err);
+      res.status(500).send("Internal server error");
+    }
+  }
+
+  async getDentistSchedules(req, res) {
+    try {
+      const schedules = await DentistService.getDentistSchedules();
+      res.json(schedules); // Hoặc res.render nếu bạn muốn render vào một template
+    } catch (err) {
+      console.error("Error fetching dentist schedules:", err);
+      res.status(500).send("Internal server error");
+    }
+  }
+  async handleGetDentistsByADate(req ,res){
+    try {
+      const schedules = await DentistService.getDentistSchedules();
+      res.json(schedules); // Hoặc res.render nếu bạn muốn render vào một template
+    } catch (err) {
+      console.error("Error fetching dentist schedules:", err);
+      res.status(500).send("Internal server error");
+    }
+  }
+
+
 }
 export default new DentistController();

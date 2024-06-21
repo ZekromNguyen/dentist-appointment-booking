@@ -8,6 +8,8 @@ import { TfiHeadphoneAlt } from "react-icons/tfi";
 import { MdGTranslate } from "react-icons/md";
 import { checkSession, logout } from '../../Service/userService';
 // import { FormattedMessage } from 'react-intl';
+
+
 export default function Header() {
     const [user, setUser] = useState(null);
     const navigate = useNavigate();
@@ -48,8 +50,9 @@ export default function Header() {
                         <div className="sub">Sống tốt mỗi ngày</div>
                     </div>
                     <div className="child-option3">
-                        <div><b>Đặt lịch</b></div>
-                        <div className="sub">Đặt ngay để gặp bác sĩ</div>
+                        <a href="/booking" className="booking-link">
+                            <div><b>Đặt lịch</b></div>
+                        </a>
                     </div>
                     <div className="child-option4">
                         <div><b>Vị trí</b></div>

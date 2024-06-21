@@ -2,6 +2,7 @@ import AccountService from "../service/authService";
 import transporter from "../config/email";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
+import authService from "../service/authService";
 class AccountController {
   // async login(req, res) {
   //   const { email, password } = req.body;
@@ -405,6 +406,40 @@ class AccountController {
       });
     }
   }
+
+  //****************************************** New API Get ALL Dentist (Nam )****************************** */
+  async handleGetAllDentists(req, res) {
+    try {
+      const dentists = await authService.getAllDentists();
+
+      if (!dentists || dentists.length === 0) {
+        return res.status(404).json({ message: 'No dentists found' });
+      }
+
+      res.status(200).json({ message: 'Success', dentists });
+    } catch (error) {
+      console.error('Error in handleGetAllDentists:', error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  }
+
+  async getCustomerId(req,res){
+    try {
+      const { AccountID } = req.query;
+
+      const customerInfo = await authService.getCustomerId(AccountID);
+      res.json(customerInfo);
+    } catch (error) {
+      console.error("Error fetching1 slots by date:", error);
+      res.status(500).send("Internal Server Error");
+    }
+  }
+
+
+
+
+
 }
+
 
 export default new AccountController();

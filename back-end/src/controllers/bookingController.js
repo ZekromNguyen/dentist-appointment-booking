@@ -14,9 +14,9 @@ class BookingController {
   //Hàm get các slot khám theo ngày
   async getSlotsByDateByDentistService(req, res) {
     try {
-      const { date, dentistID } = req.query;
-      console.log(date);
+      const { dentistID ,date } = req.query;
       console.log(dentistID);
+      console.log(date);
       const slots = await BookingService.getSlotsByDateByDentistService(
         date,
         dentistID
@@ -27,6 +27,7 @@ class BookingController {
       res.status(500).send("Internal Server Error");
     }
   }
+
   //Hàm tạo booking
   async createBooking(req, res) {
     try {

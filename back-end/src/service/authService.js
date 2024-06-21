@@ -1,9 +1,8 @@
 import { Sequelize } from "sequelize";
 import Account from "../model/account";
-
-import AccountControl from "../controllers/authController";
+import Dentist from "../model/dentist";
 import DentistSchedule from "../model/dentistSchedule";
-
+import Customer from "../model/customer";
 import bcrypt from "bcrypt";
 
 class AccountService {
@@ -184,7 +183,7 @@ class AccountService {
     await account.save();
     return account;
   }
-  async resetNewPassword() {}
+  async resetNewPassword() { }
 
   async createSchedule({ DentistID, day, stime, etime }) {
     try {
@@ -334,6 +333,49 @@ class AccountService {
       throw e;
     }
   }
+
+  //**********************************New API Get ALL Dentist****************************8 */
+  async getAllDentists(DentistID) {
+    try {
+      const dentists = await Dentist.findAll({
+        //    attributes: ['DentistID', 'DentistName', 'AccountID', 'ClinicID', 'Description'],
+      });
+
+      return dentists;
+    } catch (error) {
+      console.error('Error in getAllDentists:', error);
+      throw error;
+    }
+  }
+
+  //------------------------------New API Get CustomerId from AccountID----------------------------
+
+
+async  getCustomerId(accountId) {
+  try {
+    // Thực hiện truy vấn lấy thông tin từ bảng customer và account
+    const customers = await Customer.findOne({
+      attributes: ['customerId', 'customerName'],
+      where: {},
+      include: {
+        model: Account,
+        where: {
+          AccountID: accountId
+        },
+        attributes: [] // Để chỉ lấy thông tin từ bảng customer, không lấy từ bảng Account
+      }
+    });
+
+    return customers;
+  } catch (error) {
+    console.error('Error fetching customer information:', error);
+    throw new Error('Error fetching customer information');
+  }
 }
+
+}
+
+
+
 
 export default new AccountService();

@@ -28,11 +28,11 @@ class DentistService {
     }
   }
   //Hàm dentist tạo lịch làm việc cho họ
-  async createScheduleForDentist(DentistID, date, slotId) {
+  async createScheduleForDentist(DentistID, date, SlotId) {
     try {
       const newSchedule = await DentistSchedule.create({
         DentistID,
-        SlotID: slotId,
+        SlotID :SlotId,
         Date: date,
       });
       return newSchedule;
