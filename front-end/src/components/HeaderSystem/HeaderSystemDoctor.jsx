@@ -22,6 +22,7 @@ class HeaderSystemDoctor extends Component {
                             <IoLogOutSharp />
                         </a>
                     </i>
+                    Logout
                 </div>
             </div>
         );

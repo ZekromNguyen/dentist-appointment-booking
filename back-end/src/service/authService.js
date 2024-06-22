@@ -1,5 +1,9 @@
 import { Sequelize } from "sequelize";
 import Account from "../model/account";
+
+import AccountControl from "../controllers/authController";
+import DentistSchedule from "../model/dentistSchedule";
+
 import bcrypt from "bcrypt";
 import Dentist from "../model/dentist";
 import Customer from "../model/customer";
@@ -198,7 +202,23 @@ class AccountService {
     await account.save();
     return account;
   }
-  async resetNewPassword() { }
+  async resetNewPassword() {}
+
+  async createSchedule({ DentistID, day, stime, etime }) {
+    try {
+      const newSchedule = await DentistSchedule.create({
+        DentistID,
+        DayOfWeek: day,
+        StartTime: stime,
+        EndTime: etime,
+      });
+
+      return newSchedule;
+    } catch (error) {
+      console.error("Error in createSchedule method: ", error);
+      throw error;
+    }
+  }
 
   // lấy tất cả người dùng
   async getAllUsers(AccountID) {
@@ -330,28 +350,6 @@ class AccountService {
     } catch (e) {
       console.error("Lỗi khi cập nhật người dùng:", e);
       throw e;
-    }
-  }
-
-  async saveNewPasswordAndActivate(token, hashedPassword) {
-    try {
-      const account = await Account.findOne({
-        where: { verificationToken: token },
-      });
-
-      if (!account) {
-        return null;
-      }
-
-      account.Password = hashedPassword;
-      account.IsActive = true;  // Cập nhật IsActive thành true
-      account.verificationToken = null;
-      await account.save();
-
-      return account;
-    } catch (error) {
-      console.error("Error saving new password and activating account:", error);
-      throw error;
     }
   }
 }

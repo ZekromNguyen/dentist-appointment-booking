@@ -19,11 +19,11 @@ class BookingService {
       console.log(bookedScheduleIDs);
       return await DentistSchedule.findAll({
         where: {
-          Date: date,
+          DentistID: dentistId,
           ScheduleID: {
             [Sequelize.Op.notIn]: bookedScheduleIDs,
           },
-          DentistID: dentistId,
+          Date: date,
         },
         include: {
           model: AvailableSlot,
