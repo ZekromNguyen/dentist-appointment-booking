@@ -277,7 +277,7 @@ const Booking = () => {
   const [schedules, setSchedules] = useState([]);
   const [error, setError] = useState('');
   const [bookingDetails, setBookingDetails] = useState(null);
-  const currentDate = new Date().toISOString().split('T')[0];
+
 
   const priceBooking = 50000; // Define the booking price here
 
@@ -357,7 +357,7 @@ const Booking = () => {
 
   const handleDateChange = (e) => {
     const selected = e.target.value;
-    if (selected >= currentDate) {
+    if (selected) {
       setSelectedDate(selected);
     } else {
       alert('Vui lòng chọn một ngày sau ngày hiện tại.');

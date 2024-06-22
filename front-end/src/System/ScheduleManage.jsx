@@ -4,26 +4,22 @@ import { FormattedMessage } from 'react-intl';
 import axios from 'axios';
 import './ScheduleManage.scss';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { format, parseISO } from 'date-fns';
+
 
 export default function ScheduleManage(props) {
   const [dentists, setDentists] = useState([]);
   const [selectedDentist, setSelectedDentist] = useState('');
-  const [selectedDate, setSelectedDate] = useState('currentDate');
+  const [selectedDate, setSelectedDate] = useState('');
   const [slots, setSlots] = useState([]);
   const [selectedTime, setSelectedTime] = useState([]);
   const [schedules, setSchedules] = useState([]);
   const [error, setError] = useState('');
-  const currentDate = new Date().toISOString().split('T')[0]; // Lấy ngày hiện tại (định dạng ISO)
   const [isScheduleVisible, setIsScheduleVisible] = useState(true);
 
   const toggleScheduleVisibility = () => {
     setIsScheduleVisible(!isScheduleVisible);
   };
-  function getDayOfWeek(dateString) {
-    const date = parseISO(dateString); // Chuyển đổi chuỗi ngày thành đối tượng Date
-    return format(date, 'EEEE'); // Định dạng ngày thành ngày trong tuần (vd: Thứ Hai)
-  }
+
 
   //Get API All Dentist
   useEffect(() => {
@@ -75,7 +71,7 @@ export default function ScheduleManage(props) {
   const handleDateChange = (e) => {
     const selected = e.target.value;
     // Kiểm tra nếu ngày được chọn lớn hơn ngày hiện tại
-    if (selected > currentDate) {
+    if (selected) {
       setSelectedDate(selected);
       console.log('Selected Date:', selected);
     } else {
@@ -94,10 +90,6 @@ export default function ScheduleManage(props) {
       setSelectedTime(slotId);
     }
   };
-
-
-
-
 
   const handleSave = async () => {
     window.location.reload();
@@ -209,7 +201,7 @@ export default function ScheduleManage(props) {
                   <th scope="col">ScheduleID</th>
                   <th scope="col">Dentist Name</th>
                   <th scope="col">Date</th>
-                  <th scope="col">Date Of Week</th>
+          
                   <th scope="col">SlotTime</th>
                   <th scope="col">Status</th>
                 </tr>
@@ -220,7 +212,6 @@ export default function ScheduleManage(props) {
                     <td>{schedule.ScheduleID}</td>
                     <td>{dentists.find(dentist => dentist.DentistID === schedule.DentistID)?.DentistName}</td>
                     <td>{schedule.Date}</td>
-                    <td>{getDayOfWeek(schedule.Date)}</td>
                     <td>{slots.find(availableslot => availableslot.SlotID === schedule.SlotID)?.Time}</td>
                     <td>{schedule.Status}</td>
                   </tr>
