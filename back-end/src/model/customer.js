@@ -1,16 +1,14 @@
 import { Model, DataTypes } from "sequelize";
 import sequelize from "../config/database";
-import Account from "./account";
 
 class Customer extends Model {}
-
 Customer.init(
   {
     CustomerID: {
       type: DataTypes.INTEGER,
       primaryKey: true,
-      autoIncrement: true, // Thiết lập tự tăng
       allowNull: false,
+      autoIncrement: true,
     },
     CustomerName: {
       type: DataTypes.STRING,
@@ -20,7 +18,7 @@ Customer.init(
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: Account,
+        model: "Account",
         key: "AccountID",
       },
     },
@@ -32,9 +30,5 @@ Customer.init(
     timestamps: false,
   }
 );
-
-// Thiết lập quan hệ giữa Customer và Account
-Account.hasOne(Customer, { foreignKey: "AccountID" });
-Customer.belongsTo(Account, { foreignKey: "AccountID" });
 
 export default Customer;

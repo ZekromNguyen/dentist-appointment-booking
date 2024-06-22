@@ -4,37 +4,6 @@ import bcrypt from "bcrypt";
 import crypto from "crypto";
 import authService from "../service/authService";
 class AccountController {
-  // async login(req, res) {
-  //   const { email, password } = req.body;
-  //   if (!email || !password) {
-  //     return res.status(400).send("Email and password are required");
-  //   }
-  //   try {
-  //     const account = await AccountService.authenticate(email, password);
-  //     if (account.error) {
-  //       return res.render("login", { error: account.error });
-  //     }
-
-  //     // Xác định role và chuyển hướng tương ứng
-  //     const role = account.RoleID;
-  //     req.session.userID = account.AccountID; // Đặt userID vào session
-  //     switch (role) {
-  //       case 1:
-  //         return res.redirect("/updatePassword");
-  //       case 2:
-  //         return res.redirect("/pageDentist");
-  //       case 3:
-  //         return res.redirect("/pageOwner");
-  //       case 4:
-  //         return res.redirect("/pageAdmin");
-  //       default:
-  //         return res.status(200).json({ message: "Login successfully", account });
-  //     }
-  //   } catch (err) {
-  //     console.error("Error executing query:", err.stack);
-  //     return res.status(500).send("Database query error");
-  //   }
-  // }
   async login(req, res) {
     const { email, password } = req.body;
     if (!email || !password) {
@@ -44,6 +13,30 @@ class AccountController {
       const account = await AccountService.authenticate(email, password);
       if (account.error) {
         return res.status(400).json({ error: account.error });
+      }
+      if (!account.IsActive) {
+        // Generate reset token
+        const verificationToken = crypto.randomBytes(32).toString("hex");
+        await AccountService.createResetToken(account.Email, verificationToken);
+        const verificationLink = `http://localhost:5173/ResetPassword?token=${verificationToken}`;
+
+        // Send email to reset password
+        const mailOptions = {
+          from: process.env.EMAIL_APP_GMAIL,
+          to: account.Email,
+          subject: "Reactivate Your Account",
+          text: `Your account is inactive. Please reset your password to reactivate your account by clicking the following link: ${verificationLink}`,
+          html: `<p>Your account is inactive. Please reset your password to reactivate your account by clicking the following link: <a href="${verificationLink}">Reset Password</a></p>`,
+        };
+
+        transporter.sendMail(mailOptions, (error, info) => {
+          if (error) {
+            return res.status(500).send(error.toString());
+          }
+          res.status(200).send(`Your account is inactive. A reset password email has been sent to: ${account.Email}`);
+        });
+
+        return;
       }
       req.session.user = {
         user: account.UserName,
@@ -79,44 +72,97 @@ class AccountController {
       res.status(401).json({ message: "No session found" });
     }
   }
-  async register(req, res) {
-    const { username, password, email, phone } = req.body;
-    const roleID = 1;
-    const hashedPassword = bcrypt.hashSync(password, 10);
-    const verificationToken = crypto.randomBytes(32).toString("hex");
-    const verificationLink = `http://localhost:3000/verify?token=${verificationToken}`;
+  async registerCustomer(req, res) {
+    const { username, password, email, phone, roleID, name } = req.body;
     try {
-      if (!username || !password || !email || !phone) {
+      if (!username || !password || !email || !phone || !name) {
         return res.status(400).json({ message: "All fields are required" });
       }
-
+      const hashedPassword = bcrypt.hashSync(password, 10);
       console.log("Hashed password:", hashedPassword);
-      const mailOptions = {
-        from: process.env.EMAIL_APP_GMAIL,
-        to: email,
-        subject: "Email Verification",
-        text: `Please verify your email by clicking the following link: ${verificationLink}`,
-        html: `<p>Please verify your email by clicking the following link: <a href="${verificationLink}">Verify Email</a></p>`,
-      };
-      console.log("Request body:", req.body);
-      transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-          res.status(500).send(error.toString());
-        }
-        res.status(200).send("A verification email has been sent to:", email);
-      });
-      const newAccount = await AccountService.createAccountCustomer({
+      const verificationToken = crypto.randomBytes(32).toString("hex");
+      const newAccount = await AccountService.createAccountCustomer(
         username,
         hashedPassword,
         phone,
         email,
         roleID,
-        verificationToken,
-      });
-      console.log("Account create:", newAccount);
-      if (newAccount) {
-        res.redirect("/login");
+        verificationToken
+      );
+      const newCustomer = await AccountService.createCustomer(
+        name,
+        newAccount.AccountID
+      );
+      if (newAccount.verificationToken && newCustomer) {
+        const verificationLink = `http://localhost:3000/verify?token=${verificationToken}`;
+        const mailOptions = {
+          from: process.env.EMAIL_APP_GMAIL,
+          to: email,
+          subject: "Email Verification",
+          text: `Please verify your email by clicking the following link: ${verificationLink}`,
+          html: `<p>Please verify your email by clicking the following link: <a href="${verificationLink}">Verify Email</a></p>`,
+        };
+        console.log("Request body:", req.body);
+        transporter.sendMail(mailOptions, (error, info) => {
+          if (error) {
+            res.status(500).send(error.toString());
+          }
+          res
+            .status(200)
+            .json({ message: "A verification email has been sent to:", email });
+        });
       }
+      console.log("Account create:", newAccount);
+      console.log("Customer create:", newCustomer);
+      return res
+        .status(200)
+        .json({ message: "Account customer create successfully" });
+    } catch (err) {
+      //console.error("Error inserting into the database:", err.stack);
+      if (err.message === "Email already exists") {
+        return res.render("register", {
+          error: "Email already taken",
+          username: username,
+          email: email,
+          phone: phone,
+        });
+      }
+      if (err.message === "Username already exists") {
+        return res.render("register", {
+          error: "Username already taken",
+          username: username,
+          email: email,
+          phone: phone,
+        });
+      }
+      res.status(500).send("Database insert error");
+    }
+  }
+  async registerDentist(req, res) {
+    const { username, password, email, phone, roleID, dentistName, clinicID } =
+      req.body;
+    try {
+      if (!username || !password || !email || !phone || !dentistName) {
+        return res.status(400).json({ message: "All fields are required" });
+      }
+      const hashedPassword = bcrypt.hashSync(password, 10);
+      const newAccount = await AccountService.createAccountDentistOrOwner(
+        username,
+        hashedPassword,
+        phone,
+        email,
+        roleID
+      );
+      const newDentist = await AccountService.createDentist(
+        dentistName,
+        newAccount.AccountID,
+        clinicID
+      );
+      console.log("Account create:", newAccount);
+      console.log("Customer create:", newDentist);
+      return res
+        .status(200)
+        .json({ message: "Account dentist create successfully" });
     } catch (err) {
       //console.error("Error inserting into the database:", err.stack);
       if (err.message === "Email already exists") {
@@ -158,11 +204,15 @@ class AccountController {
     try {
       const account = await AccountService.getTokenVerify(token);
       if (!account) {
-        return res.status(400).send("Invalid verification token");
+        return res.status(400).json({ message: "Invalid verification token" });
       }
-      res.status(200).send("Email has been successfully verified ");
+      res
+        .status(200)
+        .json({ message: "Email has been successfully verified " });
     } catch (error) {
-      res.status(500).send("Error verifying email: ", error.message);
+      res
+        .status(500)
+        .json({ message: "Error verifying email: ", error: error.message });
     }
   }
   async updatePassword(req, res) {
@@ -181,10 +231,7 @@ class AccountController {
         return res.status(404).json({ message: "User not found" });
       }
 
-      const isMatch = await bcrypt.compareSync(
-        currentPassword,
-        account.Password
-      );
+      const isMatch = bcrypt.compareSync(currentPassword, account.Password);
       console.log(isMatch);
       if (!isMatch) {
         return res
@@ -259,20 +306,25 @@ class AccountController {
 
   async resetPassword(req, res) {
     const { password, confirmPassword, token } = req.body;
-    console.log(password);
-    console.log(confirmPassword);
-    console.log(token);
+
     if (password !== confirmPassword) {
-      res
-        .status(400)
-        .json({ message: "Password and corfim Password not same" });
+      return res.status(400).json({ message: "Password and confirm password do not match" });
     }
-    const hasedpassword = bcrypt.hashSync(password, 10);
-    const account = await AccountService.saveNewPassword(token, hasedpassword);
-    if (!account) {
-      console.log(`Not found account with token ${token}`);
+
+    const hashedPassword = bcrypt.hashSync(password, 10);
+
+    try {
+      const updatedAccount = await AccountService.saveNewPasswordAndActivate(token, hashedPassword);
+
+      if (!updatedAccount) {
+        return res.status(400).json({ message: `No account found with token ${token}` });
+      }
+
+      res.status(200).json({ message: "Password reset successfully" });
+    } catch (error) {
+      console.error("Error resetting password:", error);
+      res.status(500).json({ message: "Error resetting password" });
     }
-    res.status(200).json({ message: "Reset password successfully" });
   }
   async showPageAdmin(req, res) {
     res.render("admin");

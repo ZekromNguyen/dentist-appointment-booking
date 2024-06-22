@@ -6,11 +6,14 @@ class DentistController {
     try {
       const slots = await DentistService.getAvailableSlot();
       const schedules = await DentistService.getDentistSchedules();
+      const dentists = await DentistService.getDentist();
       console.log(slots);
       console.log(schedules);
+      console.log(dentists);
       res.render("schedule", {
         slots,
         schedules,
+        dentists,
       });
     } catch (err) {
       console.error("Error fetching available slots:", err);

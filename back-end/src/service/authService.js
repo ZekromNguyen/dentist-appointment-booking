@@ -1,19 +1,21 @@
 import { Sequelize } from "sequelize";
 import Account from "../model/account";
-import Dentist from "../model/dentist";
-import DentistSchedule from "../model/dentistSchedule";
-import Customer from "../model/customer";
-import bcrypt from "bcrypt";
 
+import AccountControl from "../controllers/authController";
+import DentistSchedule from "../model/dentistSchedule";
+
+import bcrypt from "bcrypt";
+import Dentist from "../model/dentist";
+import Customer from "../model/customer";
 class AccountService {
-  async createAccountCustomer({
+  async createAccountCustomer(
     username,
     hashedPassword,
     phone,
     email,
     roleID,
-    verificationToken,
-  }) {
+    verificationToken
+  ) {
     try {
       console.log("Creating account with data:", {
         username,
@@ -51,13 +53,13 @@ class AccountService {
       throw error;
     }
   }
-  async createAccountDentistOrOwner({
+  async createAccountDentistOrOwner(
     username,
     hashedPassword,
     phone,
     email,
-    roleID,
-  }) {
+    roleID
+  ) {
     try {
       console.log("Creating account with data:", {
         username,
@@ -93,6 +95,34 @@ class AccountService {
       throw error;
     }
   }
+  async createCustomer(name, accountId) {
+    const newCustomer = await Customer.create({
+      CustomerName: name,
+      AccountID: accountId,
+    });
+    return newCustomer;
+  }
+  async createDentist(dentistName, accountId, clinicID) {
+    try {
+      console.log("Creating dentist with data:", {
+        dentistName,
+        accountId,
+        clinicID,
+      });
+
+      const newDentist = await Dentist.create({
+        DentistName: dentistName,
+        AccountID: accountId,
+        ClinicID: clinicID,
+      });
+
+      console.log(newDentist);
+      return newDentist;
+    } catch (error) {
+      console.error("Error inserting dentist into the database:", error);
+      throw error;
+    }
+  }
   async getAccountByUserNameOrEmail(usernameOrEmail) {
     const account = await Account.findOne({
       where: {
@@ -123,17 +153,6 @@ class AccountService {
     if (!bcrypt.compareSync(password, account.Password)) {
       return { error: "Incorrect password" };
     }
-    if (account.roleID === 1 && !account.IsActive === true) {
-      return { error: "Account is not active" };
-    }
-    // if (
-    //   account &&
-    //   bcrypt.compareSync(password, account.Password) &&
-    //   account.IsActive === true
-    // ) {
-    //   return account;
-    // }
-    // return null;
     return account;
   }
   async getTokenVerify(token) {
@@ -183,7 +202,7 @@ class AccountService {
     await account.save();
     return account;
   }
-  async resetNewPassword() { }
+  async resetNewPassword() {}
 
   async createSchedule({ DentistID, day, stime, etime }) {
     try {
@@ -333,49 +352,6 @@ class AccountService {
       throw e;
     }
   }
-
-  //**********************************New API Get ALL Dentist****************************8 */
-  async getAllDentists(DentistID) {
-    try {
-      const dentists = await Dentist.findAll({
-        //    attributes: ['DentistID', 'DentistName', 'AccountID', 'ClinicID', 'Description'],
-      });
-
-      return dentists;
-    } catch (error) {
-      console.error('Error in getAllDentists:', error);
-      throw error;
-    }
-  }
-
-  //------------------------------New API Get CustomerId from AccountID----------------------------
-
-
-async  getCustomerId(accountId) {
-  try {
-    // Thực hiện truy vấn lấy thông tin từ bảng customer và account
-    const customers = await Customer.findOne({
-      attributes: ['customerId', 'customerName'],
-      where: {},
-      include: {
-        model: Account,
-        where: {
-          AccountID: accountId
-        },
-        attributes: [] // Để chỉ lấy thông tin từ bảng customer, không lấy từ bảng Account
-      }
-    });
-
-    return customers;
-  } catch (error) {
-    console.error('Error fetching customer information:', error);
-    throw new Error('Error fetching customer information');
-  }
 }
-
-}
-
-
-
 
 export default new AccountService();
