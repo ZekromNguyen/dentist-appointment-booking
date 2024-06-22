@@ -3,7 +3,8 @@ import Account from "../model/account";
 import Role from "../model/role";
 import Dentist from "./dentist";
 import DentistSchedule from "./dentistSchedule";
-import AvailableSlot from "./availableSlot";import Customer from "./customer";
+import AvailableSlot from "./availableSlot";
+
 
 Account.belongsTo(Role, { foreignKey: "RoleID" });
 Role.hasMany(Account, { foreignKey: "RoleID" });

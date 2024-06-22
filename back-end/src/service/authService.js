@@ -369,7 +369,7 @@ class AccountService {
      //------------------------------New API Get CustomerId from AccountID----------------------------
 
 
-async  getCustomerId(accountId) {
+async getCustomerId(accountId) {
   try {
     // Thực hiện truy vấn lấy thông tin từ bảng customer và account
     const customers = await Customer.findOne({

@@ -1,27 +1,27 @@
 
+
 import React, { useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import axios from 'axios';
 import './ScheduleManage.scss';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-
 export default function ScheduleManage(props) {
   const [dentists, setDentists] = useState([]);
   const [selectedDentist, setSelectedDentist] = useState('');
   const [selectedDate, setSelectedDate] = useState('');
   const [slots, setSlots] = useState([]);
-  const [selectedTime, setSelectedTime] = useState([]);
+  const [selectedSlots, setSelectedSlots] = useState([]);
   const [schedules, setSchedules] = useState([]);
   const [error, setError] = useState('');
   const [isScheduleVisible, setIsScheduleVisible] = useState(true);
+  const currentDate = new Date().toISOString().split('T')[0];
 
   const toggleScheduleVisibility = () => {
     setIsScheduleVisible(!isScheduleVisible);
   };
 
-
-  //Get API All Dentist
+  // Get API All Dentist
   useEffect(() => {
     const fetchDentists = async () => {
       try {
@@ -35,8 +35,7 @@ export default function ScheduleManage(props) {
     fetchDentists();
   }, []);
 
-
-  //Get API All Slot
+  // Get API All Slot
   useEffect(() => {
     const fetchSlots = async () => {
       try {
@@ -51,7 +50,7 @@ export default function ScheduleManage(props) {
     fetchSlots();
   }, []);
 
-  //Get API All DentistSchedule
+  // Get API All DentistSchedule
   useEffect(() => {
     const fetchSchedules = async () => {
       try {
@@ -66,55 +65,71 @@ export default function ScheduleManage(props) {
     fetchSchedules();
   }, []);
 
-
-
   const handleDateChange = (e) => {
     const selected = e.target.value;
-    // Kiểm tra nếu ngày được chọn lớn hơn ngày hiện tại
-    if (selected) {
+    if (selected >= currentDate) {
       setSelectedDate(selected);
-      console.log('Selected Date:', selected);
     } else {
       alert('Vui lòng chọn một ngày sau ngày hiện tại.');
-      // Nếu muốn đặt lại selectedDate về currentDate khi không hợp lệ
-      // setSelectedDate(currentDate);
     }
   };
 
-
   const handleTimeClick = (slotId) => {
     console.log('Selected SlotID:', slotId);
-    if (slotId === selectedTime) {
-      setSelectedTime('');
+    if (selectedSlots.includes(slotId)) {
+      setSelectedSlots(selectedSlots.filter(id => id !== slotId));
     } else {
-      setSelectedTime(slotId);
+      setSelectedSlots([...selectedSlots, slotId]);
     }
   };
 
   const handleSave = async () => {
-    window.location.reload();
-    if (!selectedDentist || !selectedDate || !selectedTime) {
+    if (!selectedDentist || !selectedDate || selectedSlots.length === 0) {
       setError('Please fill in all fields');
       return;
     }
 
-    try {
-      const response = await axios.post('http://localhost:3000/schedule', {
-        date: selectedDate, 
-        slotId: selectedTime,
-        dentistId: selectedDentist
-      });
+    // Check if the dentist already has a schedule on the selected date and time slot
+    const existingSchedule = schedules.find(schedule => 
+      schedule.DentistID === selectedDentist && 
+      schedule.Date === selectedDate && 
+      selectedSlots.includes(schedule.SlotID)
+    );
 
-      setSchedules([...schedules, response.data.newSchedule]);
+    if (existingSchedule) {
+      setError('This dentist is already scheduled for one or more of the selected slots on this date.');
+      return;
+    }
+
+    try {
+      const newSchedules = await Promise.all(selectedSlots.map(async (slotId) => {
+        const response = await axios.post('http://localhost:3000/schedule', {
+          date: selectedDate,
+          slotId: slotId,
+          dentistId: selectedDentist
+        });
+        return response.data.newSchedule;
+      }));
+
+      setSchedules([...schedules, ...newSchedules]);
       setSelectedDentist('');
       setSelectedDate('');
-      setSelectedTime('');
+      setSelectedSlots([]);
       setError('');
     } catch (error) {
       console.error('Error creating schedule:', error);
       setError('Error creating schedule');
     }
   };
+
+  // Filter available slots based on existing schedules
+  const filteredSlots = slots.filter(slot => 
+    !schedules.some(schedule => 
+      schedule.DentistID === selectedDentist && 
+      schedule.Date === selectedDate && 
+      schedule.SlotID === slot.SlotID
+    )
+  );
 
   return (
     <div>
@@ -154,6 +169,7 @@ export default function ScheduleManage(props) {
                 type="date"
                 className="form-control"
                 value={selectedDate}
+                min={currentDate}
                 onChange={handleDateChange}
               />
             </div>
@@ -172,10 +188,10 @@ export default function ScheduleManage(props) {
         <div className="row">
           <div className="col-md-12 pick-hour-container">
             <div className="Time-slot-container">
-              {slots.map((availableslot) => (
+              {filteredSlots.map((availableslot) => (
                 <div
-                  key={availableslot.SlotID} // Key should match a unique identifier in your data
-                  className={`hour-slot ${selectedTime === availableslot.SlotID ? 'selected' : ''}`}
+                  key={availableslot.SlotID}
+                  className={`hour-slot ${selectedSlots.includes(availableslot.SlotID) ? 'selected' : ''}`}
                   onClick={() => handleTimeClick(availableslot.SlotID)}
                 >
                   {availableslot.Time}
@@ -201,7 +217,6 @@ export default function ScheduleManage(props) {
                   <th scope="col">ScheduleID</th>
                   <th scope="col">Dentist Name</th>
                   <th scope="col">Date</th>
-          
                   <th scope="col">SlotTime</th>
                   <th scope="col">Status</th>
                 </tr>
@@ -222,11 +237,6 @@ export default function ScheduleManage(props) {
         </div>
       </div>
     </div>
-
-
-  
   );
 }
-
-
 

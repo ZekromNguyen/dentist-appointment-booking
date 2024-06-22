@@ -1,5 +1,6 @@
 import { Model, DataTypes } from "sequelize";
 import sequelize from "../config/database";
+import Account from "./account";
 
 class Customer extends Model {}
 Customer.init(
@@ -30,5 +31,9 @@ Customer.init(
     timestamps: false,
   }
 );
+
+// thiết lập mối quan hệ
+Account.hasOne(Customer, {foreignKey :"AccountID"});
+Customer.belongsTo(Account, { foreignKey :"AccountID"});
 
 export default Customer;
