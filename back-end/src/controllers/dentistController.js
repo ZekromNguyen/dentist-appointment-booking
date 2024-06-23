@@ -6,7 +6,7 @@ class DentistController {
     try {
       const slots = await DentistService.getAvailableSlot();
       const schedules = await DentistService.getDentistSchedules();
-      const dentists = await DentistService.getDentist();
+      const dentists = await DentistService.getAllDentist();
       console.log(slots);
       console.log(schedules);
       console.log(dentists);
@@ -41,7 +41,7 @@ class DentistController {
       res.status(500).send("Error adding schedule: " + error.message);
     }
   }
-//**************************** ADD New API***********************************************/
+  //**************************** ADD New API***********************************************/
 
   async getAvailableSlotN(req, res) {
     try {
@@ -62,16 +62,19 @@ class DentistController {
       res.status(500).send("Internal server error");
     }
   }
-  async handleGetDentistsByADate(req ,res){
+  async getAllDentist(req, res) {
     try {
-      const schedules = await DentistService.getDentistSchedules();
-      res.json(schedules); // Hoặc res.render nếu bạn muốn render vào một template
-    } catch (err) {
-      console.error("Error fetching dentist schedules:", err);
-      res.status(500).send("Internal server error");
+      const dentists = await DentistService.getAllDentist();
+
+      if (!dentists || dentists.length === 0) {
+        return res.status(404).json({ message: "No dentists found" });
+      }
+
+      res.status(200).json({ message: "Success", dentists });
+    } catch (error) {
+      console.error("Error in handleGetAllDentists:", error);
+      res.status(500).json({ message: "Internal server error" });
     }
   }
-
-
 }
 export default new DentistController();

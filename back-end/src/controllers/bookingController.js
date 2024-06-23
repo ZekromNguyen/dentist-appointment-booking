@@ -14,13 +14,14 @@ class BookingController {
   //Hàm get các slot khám theo ngày
   async getSlotsByDateByDentistService(req, res) {
     try {
-      const { dentistID ,date } = req.query;
+      const { dentistID, date } = req.query;
       console.log(dentistID);
       console.log(date);
       const slots = await BookingService.getSlotsByDateByDentistService(
         date,
         dentistID
       );
+      console.log(slots);
       res.json(slots);
     } catch (error) {
       console.error("Error fetching1 slots by date:", error);
@@ -31,7 +32,8 @@ class BookingController {
   //Hàm tạo booking
   async createBooking(req, res) {
     try {
-      const { customerId, price, status, typeBook, date, slotId } = req.body;
+      const { customerId, price, status, typeBook, date, scheduleId } =
+        req.body;
       const currentDateTime = new Date(); // Lấy thời gian hiện tại
       const currentDateTimeGMT7 = new Date(
         currentDateTime.getTime() + 7 * 60 * 60 * 1000
@@ -53,7 +55,7 @@ class BookingController {
         price,
         date,
         newBooking.BookingID,
-        slotId
+        scheduleId
       );
       if (!newBookingDetail) {
         res.status(400).json({ message: "No create BookingDetail" });
@@ -87,10 +89,19 @@ class BookingController {
       }
 
       // Tạo bản ghi thanh toán và cập nhật trạng thái booking
-      const payment = await BookingService.createPayment(bookingId, paymentMethod, true);
-      const updatedBooking = await BookingService.updateBookingStatus(bookingId, "Completed");
+      const payment = await BookingService.createPayment(
+        bookingId,
+        paymentMethod,
+        true
+      );
+      const updatedBooking = await BookingService.updateBookingStatus(
+        bookingId,
+        "Completed"
+      );
 
-      res.status(200).json({ message: "Payment processed successfully", payment });
+      res
+        .status(200)
+        .json({ message: "Payment processed successfully", payment });
     } catch (error) {
       console.error("Error processing payment:", error);
       res.status(500).send("Internal Server Error");

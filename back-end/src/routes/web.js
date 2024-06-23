@@ -35,16 +35,11 @@ let initAllWebRoutes = (app) => {
   router.get("/booking", BookingController.getDentistSchedules);
   router.post("/booking", BookingController.createBooking);
   router.get("/slotsByDate", BookingController.getSlotsByDateByDentistService);
-  
+
   /**************************Nam New API***************/
-  router.get("/getAllDentists", AccountController.handleGetAllDentists);
+  router.get("/getAllDentists", DentistController.getAllDentist);
   router.get("/scheduleSlot", DentistController.getAvailableSlotN);
   router.get("/scheduleDentist", DentistController.getDentistSchedules);
-  router.get("/getCustomerId", AccountController.getCustomerId);
-
-
-
-
 
   router.get("/payment/:bookingId", BookingController.showPaymentPage);
   router.post("/payment", BookingController.processPayment);
