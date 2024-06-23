@@ -3,7 +3,7 @@
 
     "admin": {
       "User": "Manage",
-      "user-manage": "Add new user",
+      "user-manage": "Manage Account",
       "manage-doctor": "Manage Doctor",
       "clinic": "Clinic",
       "manage-clinic": "Manage Clinic",
