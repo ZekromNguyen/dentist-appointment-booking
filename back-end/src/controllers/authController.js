@@ -73,7 +73,8 @@ class AccountController {
     }
   }
   async registerCustomer(req, res) {
-    const { username, password, email, phone, roleID, name } = req.body;
+    const { username, password, email, phone, name } = req.body
+    const roleID = 1;
     try {
       if (!username || !password || !email || !phone || !name) {
         return res.status(400).json({ message: "All fields are required" });
@@ -396,7 +397,8 @@ class AccountController {
       res.status(500).send("Error adding schedule: " + error.message);
     }
   }
-  ////////////////////////////////////
+
+
   async handleGetAllUser(req, res) {
     let AccountID = req.query.AccountID; // All, id
     if (!AccountID) {
@@ -510,55 +512,6 @@ class AccountController {
       });
     }
   }
-
-  async handleGetAllDentist(req, res) {
-    let DentistID = req.query.DentistID;
-    if (!DentistID) {
-      return res.status(200).json({
-        errCode: 1,
-        errMessage: "Missing required parameter",
-        account: []
-      })
-    }
-    let account = await AccountService.getAllDentist(DentistID);
-    return res.status(200).json({
-      errCode: 0,
-      errMessage: "OK",
-      account,
-    })
-  }
-
-  async handleDeleteDentist(req, res) {
-    const { DentistID } = req.body;
-    if (!DentistID) {
-      return res.status(400).json({ errCode: 1, errMessage: "DentistID is required" });
-    }
-    try {
-      const message = await AccountService.deleteDentist(DentistID);
-      return res.status(200).json(message);
-    } catch (error) {
-      console.error("Error deleting dentist:", error);
-      return res.status(500).json({ errCode: 1, errMessage: "Error deleting dentist" });
-    }
-  }
-
-  async handleEditDentist(req, res) {
-    try {
-      const data = req.body;
-      if (!data.DentistID) {
-        return res.status(400).json({ errCode: 2, errMessage: "DentistID is required" });
-      }
-      const message = await AccountService.updateDentist(data);
-      if (message.errCode !== 0) {
-        return res.status(400).json(message);
-      }
-      return res.status(200).json(message);
-    } catch (error) {
-      console.error("Error updating dentist:", error);
-      return res.status(500).json({ errCode: 1, errMessage: "Error updating dentist" });
-    }
-  }
-
   //****************************************** New API Get ALL Dentist (Nam )****************************** */
   async handleGetAllDentists(req, res) {
     try {
@@ -586,9 +539,6 @@ class AccountController {
       res.status(500).send("Internal Server Error");
     }
   }
-
-
-
 
 
 }

@@ -1,12 +1,11 @@
 import { Sequelize } from "sequelize";
 import Account from "../model/account";
-
 import AccountControl from "../controllers/authController";
 import DentistSchedule from "../model/dentistSchedule";
-
 import bcrypt from "bcrypt";
 import Dentist from "../model/dentist";
 import Customer from "../model/customer";
+
 class AccountService {
   async createAccountCustomer(
     username,
@@ -220,6 +219,7 @@ class AccountService {
     }
   }
 
+
   //////////////////////////////////////////////////////////
   //lấy tất cả người dùng
   async getAllUsers(AccountID) {
@@ -364,105 +364,6 @@ class AccountService {
       throw e;
     }
   }
-
-  async saveNewPasswordAndActivate(token, hashedPassword) {
-    try {
-      const account = await Account.findOne({
-        where: { verificationToken: token },
-      });
-
-      if (!account) {
-        return null;
-      }
-
-      account.Password = hashedPassword;
-      account.IsActive = true;
-      account.verificationToken = null;
-      await account.save();
-
-      return account;
-    } catch (error) {
-      console.error("Error saving new password and activating account:", error);
-      throw error;
-    }
-  }
-
-
-  async getAllDentist(DentistID) {
-    try {
-      let account = "";
-      if (DentistID === "ALL") {
-        account = await Dentist.findAll({
-          raw: true,
-          attributes: [
-            "AccountID",
-            "DentistID",
-            "DentistName",
-            "ClinicID",
-            "Description"
-          ],
-        });
-      } else if (DentistID) {
-        account = await Dentist.findOne({
-          where: { DentistID: DentistID },
-          raw: true,
-          attributes: [
-            "AccountID",
-            "DentistID",
-            "DentistName",
-            "ClinicID",
-            "Description"
-          ],
-        });
-      }
-
-      if (!account) {
-        console.log(`Account with ID ${DentistID} not found`);
-      }
-      return account;
-    } catch (e) {
-      console.error("Error in getAllUsers:", e);
-      throw e;
-    }
-  }
-
-  async deleteDentist(DentistID) {
-    try {
-      const dentist = await Dentist.findOne({ where: { DentistID } });
-      if (!dentist) {
-        return { errCode: 1, errMessage: "Dentist not found" };
-      }
-      await dentist.destroy();
-      return { errCode: 0, errMessage: "Dentist deleted successfully" };
-    } catch (error) {
-      console.error("Error deleting dentist:", error);
-      throw new Error("Error deleting dentist");
-    }
-  }
-
-  async updateDentist(data) {
-    try {
-      if (!data.DentistID) {
-        return { errCode: 2, errMessage: "DentistID is required" };
-      }
-
-      const dentist = await Dentist.findOne({ where: { DentistID: data.DentistID } });
-      if (!dentist) {
-        return { errCode: 1, errMessage: "Dentist not found" };
-      }
-
-      dentist.DentistName = data.DentistName || dentist.DentistName;
-      dentist.ClinicID = data.ClinicID || dentist.ClinicID;
-
-      await dentist.save();
-
-      return { errCode: 0, message: "Dentist updated successfully" };
-    } catch (error) {
-      console.error("Error updating dentist:", error);
-      throw error;
-    }
-  }
-
   //**********************************New API Get ALL Dentist****************************8 */
   async getAllDentists(DentistID) {
     try {
@@ -476,7 +377,6 @@ class AccountService {
       throw error;
     }
   }
-
 
   //------------------------------New API Get CustomerId from AccountID----------------------------
 
@@ -502,6 +402,7 @@ class AccountService {
       throw new Error('Error fetching customer information');
     }
   }
+
 
 }
 

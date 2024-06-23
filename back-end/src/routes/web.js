@@ -3,6 +3,7 @@ import homepageController from "../controllers/homepageController";
 import AccountController from "../controllers/authController";
 import DentistController from "../controllers/dentistController";
 import BookingController from "../controllers/bookingController";
+import dentistController from "../controllers/dentistController";
 // init all web routes
 
 let router = express.Router();
@@ -42,12 +43,9 @@ let initAllWebRoutes = (app) => {
   router.delete("/deleteUser", AccountController.handleDeleteUser);
 
   /////////////////////////////dentist
-  router.get("/handleGetAllDentist", AccountController.handleGetAllDentist);
-  router.delete("/handleDeleteDentist", AccountController.handleDeleteDentist);
-  router.put("/handleEditDentist", AccountController.handleEditDentist);
-
-
-
+  router.get("/handleGetAllDentist", dentistController.handleGetAllDentist);
+  router.delete("/handleDeleteDentist", dentistController.handleDeleteDentist);
+  router.put("/handleEditDentist", dentistController.handleEditDentist);
 
   /**************************Nam New API***************/
   router.get("/getAllDentists", AccountController.handleGetAllDentists);
@@ -58,7 +56,6 @@ let initAllWebRoutes = (app) => {
 
 
 
-  /////////////////// payment
   router.get("/payment/:bookingId", BookingController.showPaymentPage);
   router.post("/payment", BookingController.processPayment);
 

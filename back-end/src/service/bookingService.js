@@ -1,6 +1,4 @@
 import { Sequelize } from "sequelize";
-// import AvailableSlot from "../model/availableSlot";
-// import DentistSchedule1 from "../model/dentistSchedule1";
 import { AvailableSlot, DentistSchedule } from "../model/model";
 import Booking from "../model/booking";
 import BookingDetail from "../model/bookingDetail";
@@ -17,7 +15,7 @@ class BookingService {
 
       const bookedScheduleIDs = bookedSlots.map((slot) => slot.ScheduleID);
       console.log(bookedScheduleIDs);
-      return await DentistSchedule.findAll({
+      const availableScheduleS = await DentistSchedule.findAll({
         where: {
           DentistID: dentistId,
           ScheduleID: {
@@ -31,6 +29,10 @@ class BookingService {
         },
         order: [["SlotID", "ASC"]],
       });
+      const availableScheduleIDs = availableScheduleS.map((availableSchedule) =>
+        availableSchedule.toJSON()
+      );
+      return availableScheduleIDs;
     } catch (error) {
       throw new Error("Error fetching slots by date");
     }

@@ -1,12 +1,9 @@
 import { Sequelize } from "sequelize";
-// import AvailableSlot from "../model/availableSlot";
-// import DentistSchedule1 from "../model/dentistSchedule1";
+
 import { AvailableSlot, DentistSchedule, Dentist } from "../model/model";
-import Booking from "../model/booking";
-import BookingDetail from "../model/bookingDetail";
 
 class DentistService {
-  async getDentist() {
+  async getAllDentist() {
     try {
       const dentists = await Dentist.findAll();
       const plainDentists = dentists.map((dentist) => dentist.toJSON());
@@ -32,7 +29,7 @@ class DentistService {
     try {
       const newSchedule = await DentistSchedule.create({
         DentistID,
-        SlotID :SlotId,
+        SlotID: SlotId,
         Date: date,
       });
       return newSchedule;
@@ -68,12 +65,89 @@ class DentistService {
         }
       );
       return result;
-      console.log(`Successfully updated ${id} schedules to 'Booked' status.`);
+      console.log(`Successfully updated ${id} schedules to Booked status.`);
     } catch (error) {
       console.error("Error in updateStatusDentistSchedule method: ", error);
       throw error;
     }
   }
+
+  ///////////////////////////////////////////////////
+  async getAllDentist(DentistID) {
+    try {
+      let account = "";
+      if (DentistID === "ALL") {
+        account = await Dentist.findAll({
+          raw: true,
+          attributes: [
+            "AccountID",
+            "DentistID",
+            "DentistName",
+            "ClinicID",
+            "Description"
+          ],
+        });
+      } else if (DentistID) {
+        account = await Dentist.findOne({
+          where: { DentistID: DentistID },
+          raw: true,
+          attributes: [
+            "AccountID",
+            "DentistID",
+            "DentistName",
+            "ClinicID",
+            "Description"
+          ],
+        });
+      }
+
+      if (!account) {
+        console.log(`Account with ID ${DentistID} not found`);
+      }
+      return account;
+    } catch (e) {
+      console.error("Error in getAllUsers:", e);
+      throw e;
+    }
+  }
+
+  async deleteDentist(DentistID) {
+    try {
+      const dentist = await Dentist.findOne({ where: { DentistID } });
+      if (!dentist) {
+        return { errCode: 1, errMessage: "Dentist not found" };
+      }
+      await dentist.destroy();
+      return { errCode: 0, errMessage: "Dentist deleted successfully" };
+    } catch (error) {
+      console.error("Error deleting dentist:", error);
+      throw new Error("Error deleting dentist");
+    }
+  }
+
+  async updateDentist(data) {
+    try {
+      if (!data.DentistID) {
+        return { errCode: 2, errMessage: "DentistID is required" };
+      }
+
+      const dentist = await Dentist.findOne({ where: { DentistID: data.DentistID } });
+      if (!dentist) {
+        return { errCode: 1, errMessage: "Dentist not found" };
+      }
+
+      dentist.DentistName = data.DentistName || dentist.DentistName;
+      dentist.ClinicID = data.ClinicID || dentist.ClinicID;
+
+      await dentist.save();
+
+      return { errCode: 0, message: "Dentist updated successfully" };
+    } catch (error) {
+      console.error("Error updating dentist:", error);
+      throw error;
+    }
+  }
+
 }
 
 export default new DentistService();
