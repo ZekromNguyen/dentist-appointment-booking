@@ -165,7 +165,7 @@ export default function Login() {
             console.log(">>check response", response.data.message);
 
             console.log(">>check response 2", response.data);
-            localStorage.setItem('account',JSON.stringify(response.data.user));
+            localStorage.setItem('account', JSON.stringify(response.data.user));
             if (response && response.data && response.data.message === "Login successfully") {
                 const Role = response.data.user.RoleID; // Đảm bảo rằng `RoleID` tồn tại trong đối tượng user
                 console.log('check role', Role);

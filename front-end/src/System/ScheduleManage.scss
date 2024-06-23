@@ -58,20 +58,20 @@ $highlight-color: blue;
     border: 1px solid $border-color;
 
     &:hover {
-        background-color: #1e0a66;
-        transform: translateY(-3px);
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        color: white;
+      background-color: #1e0a66;
+      transform: translateY(-3px);
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      color: white;
     }
 
     svg {
-        margin-right: 10px;
+      margin-right: 10px;
     }
 
     span {
-        font-weight: 600;
+      font-weight: 600;
     }
-}
+  }
 
 }
 
@@ -195,24 +195,25 @@ $highlight-color: blue;
   }
 
 }
+
 .dentist-schedule-container {
 
   background-color: #f8f9fa; // Màu nền tổng thể của container
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 
-  
+
   .schedule-table {
     max-height: 0;
     overflow: hidden;
     transition: max-height 0.5s ease;
 
-  
+
     &.visible {
       max-height: 1000px; // Hoặc một giá trị lớn hơn chiều cao thực tế của bảng
     }
   }
-  
+
   .btn-toggle {
     margin-bottom: 15px;
     background-color: #007bff;
@@ -222,12 +223,12 @@ $highlight-color: blue;
     cursor: pointer;
     border-radius: 5px;
     transition: background-color 0.3s ease;
-  
+
     &:hover {
       background-color: #0056b3;
     }
   }
-  
+
 
   .table {
     width: 100%;
@@ -264,5 +265,3 @@ $highlight-color: blue;
     }
   }
 }
-
-

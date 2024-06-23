@@ -1,0 +1,59 @@
+// Reset default margins and paddings
+body,
+html {
+    margin: 0;
+    padding: 0;
+}
+
+// Global styles for tables
+#doctors {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+#doctors td,
+#doctors th {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+#doctors th {
+    background-color: #04AA6D;
+    color: white;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+}
+
+#doctors tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+#doctors tr:hover {
+    background-color: #ddd;
+}
+
+// Specific styles for Manage-doctor container
+.Manage-doctor {
+    margin-top: 50px;
+    padding: 20px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+// Styles for buttons
+.Manage-doctor button {
+    margin-top: 10px;
+}
+
+// Styles for modal dialogs (if applicable)
+/*
+.modal {
+    // Define styles for your modal here
+}
+*/
+
+// Add more specific styles as needed

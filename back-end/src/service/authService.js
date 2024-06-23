@@ -202,7 +202,7 @@ class AccountService {
     await account.save();
     return account;
   }
-  async resetNewPassword() {}
+  async resetNewPassword() { }
 
   async createSchedule({ DentistID, day, stime, etime }) {
     try {
@@ -220,13 +220,14 @@ class AccountService {
     }
   }
 
-  // lấy tất cả người dùng
+  //////////////////////////////////////////////////////////
+  //lấy tất cả người dùng
   async getAllUsers(AccountID) {
     try {
       let account = "";
       if (AccountID === "ALL") {
         account = await Account.findAll({
-          raw: true, // Trả về dữ liệu thuần túy
+          raw: true,
           attributes: [
             "AccountID",
             "UserName",
@@ -240,7 +241,7 @@ class AccountService {
       } else if (AccountID) {
         account = await Account.findOne({
           where: { AccountID: AccountID },
-          raw: true, // Trả về dữ liệu thuần túy
+          raw: true,
           attributes: [
             "AccountID",
             "UserName",
@@ -263,7 +264,40 @@ class AccountService {
     }
   }
 
-  //băm mật khẩu
+  async createAccountWithoutVerification({ username, hashedPassword, phone, email, roleID }) {
+    try {
+      const existingAccount = await Account.findOne({
+        where: {
+          [Sequelize.Op.or]: [{ Email: email }, { UserName: username }],
+        },
+      });
+
+      if (existingAccount) {
+        if (existingAccount.UserName === username) {
+          throw new Error("Username already exists");
+        }
+        if (existingAccount.Email === email) {
+          throw new Error("Email already exists");
+        }
+      }
+
+      const newAccount = await Account.create({
+        UserName: username,
+        Password: hashedPassword, // Use hashedPassword directly
+        Phone: phone,
+        Email: email,
+        IsActive: true, // Set account active by default
+        RoleID: roleID,
+      });
+
+      return newAccount;
+    } catch (error) {
+      console.error("Error inserting into the database:", error);
+      throw error;
+    }
+  }
+
+
   async hashUserPassword(password) {
     try {
       const hashedPassword = bcrypt.hashSync(password, 10);
@@ -274,44 +308,27 @@ class AccountService {
     }
   }
 
-  async deleteUser(id) {
+  async deleteUser(AccountID) {
     try {
-      // Kiểm tra sự tồn tại của id trước
-      if (!id) {
-        return {
-          errCode: 2,
-          errMessage: "ID không được cung cấp",
-        };
+      // First, delete the customer associated with the AccountID
+      await Customer.destroy({ where: { AccountID } });
+
+      // Then delete the user account
+      const result = await Account.destroy({ where: { AccountID } });
+
+      if (result) {
+        return { errCode: 0, errMessage: "User deleted successfully" };
+      } else {
+        return { errCode: 1, errMessage: "User not found" };
       }
-
-      // Tìm kiếm người dùng với AccountID được cung cấp
-      let user = await Account.findOne({
-        where: { AccountID: id },
-      });
-
-      // Kiểm tra xem người dùng có tồn tại hay không
-      if (!user) {
-        return {
-          errCode: 2,
-          errMessage: "Người dùng không tồn tại",
-        };
-      }
-
-      // Xóa người dùng
-      await user.destroy();
-      return {
-        errCode: 0,
-        message: "Người dùng đã được xóa",
-      };
-    } catch (e) {
-      console.error("Lỗi khi xóa người dùng:", e);
-      throw e;
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      throw new Error("Error deleting user");
     }
   }
 
   async handleUpdateUser(data) {
     try {
-      // Kiểm tra nếu data không tồn tại hoặc AccountID không tồn tại trong data
       if (!data.AccountID) {
         return {
           errCode: 2,
@@ -319,12 +336,10 @@ class AccountService {
         };
       }
 
-      // Tìm kiếm người dùng với AccountID được cung cấp
       let user = await Account.findOne({
         where: { AccountID: data.AccountID },
       });
 
-      // Kiểm tra xem người dùng có tồn tại hay không
       if (!user) {
         return {
           errCode: 2,
@@ -332,15 +347,12 @@ class AccountService {
         };
       }
 
-      // Cập nhật thông tin người dùng
-      user.UserName = data.UserName || user.UserName; // Nếu không có giá trị mới, giữ nguyên giá trị cũ
+      user.UserName = data.UserName || user.UserName;
       user.Phone = data.Phone || user.Phone;
       user.Email = data.Email || user.Email;
-      user.IsActive =
-        data.IsActive !== undefined ? data.IsActive : user.IsActive; // Đảm bảo kiểm tra undefined
+      user.IsActive = data.IsActive !== undefined ? data.IsActive : user.IsActive;
       user.RoleID = data.RoleID || user.RoleID;
 
-      // Lưu các thay đổi vào cơ sở dữ liệu
       await user.save();
 
       return {
@@ -352,44 +364,144 @@ class AccountService {
       throw e;
     }
   }
-    //**********************************New API Get ALL Dentist****************************8 */
-    async getAllDentists(DentistID) {
-      try {
-        const dentists = await Dentist.findAll({
-          //    attributes: ['DentistID', 'DentistName', 'AccountID', 'ClinicID', 'Description'],
-        });
-  
-        return dentists;
-      } catch (error) {
-        console.error('Error in getAllDentists:', error);
-        throw error;
+
+  async saveNewPasswordAndActivate(token, hashedPassword) {
+    try {
+      const account = await Account.findOne({
+        where: { verificationToken: token },
+      });
+
+      if (!account) {
+        return null;
       }
+
+      account.Password = hashedPassword;
+      account.IsActive = true;
+      account.verificationToken = null;
+      await account.save();
+
+      return account;
+    } catch (error) {
+      console.error("Error saving new password and activating account:", error);
+      throw error;
     }
-
-     //------------------------------New API Get CustomerId from AccountID----------------------------
-
-
-async getCustomerId(accountId) {
-  try {
-    // Thực hiện truy vấn lấy thông tin từ bảng customer và account
-    const customers = await Customer.findOne({
-      attributes: ['customerId', 'customerName'],
-      where: {},
-      include: {
-        model: Account,
-        where: {
-          AccountID: accountId
-        },
-        attributes: [] // Để chỉ lấy thông tin từ bảng customer, không lấy từ bảng Account
-      }
-    });
-
-    return customers;
-  } catch (error) {
-    console.error('Error fetching customer information:', error);
-    throw new Error('Error fetching customer information');
   }
-}
+
+
+  async getAllDentist(DentistID) {
+    try {
+      let account = "";
+      if (DentistID === "ALL") {
+        account = await Dentist.findAll({
+          raw: true,
+          attributes: [
+            "AccountID",
+            "DentistID",
+            "DentistName",
+            "ClinicID",
+            "Description"
+          ],
+        });
+      } else if (DentistID) {
+        account = await Dentist.findOne({
+          where: { DentistID: DentistID },
+          raw: true,
+          attributes: [
+            "AccountID",
+            "DentistID",
+            "DentistName",
+            "ClinicID",
+            "Description"
+          ],
+        });
+      }
+
+      if (!account) {
+        console.log(`Account with ID ${DentistID} not found`);
+      }
+      return account;
+    } catch (e) {
+      console.error("Error in getAllUsers:", e);
+      throw e;
+    }
+  }
+
+  async deleteDentist(DentistID) {
+    try {
+      const dentist = await Dentist.findOne({ where: { DentistID } });
+      if (!dentist) {
+        return { errCode: 1, errMessage: "Dentist not found" };
+      }
+      await dentist.destroy();
+      return { errCode: 0, errMessage: "Dentist deleted successfully" };
+    } catch (error) {
+      console.error("Error deleting dentist:", error);
+      throw new Error("Error deleting dentist");
+    }
+  }
+
+  async updateDentist(data) {
+    try {
+      if (!data.DentistID) {
+        return { errCode: 2, errMessage: "DentistID is required" };
+      }
+
+      const dentist = await Dentist.findOne({ where: { DentistID: data.DentistID } });
+      if (!dentist) {
+        return { errCode: 1, errMessage: "Dentist not found" };
+      }
+
+      dentist.DentistName = data.DentistName || dentist.DentistName;
+      dentist.ClinicID = data.ClinicID || dentist.ClinicID;
+
+      await dentist.save();
+
+      return { errCode: 0, message: "Dentist updated successfully" };
+    } catch (error) {
+      console.error("Error updating dentist:", error);
+      throw error;
+    }
+  }
+
+  //**********************************New API Get ALL Dentist****************************8 */
+  async getAllDentists(DentistID) {
+    try {
+      const dentists = await Dentist.findAll({
+        //    attributes: ['DentistID', 'DentistName', 'AccountID', 'ClinicID', 'Description'],
+      });
+
+      return dentists;
+    } catch (error) {
+      console.error('Error in getAllDentists:', error);
+      throw error;
+    }
+  }
+
+
+  //------------------------------New API Get CustomerId from AccountID----------------------------
+
+
+  async getCustomerId(accountId) {
+    try {
+      // Thực hiện truy vấn lấy thông tin từ bảng customer và account
+      const customers = await Customer.findOne({
+        attributes: ['customerId', 'customerName'],
+        where: {},
+        include: {
+          model: Account,
+          where: {
+            AccountID: accountId
+          },
+          attributes: [] // Để chỉ lấy thông tin từ bảng customer, không lấy từ bảng Account
+        }
+      });
+
+      return customers;
+    } catch (error) {
+      console.error('Error fetching customer information:', error);
+      throw new Error('Error fetching customer information');
+    }
+  }
 
 }
 

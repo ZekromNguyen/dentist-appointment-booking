@@ -1,157 +1,185 @@
 import React, { Component } from 'react';
-import { FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
+import { getAllUSer, deleteUser, handleEditUser } from '../Service/userService';
+import ModelUser from './ModelUser';
+import ModelEdit from './ModelEdit';
+import ModelAddDentist from './ModelAddDentist'; // Import the new component
 import './UserManage.scss';
-//import Lightbox from 'react-image-lightbox';
-//import 'react-image-lightbox/style.css';
-import TableUserManage from './TableUserManage';
-import { getAllUSer } from '../Service/userService';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 class UserManage extends Component {
-
     constructor(props) {
         super(props);
         this.state = {
-            genderArr: [],
-            previewImgURL: '',
-            isOpen: false,
-            arrUser: []
-        }
+            arrUser: [],
+            isOpenModalUser: false,
+            isOpenModalEdit: false,
+            isOpenModalAddDentist: false, // Add state for the new modal
+            userEdit: {}
+        };
     }
 
     async componentDidMount() {
-        let response = await getAllUSer('ALL')
+        await this.handleGetAllUsers();
+    }
+
+    handleGetAllUsers = async () => {
+        let response = await getAllUSer('ALL');
         if (response && response.errCode === 0) {
             this.setState({
                 arrUser: response.account
-            })
+            });
         }
-        console.log('get uer from back-end', response)
-    }
+        console.log('get user from back-end', response);
+    };
 
-    handleOnchangeImage = (event) => {
-        let data = event.target.files;
-        let file = data[0];
-        if (file) {
-            let objectUrl = URL.createObjectURL(file);
-            this.setState({
-                previewImgURL: objectUrl
+    handleAddNewUser = () => {
+        this.setState({
+            isOpenModalUser: true
+        });
+    };
 
-            })
+    handleAddNewDentist = () => {
+        this.setState({
+            isOpenModalAddDentist: true // Open the new modal
+        });
+    };
+
+    toggleUserModal = () => {
+        this.setState({
+            isOpenModalUser: !this.state.isOpenModalUser
+        });
+    };
+
+    toggleAddDentistModal = () => {
+        this.setState({
+            isOpenModalAddDentist: !this.state.isOpenModalAddDentist // Toggle the new modal
+        });
+    };
+
+    toggleEditModal = () => {
+        this.setState({
+            isOpenModalEdit: !this.state.isOpenModalEdit
+        });
+    };
+
+    handleDelete = async (user) => {
+        console.log('Deleting user:', user);
+        try {
+            let res = await deleteUser(user.AccountID);
+            if (res && res.errCode === 0) {
+                // Remove the deleted user from the state array
+                const updatedUsers = this.state.arrUser.filter(item => item.AccountID !== user.AccountID);
+                this.setState({
+                    arrUser: updatedUsers
+                });
+            } else {
+                alert(res.errMessage);
+            }
+            console.log(res);
+        } catch (error) {
+            console.error('Error deleting user:', error);
+            alert('Error deleting user. Please try again later.');
         }
-    }
+    };
+
+    handleEdit = (user) => {
+        console.log('check edit user', user);
+        this.setState({
+            isOpenModalEdit: true,
+            userEdit: user
+        });
+    };
+
+    handleUserUpdated = () => {
+        this.setState({
+            isOpenModalEdit: false, // Close the edit modal after updating
+            isOpenModalAddDentist: false // Close the dentist modal after adding
+        });
+        this.handleGetAllUsers();
+    };
+
+    handleUpdated = async (user) => {
+        let res = await handleEditUser(user);
+        console.log('user', res);
+        this.handleUserUpdated(); // Call handleUserUpdated after updating user
+    };
 
     render() {
-        console.log('check render', this.state)
+        console.log('check render', this.state.arrUser);
         let arrUser = this.state.arrUser;
         return (
-            <div className="User-redux-container" >
-                <div className="title">
-                    User Manage
-                </div>
-
-                <div className="User-redux-body">
-
-                    <div className="container">
-                        <div className="row">
-                            <div className="col-3">
-                                <label> <FormattedMessage id="manager-user.email" /></label>
-                                <input className="form-control" type="email" />
-                            </div>
-                            <div className="col-3">
-                                <label> <FormattedMessage id="manager-user.password" /></label>
-                                <input className="form-control" type="password" />
-                            </div>
-                            <div className="col-3">
-                                <label> <FormattedMessage id="manager-user.username" /></label>
-                                <input className="form-control" type="text" />
-                            </div>
-
-                            <div className="col-3">
-                                <label> <FormattedMessage id="manager-user.phone-number" /></label>
-                                <input className="form-control" type="text" />
-                            </div>
-
-                            <div className="col-3">
-                                <label> <FormattedMessage id="manager-user.role" /></label>
-                                <select className="form-control">
-                                    <option selected>Choose...</option>
-                                    <option>...</option>
-                                </select>
-                            </div>
-                            <div className="col-3">
-                                <label> <FormattedMessage id="manager-user.image" /></label>
-                                <div className="preview-img-container">
-                                    <input id="previewImg" type="file" hidden
-                                        onChange={(event) => this.handleOnchangeImage(event)}
-
-                                    />
-                                    <label className="label-upload" htmlFor="previewImg">Tải Ảnh <i className="fas fa-upload"></i></label>
-                                    <div className="preview-image"
-
-                                        style={{ backgroundImage: `url(${this.state.previewImgURL})` }}
-
-                                    ></div>
-                                </div>
-
-                            </div>
-                            <div className="col-12 my-3">
-                                <button className="btn btn-primary"><FormattedMessage id="manager-user.save" /></button>
-                            </div>
-                        </div>
-
-                    </div>
-                    <TableUserManage />
-                </div>
-                <div className='user-table mt-20 mx-10'>
-                    <table id="customers">
-                        <tr>
-                            <th>AccountID</th>
-                            <th>UserName</th>
-                            <th>Phone</th>
-                            <th>Email</th>
-                            <th>RoleID</th>
-                            <th>Action</th>
-                        </tr>
-
-                        {arrUser && arrUser.map((item, index) => {
-                            console.log('check map', item, index)
-                            return (
-                                <tr>
-                                    <td>{item.AccountID}</td>
-                                    <td>{item.UserName}</td>
-                                    <td>{item.Phone}</td>
-                                    <td>{item.Email}</td>
-                                    <td>{item.RoleID}</td>
-                                    <td>
-                                        <button>Edit</button>
-                                        <button>Delete</button>
-                                    </td>
-                                </tr>
-                            )
-                        })
-
-                        }
-
-
+            <div className='Manage-user'>
+                <ModelUser
+                    isOpen={this.state.isOpenModalUser}
+                    toggleFromParent={this.toggleUserModal}
+                    test={'abc'}
+                />
+                {this.state.isOpenModalEdit &&
+                    <ModelEdit
+                        isOpen={this.state.isOpenModalEdit}
+                        toggleFromParent={this.toggleEditModal}
+                        currentUser={this.state.userEdit}
+                        editUser={this.handleUpdated} // Pass the callback to handle user update
+                        onUserUpdated={this.handleUserUpdated} // Pass handleUserUpdated as prop
+                    />}
+                {this.state.isOpenModalAddDentist && // Add the new modal
+                    <ModelAddDentist
+                        isOpen={this.state.isOpenModalAddDentist}
+                        toggleFromParent={this.toggleAddDentistModal}
+                        onDentistAdded={this.handleUserUpdated} // Handle dentist added
+                    />}
+                <div className='mt-100'>Manage CRUD User</div>
+                <button className='btn btn-primary px-3' onClick={this.handleAddNewUser}>
+                    Add new user
+                </button>
+                <button className='btn btn-primary px-3 ml-2' onClick={this.handleAddNewDentist}>
+                    Add new dentist
+                </button>
+                <div className='user-table mt-30 mx-10'>
+                    <table id='customers'>
+                        <thead>
+                            <tr>
+                                <th>AccountID</th>
+                                <th>UserName</th>
+                                <th>Phone</th>
+                                <th>Email</th>
+                                <th>RoleID</th>
+                                <th>IsActive</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {arrUser && arrUser.map((item, index) => {
+                                return (
+                                    <tr key={index}>
+                                        <td>{item.AccountID}</td>
+                                        <td>{item.UserName}</td>
+                                        <td>{item.Phone}</td>
+                                        <td>{item.Email}</td>
+                                        <td>{item.RoleID}</td>
+                                        <td>{item.IsActive.data}</td>
+                                        <td>
+                                            <button onClick={() => { this.handleEdit(item) }}>Edit</button>
+                                            <button onClick={() => { this.handleDelete(item) }}>Delete</button>
+                                        </td>
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
                     </table>
                 </div>
             </div>
-
-
-        )
+        );
     }
 }
 
-
 const mapStateToProps = state => {
-    return {
-    };
+    return {};
 };
 
 const mapDispatchToProps = dispatch => {
-    return {
-    };
+    return {};
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(UserManage);

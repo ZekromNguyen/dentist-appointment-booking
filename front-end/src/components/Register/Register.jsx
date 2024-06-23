@@ -14,12 +14,14 @@ export default function Register(props) {
     const [password, setPassword] = useState("");
     const [email, setEmail] = useState("");
     const [phone, setPhone] = useState("");
+    const [name, setName] = useState("");
 
     const defaultValidInput = {
         isValidUsername: true,
         isValidPassword: true,
         isValidEmail: true,
         isValidPhone: true,
+        isValidName: true
     }
     const [isShowPassword, setIsShowPassword] = useState(false);
     const [checkinput, SetCheckInput] = useState(defaultValidInput);
@@ -53,6 +55,10 @@ export default function Register(props) {
             toast.error("Số điện thoại bắt buộc")
             return false;
         }
+        if (!name) {
+            toast.error("Tên người dùng bắt buộc")
+            return false;
+        }
 
         return true;
     }
@@ -62,7 +68,7 @@ export default function Register(props) {
 
         if (check === true) {
             try {
-                const response = await register(username, password, email, phone);
+                const response = await register(username, password, email, phone, name);
                 if (response && response.status === 200) {
                     navigate("/login");
                     toast.success(response.data.message);
@@ -126,6 +132,16 @@ export default function Register(props) {
                         value={phone}
                         onChange={(event) => setPhone(event.target.value)} />
                 </div>
+
+                {/* name */}
+                <div className="div-name">
+                    <input type="text"
+                        className={checkinput.isValidName ? "name form-control" : "name form-control is-invalid"} placeholder="Nhập tên của bạn..."
+                        value={name}
+                        onChange={(event) => setName(event.target.value)}
+                    />
+                </div>
+
 
                 <div className="div-sign-up">
                     <button onClick={() => handleRegister()}>

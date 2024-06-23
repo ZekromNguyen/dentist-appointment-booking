@@ -1,13 +1,15 @@
 import axios from "axios";
 
 // Đăng ký tài khoản
-const register = async (username, password, email, phone) => {
+
+const register = async (username, password, email, phone, name) => {
     try {
         const response = await axios.post("http://localhost:3000/register", {
             username,
             password,
             email,
             phone,
+            name,
         });
         return response;
     } catch (error) {
@@ -149,6 +151,104 @@ const getAllUSer = async (AccountID) => {
     }
 };
 
+const deleteUser = async (id) => {
+    try {
+        const response = await axios.delete('http://localhost:3000/deleteUser', {
+            data: { AccountID: id }
+        });
+
+        // Assuming the server returns JSON data
+        return response.data;
+    } catch (error) {
+        // Handle error, log it, etc.
+        console.error('Error deleting user:', error);
+        throw error; // Optional: re-throw the error to be handled upstream
+    }
+};
+
+const handelAddUser = async ({ username, password, email, phone }) => {
+    try {
+        const response = await axios.post("http://localhost:3000/handleCreateUser", {
+            username,
+            password,
+            email,
+            phone,
+        });
+        return response.data; // Assuming the backend returns appropriate data
+    } catch (error) {
+        console.error("Error during registration:", error);
+        throw error;
+    }
+};
+
+const handleEditUser = async (userData) => {
+    try {
+        const response = await axios.put("http://localhost:3000/editUser", userData);
+        return response.data; // Assuming backend returns a JSON response
+    } catch (error) {
+        throw error; // Propagate the error for handling in the calling code
+    }
+};
+
+// Đăng ký tài khoản
+const registerDentist = async (username, password, email, phone, dentistName, clinicID, roleID) => {
+    try {
+        const response = await axios.post("http://localhost:3000/registerDentist", {
+            username,
+            password,
+            email,
+            phone,
+            dentistName,
+            clinicID,
+            roleID // Include roleID in the request body
+        });
+        return response;
+    } catch (error) {
+        console.error("Error during registration:", error);
+        throw error;
+    }
+};
+
+const getAllDentist = async (DentistID) => {
+    try {
+        const response = await axios.get(
+            `http://localhost:3000/handleGetAllDentist?id=${DentistID}`,
+            {
+                params: { DentistID: DentistID },
+            }
+        );
+        return response.data; // Return the data from the response
+    } catch (error) {
+        throw new Error("Error getting AccountID from account: " + error.message);
+    }
+};
+// Xóa bác sĩ nha khoa
+const deleteDentist = async (DentistID) => {
+    try {
+        const response = await axios.delete('http://localhost:3000/handleDeleteDentist', {
+            data: { DentistID: DentistID }
+        });
+
+        // Assuming the server returns JSON data
+        return response.data;
+    } catch (error) {
+        // Handle error, log it, etc.
+        console.error('Error deleting dentist:', error);
+        throw error; // Optional: re-throw the error to be handled upstream
+    }
+};
+// Chỉnh sửa bác sĩ nha khoa
+const handleEditDentist = async (dentistData) => {
+    try {
+        const response = await axios.put("http://localhost:3000/handleEditDentist", dentistData);
+        return response.data; // Assuming backend returns a JSON response
+    } catch (error) {
+        throw error; // Propagate the error for handling in the calling code
+    }
+};
+
+
+/////////////////////////
 export {
     register,
     login,
@@ -159,5 +259,14 @@ export {
     resetEmail,
     forgotPassword,
     checkSession,
-    logout
+    logout,
+    deleteUser,
+    handelAddUser,
+    handleEditUser,
+    registerDentist,
+    getAllDentist,
+    deleteDentist,
+    handleEditDentist
 };
+
+

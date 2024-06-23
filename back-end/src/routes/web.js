@@ -27,15 +27,28 @@ let initAllWebRoutes = (app) => {
   router.get("/pageDentist", AccountController.showDentistPage);
   router.get("/schedule", DentistController.getAvailableSlot);
   router.post("/schedule", DentistController.createScheduleForDentist);
-  router.get("/getAllUser", AccountController.handleGetAllUser);
-  router.put("/editUser", AccountController.handleEditUser);
-  router.delete("/deleteUser", AccountController.handleDeleteUser);
   router.post("/logout", AccountController.logout);
   router.get("/get-session", AccountController.getSession);
   router.get("/booking", BookingController.getDentistSchedules);
   router.post("/booking", BookingController.createBooking);
   router.get("/slotsByDate", BookingController.getSlotsByDateByDentistService);
-  
+
+
+
+  ///////////////////////////user
+  router.post("/handleCreateUser", AccountController.handleCreateUser);
+  router.get("/getAllUser", AccountController.handleGetAllUser);
+  router.put("/editUser", AccountController.handleEditUser);
+  router.delete("/deleteUser", AccountController.handleDeleteUser);
+
+  /////////////////////////////dentist
+  router.get("/handleGetAllDentist", AccountController.handleGetAllDentist);
+  router.delete("/handleDeleteDentist", AccountController.handleDeleteDentist);
+  router.put("/handleEditDentist", AccountController.handleEditDentist);
+
+
+
+
   /**************************Nam New API***************/
   router.get("/getAllDentists", AccountController.handleGetAllDentists);
   router.get("/scheduleSlot", DentistController.getAvailableSlotN);
@@ -45,7 +58,7 @@ let initAllWebRoutes = (app) => {
 
 
 
-
+  /////////////////// payment
   router.get("/payment/:bookingId", BookingController.showPaymentPage);
   router.post("/payment", BookingController.processPayment);
 

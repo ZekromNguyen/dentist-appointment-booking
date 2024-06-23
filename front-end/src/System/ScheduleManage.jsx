@@ -90,9 +90,9 @@ export default function ScheduleManage(props) {
     }
 
     // Check if the dentist already has a schedule on the selected date and time slot
-    const existingSchedule = schedules.find(schedule => 
-      schedule.DentistID === selectedDentist && 
-      schedule.Date === selectedDate && 
+    const existingSchedule = schedules.find(schedule =>
+      schedule.DentistID === selectedDentist &&
+      schedule.Date === selectedDate &&
       selectedSlots.includes(schedule.SlotID)
     );
 
@@ -123,10 +123,10 @@ export default function ScheduleManage(props) {
   };
 
   // Filter available slots based on existing schedules
-  const filteredSlots = slots.filter(slot => 
-    !schedules.some(schedule => 
-      schedule.DentistID === selectedDentist && 
-      schedule.Date === selectedDate && 
+  const filteredSlots = slots.filter(slot =>
+    !schedules.some(schedule =>
+      schedule.DentistID === selectedDentist &&
+      schedule.Date === selectedDate &&
       schedule.SlotID === slot.SlotID
     )
   );

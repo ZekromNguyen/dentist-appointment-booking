@@ -396,7 +396,7 @@ class AccountController {
       res.status(500).send("Error adding schedule: " + error.message);
     }
   }
-
+  ////////////////////////////////////
   async handleGetAllUser(req, res) {
     let AccountID = req.query.AccountID; // All, id
     if (!AccountID) {
@@ -415,15 +415,67 @@ class AccountController {
     });
   }
 
+  async handleCreateUser(req, res) {
+    const { username, password, email, phone } = req.body;
+    const roleID = 1; // Assuming roleID for customer
+    const saltRounds = 10; // Number of salt rounds
+
+    try {
+      if (!username || !password || !email || !phone) {
+        return res.status(400).json({ message: "All fields are required" });
+      }
+
+      // Validate password length or complexity if needed
+      if (password.length < 8) {
+        return res.status(400).json({ message: "Password must be at least 8 characters long" });
+      }
+
+      // Hash the password using bcrypt
+      const hashedPassword = bcrypt.hashSync(password, saltRounds);
+
+      // Call your service method to create the account
+      const newAccount = await AccountService.createAccountWithoutVerification({
+        username,
+        hashedPassword,
+        phone,
+        email,
+        roleID,
+      });
+
+      if (newAccount) {
+        return res.status(200).json({ message: "Account created successfully" });
+      }
+    } catch (err) {
+      // Handle specific errors if needed
+      if (err.message === "Email already exists") {
+        return res.status(400).json({ error: "Email already taken" });
+      }
+      if (err.message === "Username already exists") {
+        return res.status(400).json({ error: "Username already taken" });
+      }
+      // Handle generic error
+      res.status(500).json({ message: "Database insert error" });
+    }
+  }
+
   async handleDeleteUser(req, res) {
-    if (!req.body.AccountID) {
-      return res.status(500).json({
+    const { AccountID } = req.body;
+    if (!AccountID) {
+      return res.status(400).json({
         errCode: 1,
         errMessage: "Missing required parameter",
       });
     }
-    let message = await AccountService.deleteUser(req.body.AccountID);
-    return res.status(200).json(message);
+    try {
+      const message = await AccountService.deleteUser(AccountID);
+      return res.status(200).json(message);
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      return res.status(500).json({
+        errCode: 1,
+        errMessage: "Error deleting user",
+      });
+    }
   }
 
   async handleEditUser(req, res) {
@@ -459,6 +511,54 @@ class AccountController {
     }
   }
 
+  async handleGetAllDentist(req, res) {
+    let DentistID = req.query.DentistID;
+    if (!DentistID) {
+      return res.status(200).json({
+        errCode: 1,
+        errMessage: "Missing required parameter",
+        account: []
+      })
+    }
+    let account = await AccountService.getAllDentist(DentistID);
+    return res.status(200).json({
+      errCode: 0,
+      errMessage: "OK",
+      account,
+    })
+  }
+
+  async handleDeleteDentist(req, res) {
+    const { DentistID } = req.body;
+    if (!DentistID) {
+      return res.status(400).json({ errCode: 1, errMessage: "DentistID is required" });
+    }
+    try {
+      const message = await AccountService.deleteDentist(DentistID);
+      return res.status(200).json(message);
+    } catch (error) {
+      console.error("Error deleting dentist:", error);
+      return res.status(500).json({ errCode: 1, errMessage: "Error deleting dentist" });
+    }
+  }
+
+  async handleEditDentist(req, res) {
+    try {
+      const data = req.body;
+      if (!data.DentistID) {
+        return res.status(400).json({ errCode: 2, errMessage: "DentistID is required" });
+      }
+      const message = await AccountService.updateDentist(data);
+      if (message.errCode !== 0) {
+        return res.status(400).json(message);
+      }
+      return res.status(200).json(message);
+    } catch (error) {
+      console.error("Error updating dentist:", error);
+      return res.status(500).json({ errCode: 1, errMessage: "Error updating dentist" });
+    }
+  }
+
   //****************************************** New API Get ALL Dentist (Nam )****************************** */
   async handleGetAllDentists(req, res) {
     try {
@@ -475,7 +575,7 @@ class AccountController {
     }
   }
 
-  async getCustomerId(req,res){
+  async getCustomerId(req, res) {
     try {
       const { AccountID } = req.query;
 
