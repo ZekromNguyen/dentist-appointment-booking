@@ -1,12 +1,9 @@
 import { Sequelize } from "sequelize";
-// import AvailableSlot from "../model/availableSlot";
-// import DentistSchedule1 from "../model/dentistSchedule1";
+
 import { AvailableSlot, DentistSchedule, Dentist } from "../model/model";
-import Booking from "../model/booking";
-import BookingDetail from "../model/bookingDetail";
 
 class DentistService {
-  async getDentist() {
+  async getAllDentist() {
     try {
       const dentists = await Dentist.findAll();
       const plainDentists = dentists.map((dentist) => dentist.toJSON());
@@ -32,7 +29,7 @@ class DentistService {
     try {
       const newSchedule = await DentistSchedule.create({
         DentistID,
-        SlotID :SlotId,
+        SlotID: SlotId,
         Date: date,
       });
       return newSchedule;
@@ -68,7 +65,7 @@ class DentistService {
         }
       );
       return result;
-      console.log(`Successfully updated ${id} schedules to 'Booked' status.`);
+      console.log(`Successfully updated ${id} schedules to Booked status.`);
     } catch (error) {
       console.error("Error in updateStatusDentistSchedule method: ", error);
       throw error;

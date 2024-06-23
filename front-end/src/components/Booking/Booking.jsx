@@ -1,10 +1,9 @@
-
-
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './Booking.scss';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { checkSession } from '../../Service/userService';
 
 const Booking = () => {
   const [dentists, setDentists] = useState([]);
@@ -19,8 +18,23 @@ const Booking = () => {
   const [error, setError] = useState('');
   const [bookingDetails, setBookingDetails] = useState(null);
   const currentDate = new Date().toISOString().split('T')[0];
-
+  const navigate = useNavigate();
   const priceBooking = 50000; // Define the booking price here
+
+  useEffect(() => {
+    // Kiểm tra session khi component được mount
+    const fetchSession = async () => {
+      const customerId = await checkSession();
+      if (customerId === null) {
+        setCustomerId(null);
+        navigate('/');
+      }
+      if (customerId) {
+        setCustomerId(customerId);
+      }
+    };
+    fetchSession();
+  }, []);
 
   useEffect(() => {
     const fetchDentists = async () => {
@@ -59,25 +73,7 @@ const Booking = () => {
     fetchAvailableSlots();
   }, [selectedDentist, selectedDate]);
 
-  useEffect(() => {
-    const fetchCustomerID = async () => {
-      try {
-        const account = JSON.parse(localStorage.getItem('account'));
-        if (account && account.id) {
-          const response = await axios.get('http://localhost:3000/getCustomerId', {
-            params: { AccountID: account.id }
-          });
-          setCustomerId(response.data);
-        } else {
-          setCustomerId('');
-        }
-      } catch (error) {
-        console.error('Error fetching customer ID:', error);
-        setCustomerId('');
-      }
-    };
-    fetchCustomerID();
-  }, []);
+
 
   useEffect(() => {
     const fetchSchedules = async () => {
@@ -92,7 +88,7 @@ const Booking = () => {
     fetchSchedules();
   }, []);
 
-  const handleTimeClick = (slotId, scheduleId) => {
+  const handleTimeClick = (scheduleId) => {
     setSelectedTime(scheduleId);
   };
 
@@ -116,14 +112,14 @@ const Booking = () => {
         price: parseFloat(priceBooking),
         dentist: selectedDentist,
         date: selectedDate,
-        slotId: selectedTime
+        scheduleId: selectedTime
       });
       if (response.status === 200) {
         setBookingMessage('Booking successfully created!');
-        
+
         // Ẩn slot đã chọn bằng cách cập nhật lại availableSlots
         setAvailableSlots(prevSlots => prevSlots.filter(slot => slot.ScheduleID !== selectedTime));
-        
+
         setSelectedTime('');
       } else {
         setBookingMessage('Failed to create booking');
@@ -176,7 +172,7 @@ const Booking = () => {
               <div
                 key={availableslot.ScheduleID}
                 className={`hour-slot ${selectedTime === availableslot.ScheduleID ? 'selected' : ''}`}
-                onClick={() => handleTimeClick(availableslot.SlotID, availableslot.ScheduleID)}
+                onClick={() => handleTimeClick(availableslot.ScheduleID)}
               >
                 {availableslot.AvailableSlot.Time}
               </div>
@@ -227,5 +223,3 @@ const Booking = () => {
 };
 
 export default Booking;
-
-
