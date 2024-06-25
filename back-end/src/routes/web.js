@@ -33,8 +33,19 @@ let initAllWebRoutes = (app) => {
   router.get("/booking", BookingController.getDentistSchedules);
   router.post("/booking", BookingController.createBooking);
   router.get("/slotsByDate", BookingController.getSlotsByDateByDentistService);
+  router.get(
+    "/getDentistSchedule",
+    DentistController.getDentistScheduleByDentistId
+  );
+  //get lịch của 1 dentist nếu đã có booking thì sẽ hiện cả CustomerName đã booking
+  //ex: /getDentistSchedule?dentistId=1
 
-
+  router.get(
+    "/getBookingDetail",
+    BookingController.getDentistNameByBookingDetail
+  );
+  //get CustomerName và SlotTime customer DentistName của 1 bookingdetail nếu đã booking
+  //ex: /getBookingDetail?BookingDetailID=1
 
   ///////////////////////////user
   router.post("/handleCreateUser", AccountController.handleCreateUser);
@@ -48,13 +59,10 @@ let initAllWebRoutes = (app) => {
   router.put("/handleEditDentist", dentistController.handleEditDentist);
 
   /**************************Nam New API***************/
-  router.get("/getAllDentists", AccountController.handleGetAllDentists);
+  router.get("/getAllDentists", DentistController.getAllDentist);
   router.get("/scheduleSlot", DentistController.getAvailableSlotN);
   router.get("/scheduleDentist", DentistController.getDentistSchedules);
   router.get("/getCustomerId", AccountController.getCustomerId);
-
-
-
 
   router.get("/payment/:bookingId", BookingController.showPaymentPage);
   router.post("/payment", BookingController.processPayment);

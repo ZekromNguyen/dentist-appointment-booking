@@ -109,12 +109,15 @@
         <div class="form-group">
             <label for="dentist">Select Dentist:</label>
             <select id="dentistId" name="dentistId" required>
-                <option value="" disabled selected>Select a dentist</option>
-                <% dentists.forEach(dentist=> { %>
-                    <option value="<%= dentist.DentistID %>">
-                        <%= dentist.DentistName %>
-                    </option>
-                    <% }) %>
+                <% if (Array.isArray(dentists) && dentists.length> 0) { %>
+                    <% dentists.forEach(dentist=> { %>
+                        <option value="<%= dentist.DentistID %>">
+                            <%= dentist.DentistName %>
+                        </option>
+                        <% }); %>
+                            <% } else { %>
+                                <option value="" disabled>No dentists available</option>
+                                <% } %>
             </select>
             <br>
         </div>

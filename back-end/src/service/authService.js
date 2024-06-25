@@ -1,10 +1,12 @@
 import { Sequelize } from "sequelize";
-import Account from "../model/account";
-import AccountControl from "../controllers/authController";
-import DentistSchedule from "../model/dentistSchedule";
 import bcrypt from "bcrypt";
-import Dentist from "../model/dentist";
-import Customer from "../model/customer";
+import {
+  Dentist,
+  Customer,
+  ClinicOwner,
+  DentistSchedule,
+  Account,
+} from "../model/model";
 
 class AccountService {
   async createAccountCustomer(
@@ -31,10 +33,10 @@ class AccountService {
       });
       if (existingAccount) {
         if (existingAccount.UserName === username) {
-          throw new Error("Username already exists");
+          return { error: "Username already exists" };
         }
         if (existingAccount.Email === email) {
-          throw new Error("Email already exists");
+          return { error: "Email already exists" };
         }
       }
       const newAccount = await Account.create({
@@ -74,10 +76,10 @@ class AccountService {
       });
       if (existingAccount) {
         if (existingAccount.UserName === username) {
-          throw new Error("Username already exists");
+          return { error: "Username already exists" };
         }
         if (existingAccount.Email === email) {
-          throw new Error("Email already exists");
+          return { error: "Email already exists" };
         }
       }
       const newAccount = await Account.create({
@@ -122,6 +124,26 @@ class AccountService {
       throw error;
     }
   }
+  async createClinicOwner(clinicId, clinicOwnerName, accountId) {
+    try {
+      console.log("Create clinicOwner with data", {
+        clinicId,
+        clinicOwnerName,
+        accountId,
+      });
+      const newClinicOwner = await ClinicOwner.create({
+        ClinicID: clinicId,
+        ClinicOWnerName: clinicOwnerName,
+        AccountID: accountId,
+      });
+      if (!newClinicOwner) {
+        console.log("Can not create new clinicOwner");
+      }
+      return newClinicOwner;
+    } catch (err) {
+      throw err;
+    }
+  }
   async getAccountByUserNameOrEmail(usernameOrEmail) {
     const account = await Account.findOne({
       where: {
@@ -152,8 +174,45 @@ class AccountService {
     if (!bcrypt.compareSync(password, account.Password)) {
       return { error: "Incorrect password" };
     }
+    if (account.IsActive === false && account.verificationToken == !null) {
+      return {
+        error:
+          "Your account is not active, please check your mail to active account",
+      };
+    }
     return account;
   }
+
+  async getCustomerByAccountId(id) {
+    const customer = await Customer.findOne({
+      where: { AccountID: id },
+    });
+    if (!customer) {
+      console.log(`Customer with id ${id} not found`);
+    }
+    return customer;
+  }
+
+  async getDentistByAccountId(id) {
+    const dentist = await Dentist.findOne({
+      where: { AccountID: id },
+    });
+    if (!dentist) {
+      console.log(`Dentist with AccountId ${id} not found`);
+    }
+    return dentist;
+  }
+
+  async getClinicOwnerByAccountId(id) {
+    const clinicOwner = await ClinicOwner.findOne({
+      where: { AccountID: id },
+    });
+    if (!clinicOwner) {
+      console.log(`ClinicOwner with AccountId ${id} not found`);
+    }
+    return clinicOwner;
+  }
+
   async getTokenVerify(token) {
     const account = await Account.findOne({
       where: { verificationToken: token },
@@ -201,7 +260,7 @@ class AccountService {
     await account.save();
     return account;
   }
-  async resetNewPassword() { }
+  async resetNewPassword() {}
 
   async createSchedule({ DentistID, day, stime, etime }) {
     try {
@@ -218,7 +277,6 @@ class AccountService {
       throw error;
     }
   }
-
 
   //////////////////////////////////////////////////////////
   //lấy tất cả người dùng
@@ -264,7 +322,13 @@ class AccountService {
     }
   }
 
-  async createAccountWithoutVerification({ username, hashedPassword, phone, email, roleID }) {
+  async createAccountWithoutVerification({
+    username,
+    hashedPassword,
+    phone,
+    email,
+    roleID,
+  }) {
     try {
       const existingAccount = await Account.findOne({
         where: {
@@ -296,7 +360,6 @@ class AccountService {
       throw error;
     }
   }
-
 
   async hashUserPassword(password) {
     try {
@@ -350,7 +413,8 @@ class AccountService {
       user.UserName = data.UserName || user.UserName;
       user.Phone = data.Phone || user.Phone;
       user.Email = data.Email || user.Email;
-      user.IsActive = data.IsActive !== undefined ? data.IsActive : user.IsActive;
+      user.IsActive =
+        data.IsActive !== undefined ? data.IsActive : user.IsActive;
       user.RoleID = data.RoleID || user.RoleID;
 
       await user.save();
@@ -365,7 +429,7 @@ class AccountService {
     }
   }
   //**********************************New API Get ALL Dentist****************************8 */
-  async getAllDentists(DentistID) {
+  async getAllDentists() {
     try {
       const dentists = await Dentist.findAll({
         //    attributes: ['DentistID', 'DentistName', 'AccountID', 'ClinicID', 'Description'],
@@ -373,37 +437,34 @@ class AccountService {
 
       return dentists;
     } catch (error) {
-      console.error('Error in getAllDentists:', error);
+      console.error("Error in getAllDentists:", error);
       throw error;
     }
   }
 
   //------------------------------New API Get CustomerId from AccountID----------------------------
 
-
   async getCustomerId(accountId) {
     try {
       // Thực hiện truy vấn lấy thông tin từ bảng customer và account
       const customers = await Customer.findOne({
-        attributes: ['customerId', 'customerName'],
+        attributes: ["customerId", "customerName"],
         where: {},
         include: {
           model: Account,
           where: {
-            AccountID: accountId
+            AccountID: accountId,
           },
-          attributes: [] // Để chỉ lấy thông tin từ bảng customer, không lấy từ bảng Account
-        }
+          attributes: [], // Để chỉ lấy thông tin từ bảng customer, không lấy từ bảng Account
+        },
       });
 
       return customers;
     } catch (error) {
-      console.error('Error fetching customer information:', error);
-      throw new Error('Error fetching customer information');
+      console.error("Error fetching customer information:", error);
+      throw new Error("Error fetching customer information");
     }
   }
-
-
 }
 
 export default new AccountService();

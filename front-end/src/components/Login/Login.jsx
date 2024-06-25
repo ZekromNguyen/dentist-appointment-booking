@@ -210,9 +210,9 @@ export default function Login() {
                             onChange={(event) => setPassword(event.target.value)} />
                         <div onClick={() => setIsShowPassword(!isShowPassword)} className="icon-container">
                             {isShowPassword ? (
-                                <FaEye className="icon-open-eye col-12 col-sm-4" />
+                                <FaEye className="icon-open-eye col-12 col-sm-3" />
                             ) : (
-                                <FaEyeSlash className="icon-open-eye col-12 col-sm-4" />
+                                <FaEyeSlash className="icon-open-eye col-12 col-sm-3" />
                             )}
                         </div>
                     </div>

@@ -1,4 +1,3 @@
-import dentistService from "../service/dentistService";
 import DentistService from "../service/dentistService";
 
 class DentistController {
@@ -7,7 +6,7 @@ class DentistController {
     try {
       const slots = await DentistService.getAvailableSlot();
       const schedules = await DentistService.getDentistSchedules();
-      const dentists = await DentistService.getAllDentist();
+      const dentists = await DentistService.getAllDentist1();
       console.log(slots);
       console.log(schedules);
       console.log(dentists);
@@ -43,7 +42,30 @@ class DentistController {
     }
   }
 
-
+  // Hàm get lịch của 1 dentist nếu có customer booking thì hiện cả tên customer
+  async getDentistScheduleByDentistId(req, res) {
+    const { dentistId } = req.query;
+    console.log(dentistId);
+    if (!dentistId) {
+      res.status(400).json({ message: "DentistId is required" });
+    }
+    try {
+      const newDentistScheduleByDentistId =
+        await DentistService.getDentistScheduleByDentistId(dentistId);
+      if (
+        !newDentistScheduleByDentistId ||
+        newDentistScheduleByDentistId.length === 0
+      ) {
+        return res.status(404).json({ message: "No dentist found" });
+      }
+      res
+        .status(200)
+        .json({ message: "Success", newDentistScheduleByDentistId });
+    } catch (error) {
+      console.error("Error fetching getDentistScheduleByDentistID", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  }
 
   //**************************** ADD New API***********************************************/
 
@@ -68,8 +90,8 @@ class DentistController {
   }
   async getAllDentist(req, res) {
     try {
-      const dentists = await DentistService.getAllDentist();
-
+      const dentists = await DentistService.getAllDentist1();
+      console.log(dentists);
       if (!dentists || dentists.length === 0) {
         return res.status(404).json({ message: "No dentists found" });
       }
@@ -81,7 +103,6 @@ class DentistController {
     }
   }
 
-
   //////////////////////////////////////
   async handleGetAllDentist(req, res) {
     let DentistID = req.query.DentistID;
@@ -89,28 +110,32 @@ class DentistController {
       return res.status(200).json({
         errCode: 1,
         errMessage: "Missing required parameter",
-        account: []
-      })
+        account: [],
+      });
     }
-    let account = await dentistService.getAllDentist(DentistID);
+    let account = await DentistService.getAllDentist(DentistID);
     return res.status(200).json({
       errCode: 0,
       errMessage: "OK",
       account,
-    })
+    });
   }
 
   async handleDeleteDentist(req, res) {
     const { DentistID } = req.body;
     if (!DentistID) {
-      return res.status(400).json({ errCode: 1, errMessage: "DentistID is required" });
+      return res
+        .status(400)
+        .json({ errCode: 1, errMessage: "DentistID is required" });
     }
     try {
-      const message = await dentistService.deleteDentist(DentistID);
+      const message = await DentistService.deleteDentist(DentistID);
       return res.status(200).json(message);
     } catch (error) {
       console.error("Error deleting dentist:", error);
-      return res.status(500).json({ errCode: 1, errMessage: "Error deleting dentist" });
+      return res
+        .status(500)
+        .json({ errCode: 1, errMessage: "Error deleting dentist" });
     }
   }
 
@@ -118,19 +143,21 @@ class DentistController {
     try {
       const data = req.body;
       if (!data.DentistID) {
-        return res.status(400).json({ errCode: 2, errMessage: "DentistID is required" });
+        return res
+          .status(400)
+          .json({ errCode: 2, errMessage: "DentistID is required" });
       }
-      const message = await dentistService.updateDentist(data);
+      const message = await DentistService.updateDentist(data);
       if (message.errCode !== 0) {
         return res.status(400).json(message);
       }
       return res.status(200).json(message);
     } catch (error) {
       console.error("Error updating dentist:", error);
-      return res.status(500).json({ errCode: 1, errMessage: "Error updating dentist" });
+      return res
+        .status(500)
+        .json({ errCode: 1, errMessage: "Error updating dentist" });
     }
   }
-
-
 }
 export default new DentistController();

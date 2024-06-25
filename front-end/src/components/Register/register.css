@@ -11,7 +11,7 @@
     background-image: url(../../assets/picture/picuture_imgDoctor/clinic.webp);
     background-repeat: no-repeat;
     background-size: cover;
-    height: 700px;
+    height: 100vh;
     width: 100%;
 }
 
@@ -61,6 +61,20 @@
         background-color: aquamarine;
     }
 }
+.name {
+    background-color: azure;
+    width: 300px;
+    height: 50px;
+    font-size: 20px;
+    margin-bottom: 20px;
+    font-family: sans-serif;
+    padding: 10px;
+    border-radius: 10px;
+
+    &:hover {
+        background-color: aquamarine;
+    }
+}
 
 .div-phone {
     display: flex;
@@ -84,6 +98,7 @@
 }
 
 .div-sign-up {
+    margin: 20px;
     cursor: pointer;
     display: flex;
     justify-content: center;

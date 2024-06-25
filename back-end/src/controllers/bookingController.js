@@ -4,7 +4,7 @@ class BookingController {
   //Hàm lấy lịch dentist đã tạo cho customer book
   async getDentistSchedules(req, res) {
     try {
-      const dentists = await DentistService.getDentist();
+      const dentists = await DentistService.getAllDentist1();
       res.render("booking", { dentists, schedules: [] });
     } catch (error) {
       console.error("Error fetching dentist schedules:", error);
@@ -64,6 +64,30 @@ class BookingController {
     } catch (error) {
       console.error("Error creating booking in controller:", error);
       res.status(500).send("Internal Server Error");
+    }
+  }
+  //Hàm get dentistName với Slot time của bookingDetail
+  async getDentistNameByBookingDetail(req, res) {
+    const { BookingDetailID } = req.query;
+    console.log(BookingDetailID);
+    if (!BookingDetailID) {
+      res.status(400).json({ message: "BookingDetailID is required" });
+    }
+    try {
+      const newBookingDetailByBookingDetailID =
+        await BookingService.getDentistNameByBookingDetail(BookingDetailID);
+      if (
+        !newBookingDetailByBookingDetailID ||
+        newBookingDetailByBookingDetailID.length === 0
+      ) {
+        return res.status(404).json({ message: "No dentist found" });
+      }
+      res
+        .status(200)
+        .json({ message: "Success", newBookingDetailByBookingDetailID });
+    } catch (error) {
+      console.error("Error fetching getDentistNameByBookingDetail", error);
+      res.status(500).json({ message: "Internal server error" });
     }
   }
   async showPaymentPage(req, res) {

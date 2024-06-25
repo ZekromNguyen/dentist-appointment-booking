@@ -1,9 +1,16 @@
 import { Sequelize } from "sequelize";
 
-import { AvailableSlot, DentistSchedule, Dentist } from "../model/model";
+import {
+  AvailableSlot,
+  DentistSchedule,
+  Booking,
+  BookingDetail,
+  Customer,
+  Dentist,
+} from "../model/model";
 
 class DentistService {
-  async getAllDentist() {
+  async getAllDentist1() {
     try {
       const dentists = await Dentist.findAll();
       const plainDentists = dentists.map((dentist) => dentist.toJSON());
@@ -65,9 +72,45 @@ class DentistService {
         }
       );
       return result;
-      console.log(`Successfully updated ${id} schedules to Booked status.`);
     } catch (error) {
       console.error("Error in updateStatusDentistSchedule method: ", error);
+      throw error;
+    }
+  }
+  async getDentistScheduleByDentistId(dentistId) {
+    try {
+      const dentistSchedule = await DentistSchedule.findAll({
+        where: { DentistID: dentistId },
+        include: [
+          {
+            model: Dentist,
+            attributes: ["DentistName"],
+          },
+          {
+            model: AvailableSlot,
+            attributes: ["Time"],
+          },
+          {
+            model: BookingDetail,
+            attributes: ["BookingDetailID", "BookingID"],
+            include: {
+              model: Booking,
+              attributes: ["CustomerID"],
+              include: {
+                model: Customer,
+                attributes: ["CustomerName"],
+              },
+            },
+          },
+        ],
+      });
+
+      const plainDentistSchedule = dentistSchedule.map((schedule) =>
+        schedule.toJSON()
+      );
+      return plainDentistSchedule;
+    } catch (error) {
+      console.error("Error in getDentistScheduleByDentistId method: ", error);
       throw error;
     }
   }
@@ -84,7 +127,7 @@ class DentistService {
             "DentistID",
             "DentistName",
             "ClinicID",
-            "Description"
+            "Description",
           ],
         });
       } else if (DentistID) {
@@ -96,7 +139,7 @@ class DentistService {
             "DentistID",
             "DentistName",
             "ClinicID",
-            "Description"
+            "Description",
           ],
         });
       }
@@ -131,7 +174,9 @@ class DentistService {
         return { errCode: 2, errMessage: "DentistID is required" };
       }
 
-      const dentist = await Dentist.findOne({ where: { DentistID: data.DentistID } });
+      const dentist = await Dentist.findOne({
+        where: { DentistID: data.DentistID },
+      });
       if (!dentist) {
         return { errCode: 1, errMessage: "Dentist not found" };
       }
@@ -147,7 +192,6 @@ class DentistService {
       throw error;
     }
   }
-
 }
 
 export default new DentistService();

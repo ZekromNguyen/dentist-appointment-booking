@@ -2,7 +2,6 @@ import AccountService from "../service/authService";
 import transporter from "../config/email";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
-import authService from "../service/authService";
 class AccountController {
   async login(req, res) {
     const { email, password } = req.body;
@@ -14,7 +13,11 @@ class AccountController {
       if (account.error) {
         return res.status(400).json({ error: account.error });
       }
-      if (!account.IsActive) {
+      if (
+        !account.IsActive &&
+        account.roleID === 1 &&
+        account.verificationToken === null
+      ) {
         // Generate reset token
         const verificationToken = crypto.randomBytes(32).toString("hex");
         await AccountService.createResetToken(account.Email, verificationToken);
@@ -33,23 +36,76 @@ class AccountController {
           if (error) {
             return res.status(500).send(error.toString());
           }
-          res.status(200).send(`Your account is inactive. A reset password email has been sent to: ${account.Email}`);
+          res
+            .status(200)
+            .send(
+              `Your account is inactive. A reset password email has been sent to: ${account.Email}`
+            );
         });
 
         return;
       }
-      req.session.user = {
-        user: account.UserName,
-        id: account.AccountID,
-        RoleID: account.RoleID,
-        IsActive: account.IsActive,
-      };
-      if (req.session.user) {
-        res
-          .status(200)
-          .json({ message: "Login successfully", user: req.session.user });
-      } else {
-        res.status(500).json({ message: "Failed to set session" });
+      const roleID = account.RoleID;
+      switch (roleID) {
+        case 1:
+          const customer = await AccountService.getCustomerByAccountId(
+            account.AccountID
+          );
+          req.session.user = {
+            user: customer.CustomerName,
+            id: account.AccountID,
+            customerId: customer.CustomerID,
+            RoleID: roleID,
+            IsActive: account.IsActive,
+          };
+          res
+            .status(200)
+            .json({ message: "Login successfully", user: req.session.user });
+          break;
+        case 2:
+          const dentist = await AccountService.getDentistByAccountId(
+            account.AccountID
+          );
+          req.session.user = {
+            user: dentist.DentistName,
+            id: account.AccountID,
+            dentistId: dentist.DentistID,
+            RoleID: roleID,
+            IsActive: account.IsActive,
+          };
+          res
+            .status(200)
+            .json({ message: "Login successfully", user: req.session.user });
+          break;
+        case 3:
+          const clinicOwner = await AccountService.getClinicOwnerByAccountId(
+            account.AccountID
+          );
+          req.session.user = {
+            user: clinicOwner.ClinicOWnerName,
+            id: account.AccountID,
+            clinicOwnerId: clinicOwner.ClinicOwnerID,
+            RoleID: roleID,
+            IsActive: account.IsActive,
+          };
+          res
+            .status(200)
+            .json({ message: "Login successfully", user: req.session.user });
+          break;
+        case 4:
+          req.session.user = {
+            user: account.UserName,
+            id: account.AccountID,
+            RoleID: roleID,
+            IsActive: account.IsActive,
+          };
+          res
+            .status(200)
+            .json({ message: "Login successfully", user: req.session.user });
+          break;
+        default:
+          res.status(500).json({ message: "Failed to set session" });
+          break;
       }
     } catch (err) {
       console.error("Error executing query:", err.stack);
@@ -73,14 +129,13 @@ class AccountController {
     }
   }
   async registerCustomer(req, res) {
-    const { username, password, email, phone, name } = req.body
+    const { username, password, email, phone, name } = req.body;
     const roleID = 1;
     try {
       if (!username || !password || !email || !phone || !name) {
         return res.status(400).json({ message: "All fields are required" });
       }
       const hashedPassword = bcrypt.hashSync(password, 10);
-      console.log("Hashed password:", hashedPassword);
       const verificationToken = crypto.randomBytes(32).toString("hex");
       const newAccount = await AccountService.createAccountCustomer(
         username,
@@ -90,6 +145,9 @@ class AccountController {
         roleID,
         verificationToken
       );
+      if (newAccount.error) {
+        return res.status(400).json({ error: newAccount.error });
+      }
       const newCustomer = await AccountService.createCustomer(
         name,
         newAccount.AccountID
@@ -119,23 +177,6 @@ class AccountController {
         .status(200)
         .json({ message: "Account customer create successfully" });
     } catch (err) {
-      //console.error("Error inserting into the database:", err.stack);
-      if (err.message === "Email already exists") {
-        return res.render("register", {
-          error: "Email already taken",
-          username: username,
-          email: email,
-          phone: phone,
-        });
-      }
-      if (err.message === "Username already exists") {
-        return res.render("register", {
-          error: "Username already taken",
-          username: username,
-          email: email,
-          phone: phone,
-        });
-      }
       res.status(500).send("Database insert error");
     }
   }
@@ -154,6 +195,9 @@ class AccountController {
         email,
         roleID
       );
+      if (newAccount.error) {
+        return res.status(400).json({ error: newAccount.error });
+      }
       const newDentist = await AccountService.createDentist(
         dentistName,
         newAccount.AccountID,
@@ -165,23 +209,6 @@ class AccountController {
         .status(200)
         .json({ message: "Account dentist create successfully" });
     } catch (err) {
-      //console.error("Error inserting into the database:", err.stack);
-      if (err.message === "Email already exists") {
-        return res.render("register", {
-          error: "Email already taken",
-          username: username,
-          email: email,
-          phone: phone,
-        });
-      }
-      if (err.message === "Username already exists") {
-        return res.render("register", {
-          error: "Username already taken",
-          username: username,
-          email: email,
-          phone: phone,
-        });
-      }
       res.status(500).send("Database insert error");
     }
   }
@@ -309,16 +336,23 @@ class AccountController {
     const { password, confirmPassword, token } = req.body;
 
     if (password !== confirmPassword) {
-      return res.status(400).json({ message: "Password and confirm password do not match" });
+      return res
+        .status(400)
+        .json({ message: "Password and confirm password do not match" });
     }
 
     const hashedPassword = bcrypt.hashSync(password, 10);
 
     try {
-      const updatedAccount = await AccountService.saveNewPasswordAndActivate(token, hashedPassword);
+      const updatedAccount = await AccountService.saveNewPasswordAndActivate(
+        token,
+        hashedPassword
+      );
 
       if (!updatedAccount) {
-        return res.status(400).json({ message: `No account found with token ${token}` });
+        return res
+          .status(400)
+          .json({ message: `No account found with token ${token}` });
       }
 
       res.status(200).json({ message: "Password reset successfully" });
@@ -371,34 +405,6 @@ class AccountController {
     res.render("dentist");
   }
 
-  async showSchedule(req, res) {
-    res.render("schedule", {
-      day: "",
-      stime: "",
-      etime: "",
-    });
-  }
-
-  async schedule(req, res) {
-    const { day, stime, etime, dentistId } = req.body; // Đảm bảo rằng dentistId được lấy từ req.body
-    const DentistID = req.session.userID || dentistId; // Sử dụng dentistId từ request body hoặc session
-    if (!DentistID) {
-      return res.status(400).send("DentistID is required");
-    }
-    try {
-      const newSchedule = await AccountService.createSchedule({
-        DentistID,
-        day,
-        stime,
-        etime,
-      });
-      res.status(200).send("Schedule added successfully", newSchedule);
-    } catch (error) {
-      res.status(500).send("Error adding schedule: " + error.message);
-    }
-  }
-
-
   async handleGetAllUser(req, res) {
     let AccountID = req.query.AccountID; // All, id
     if (!AccountID) {
@@ -429,7 +435,9 @@ class AccountController {
 
       // Validate password length or complexity if needed
       if (password.length < 8) {
-        return res.status(400).json({ message: "Password must be at least 8 characters long" });
+        return res
+          .status(400)
+          .json({ message: "Password must be at least 8 characters long" });
       }
 
       // Hash the password using bcrypt
@@ -445,7 +453,9 @@ class AccountController {
       });
 
       if (newAccount) {
-        return res.status(200).json({ message: "Account created successfully" });
+        return res
+          .status(200)
+          .json({ message: "Account created successfully" });
       }
     } catch (err) {
       // Handle specific errors if needed
@@ -515,16 +525,16 @@ class AccountController {
   //****************************************** New API Get ALL Dentist (Nam )****************************** */
   async handleGetAllDentists(req, res) {
     try {
-      const dentists = await authService.getAllDentists();
+      const dentists = await AccountService.getAllDentists();
 
       if (!dentists || dentists.length === 0) {
-        return res.status(404).json({ message: 'No dentists found' });
+        return res.status(404).json({ message: "No dentists found" });
       }
 
-      res.status(200).json({ message: 'Success', dentists });
+      res.status(200).json({ message: "Success", dentists });
     } catch (error) {
-      console.error('Error in handleGetAllDentists:', error);
-      res.status(500).json({ message: 'Internal server error' });
+      console.error("Error in handleGetAllDentists:", error);
+      res.status(500).json({ message: "Internal server error" });
     }
   }
 
@@ -532,16 +542,13 @@ class AccountController {
     try {
       const { AccountID } = req.query;
 
-      const customerInfo = await authService.getCustomerId(AccountID);
+      const customerInfo = await AccountService.getCustomerId(AccountID);
       res.json(customerInfo);
     } catch (error) {
       console.error("Error fetching1 slots by date:", error);
       res.status(500).send("Internal Server Error");
     }
   }
-
-
 }
-
 
 export default new AccountController();

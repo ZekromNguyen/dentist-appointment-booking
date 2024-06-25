@@ -15,7 +15,6 @@ export default function Register(props) {
     const [email, setEmail] = useState("");
     const [phone, setPhone] = useState("");
     const [name, setName] = useState("");
-
     const defaultValidInput = {
         isValidUsername: true,
         isValidPassword: true,
@@ -73,14 +72,14 @@ export default function Register(props) {
                     navigate("/login");
                     toast.success(response.data.message);
                     toast.success("Đăng ký thành công, vui lòng kiểm tra email của bạn để xác minh mới có thể đăng nhập.");
-                } else if (response && response.data && response.data.message) {
-                    toast.error(response.data.message);
+                } else if (response && response.data && response.data.error) {
+                    toast.error(response.data.error);
                 } else {
                     toast.error("Đã xảy ra lỗi, vui lòng thử lại.");
                 }
             } catch (error) {
-                if (error.response && error.response.data && error.response.data.message) {
-                    toast.error(error.response.data.message);
+                if (error.response && error.response.data && error.response.data.error) {
+                    toast.error(error.response.data.error);
                 } else {
                     toast.error("Đã xảy ra lỗi, vui lòng thử lại.");
                 }
@@ -149,7 +148,6 @@ export default function Register(props) {
                     </button>
                 </div>
                 <div className="shift"></div>
-
                 <div className="account">
                     <span className='text-gray-600 mr-1'>Already have an account?</span>
                     <Link className='text-gray-500 underline hover:text-red-500' to='/Login'>

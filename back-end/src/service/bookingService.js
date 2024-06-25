@@ -1,7 +1,12 @@
 import { Sequelize } from "sequelize";
-import { AvailableSlot, DentistSchedule } from "../model/model";
-import Booking from "../model/booking";
-import BookingDetail from "../model/bookingDetail";
+import {
+  AvailableSlot,
+  DentistSchedule,
+  Dentist,
+  Booking,
+  BookingDetail,
+  Customer,
+} from "../model/model";
 import DentistService from "./dentistService";
 import Payment from "../model/payment"; // Import lớp Payment
 class BookingService {
@@ -119,6 +124,43 @@ class BookingService {
       return null;
     } catch (error) {
       console.error("Error updating booking status:", error);
+      throw error;
+    }
+  }
+  //Hàm lấy tên dentist Name theo bookingDetail
+  async getDentistNameByBookingDetail(BookingDetailID) {
+    try {
+      const dentist = await BookingDetail.findOne({
+        where: { BookingDetailID: BookingDetailID },
+        include: [
+          {
+            model: Booking,
+            attributes: ["CustomerID"],
+            include: {
+              model: Customer,
+              attributes: ["CustomerName"],
+            },
+          },
+          {
+            model: DentistSchedule,
+            attributes: ["SlotID", "DentistID"],
+            include: [
+              {
+                model: AvailableSlot,
+                attributes: ["Time"],
+              },
+              {
+                model: Dentist,
+                attributes: ["DentistName"],
+              },
+            ],
+          },
+        ],
+      });
+      const plainDentist = dentist ? dentist.toJSON() : null; // Convert to JSON if not null
+      return plainDentist;
+    } catch (error) {
+      console.error("Error in getDentistNameByBookingDetail method: ", error);
       throw error;
     }
   }
