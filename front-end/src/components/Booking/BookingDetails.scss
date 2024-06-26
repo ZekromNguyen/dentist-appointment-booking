@@ -1,32 +1,78 @@
 .booking-details-modal {
-    .modal-dialog {
-      max-width: 90%; // Giảm độ rộng của modal để phù hợp với nội dung
+  .modal-dialog {
+    max-width: 90%; // Giảm độ rộng của modal để phù hợp với nội dung
+  }
+
+  .modal-content {
+    .modal-body {
+      overflow-x: auto; // Cho phép scroll ngang khi nội dung quá dài
     }
-  
-    .modal-content {
-      .modal-body {
-        overflow-x: auto; // Cho phép scroll ngang khi nội dung quá dài
-      }
-  
-      .table {
-        width: 100%;
-        table-layout: fixed; // Đảm bảo các cột có độ rộng bằng nhau
-      }
-  
-      th, td {
-        text-align: center; // Căn giữa nội dung của các cột
-        vertical-align: middle; // Canh giữa dọc cho nội dung
-      }
-  
-      th {
-        background-color: #f2f2f2; // Màu nền cho header của bảng
-      }
-  
-      .cancel-booking-btn {
-        width: 100%; // Độ rộng tối đa của nút Cancel Booking
-        padding: 8px 16px; // Padding cho nút
-        font-size: 14px; // Kích thước chữ cho nút
-      }
+
+    .table {
+      width: 100%;
+      table-layout: fixed; // Đảm bảo các cột có độ rộng bằng nhau
+    }
+
+    th,
+    td {
+      text-align: center; // Căn giữa nội dung của các cột
+      vertical-align: middle; // Canh giữa dọc cho nội dung
+    }
+
+    th {
+      background-color: #f2f2f2; // Màu nền cho header của bảng
+    }
+
+    .cancel-booking-btn {
+      width: 100%; // Độ rộng tối đa của nút Cancel Booking
+      padding: 8px 16px; // Padding cho nút
+      font-size: 20px; // Kích thước chữ cho nút
+      border-radius: 10px;
     }
   }
+
+
+}
+
+.booking-details-modal .modal-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.booking-details-modal .total-cost {
+  font-size: 1.2em;
+  margin-right: auto;
+  /* Đẩy các nút về phía bên phải */
+}
+
+.booking-details-modal .action-buttons {
+  display: flex;
+  gap: 10px;
+  /* Khoảng cách giữa các nút trong bảng */
+}
+.small-button {
+  max-width: 50%;
+  height: a;
+  padding: 5px 10px; /* Giảm kích thước của button */
+  font-size: 20px; /* Giảm kích thước chữ */
+  margin-right: 10px; /* Tạo khoảng cách giữa các button */
+  border-radius: 10px;
   
+  &:last-child {
+    margin-right: 0; /* Loại bỏ khoảng cách bên phải của button cuối cùng */
+  }
+}
+.justify-content-between{
+  font-weight: bolder;
+}
+.canceled {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.canceled .cancel-booking-btn {
+  background-color: #f5c6cb;
+  border-color: #f5c6cb;
+}
+

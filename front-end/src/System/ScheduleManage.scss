@@ -265,3 +265,87 @@ $highlight-color: blue;
     }
   }
 }
+
+.booked-schedule-container {
+
+  background-color: #f8f9fa; // Màu nền tổng thể của container
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+
+  .schedule-table {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease;
+
+
+    &.visible {
+      max-height: 1000px; // Hoặc một giá trị lớn hơn chiều cao thực tế của bảng
+    }
+  }
+
+  .btn-toggle {
+    margin-bottom: 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+      background-color: #0056b3;
+    }
+  }
+
+
+  .table {
+    width: 100%;
+    margin-bottom: 1rem;
+    background-color: white; // Màu nền của bảng
+    border-radius: 10px;
+    overflow: hidden;
+
+    thead {
+      background-color: #007bff; // Màu nền của tiêu đề bảng
+      color: white;
+
+      th {
+        padding: 12px;
+        text-align: left;
+        font-size: 15px;
+      }
+    }
+
+    tbody {
+      tr {
+        border-bottom: 1px solid #dee2e6; // Đường kẻ dưới mỗi hàng
+
+        &:last-child {
+          border-bottom: none; // Bỏ đường kẻ dưới hàng cuối cùng
+        }
+
+        td {
+          padding: 12px;
+          color: #495057;
+          font-size: 15px;
+        }
+      }
+    }
+  }
+}
+.schedule-table {
+  display: none; // Ẩn mặc định
+  width: 100%; // Sử dụng toàn bộ chiều rộng của container
+
+  &.visible {
+    display: block; // Hiển thị toàn bộ block
+  }
+}
+
+/* Đảm bảo các cột có đúng chiều rộng */
+.col-md-6 {
+  width: 100%; // 50% chiều rộng để chia đều
+}
+

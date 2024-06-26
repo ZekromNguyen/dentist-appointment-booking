@@ -32,40 +32,94 @@ class BookingController {
   //Hàm tạo booking
   async createBooking(req, res) {
     try {
-      const { customerId, price, status, typeBook, date, scheduleId } =
-        req.body;
-      const currentDateTime = new Date(); // Lấy thời gian hiện tại
-      const currentDateTimeGMT7 = new Date(
-        currentDateTime.getTime() + 7 * 60 * 60 * 1000
-      );
-      console.log(req.body);
-
-      const newBooking = await BookingService.createBooking(
-        customerId,
-        status,
-        price
-      );
-      if (!newBooking) {
-        res.status(400).json({ message: "No create Booking" });
+      const bookings = req.body.bookings;
+      if (!Array.isArray(bookings)) {
+        return res.status(400).json({ message: "Invalid data format" });
       }
-      const newBookingDetail = await BookingService.createBookingDetail(
-        currentDateTimeGMT7,
-        typeBook,
-        status,
-        price,
-        date,
-        newBooking.BookingID,
-        scheduleId
-      );
-      if (!newBookingDetail) {
-        res.status(400).json({ message: "No create BookingDetail" });
+  
+      const results = [];
+      for (const booking of bookings) {
+        const { customerId, price, status, typeBook, date, scheduleId } = booking;
+        const currentDateTime = new Date(); // Lấy thời gian hiện tại
+        const currentDateTimeGMT7 = new Date(
+          currentDateTime.getTime() + 7 * 60 * 60 * 1000
+        );
+        console.log(booking);
+  
+        const newBooking = await BookingService.createBooking(
+          customerId,
+          status,
+          price
+        );
+        if (!newBooking) {
+          return res.status(400).json({ message: "Failed to create Booking" });
+        }
+  
+        const newBookingDetail = await BookingService.createBookingDetail(
+          currentDateTimeGMT7,
+          typeBook,
+          status,
+          price,
+          date,
+          newBooking.BookingID,
+          scheduleId
+        );
+        if (!newBookingDetail) {
+          return res.status(400).json({ message: "Failed to create BookingDetail" });
+        }
+  
+        results.push({
+          booking: newBooking,
+          bookingDetail: newBookingDetail
+        });
       }
-      res.status(200).json({ message: "Create booking successfully" });
+  
+      res.status(200).json({
+        message: "All bookings created successfully",
+        results: results
+      });
     } catch (error) {
-      console.error("Error creating booking in controller:", error);
+      console.error("Error creating bookings in controller:", error);
       res.status(500).send("Internal Server Error");
     }
   }
+  
+  // async createBooking(req, res) {
+  //   try {
+  //     const { customerId, price, status, typeBook, date, scheduleId } =
+  //       req.body;
+  //     const currentDateTime = new Date(); // Lấy thời gian hiện tại
+  //     const currentDateTimeGMT7 = new Date(
+  //       currentDateTime.getTime() + 7 * 60 * 60 * 1000
+  //     );
+  //     console.log(req.body);
+
+  //     const newBooking = await BookingService.createBooking(
+  //       customerId,
+  //       status,
+  //       price
+  //     );
+  //     if (!newBooking) {
+  //       res.status(400).json({ message: "No create Booking" });
+  //     }
+  //     const newBookingDetail = await BookingService.createBookingDetail(
+  //       currentDateTimeGMT7,
+  //       typeBook,
+  //       status,
+  //       price,
+  //       date,
+  //       newBooking.BookingID,
+  //       scheduleId
+  //     );
+  //     if (!newBookingDetail) {
+  //       res.status(400).json({ message: "No create BookingDetail" });
+  //     }
+  //     res.status(200).json({ message: "Create booking successfully" });
+  //   } catch (error) {
+  //     console.error("Error creating booking in controller:", error);
+  //     res.status(500).send("Internal Server Error");
+  //   }
+  // }
   //Hàm get dentistName với Slot time của bookingDetail
   async getDentistNameByBookingDetail(req, res) {
     const { BookingDetailID } = req.query;

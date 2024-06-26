@@ -1,0 +1,103 @@
+.container-fluid {
+    max-width: 80%;
+    padding-top: 10px;
+    
+    .border-box {
+      max-width: 60%;
+      margin: 0 auto;
+    }
+    
+    .img-fluid {
+      max-width: 80%;
+      display: block;
+      margin: 0 auto;
+    }
+  
+    .border1 {
+      border: 2px solid #007bff; /* Blue border for booking summary */
+      border-bottom: none; /* Remove bottom border */
+      border-radius: 8px 8px 0 0; /* Rounded corners only at the top */
+      padding: 20px;
+      background-color: #150835;
+      box-sizing: border-box; /* Include padding and border in width calculation */
+    }
+    
+    .total-price-wrapper {
+      border: 2px solid #007bff; /* Same blue border for total price */
+      border-top: none; /* Remove top border */
+      border-radius: 0 0 8px 8px; /* Rounded corners only at the bottom */
+      padding: 10px;
+      background-color: y;
+      display: inline-block;
+      width: 100%; /* Ensure full width */
+      box-sizing: border-box; /* Include padding and border in width calculation */
+    }
+    
+    .booking-summary h3 {
+      color: yellow;
+    }
+    
+    .booking-summary .table {
+      width: 100%;
+      background-color: #150835;
+    }
+    
+    .booking-summary .table thead {
+      background-color: #150835; /* Blue background for header */
+      color: yellow; /* White text for header */
+    }
+    
+    .booking-summary .table tbody tr:nth-child(even) {
+      background-color: #1f103e; /* Slightly lighter color for even rows */
+      color: yellow;
+    }
+    
+    .booking-summary .table tbody tr:nth-child(odd) {
+      background-color: #150835; /* Dark color for odd rows */
+      color: yellow;
+    }
+  
+    .border2 {
+      border: 1px solid #ccc; /* Example: set border color and width */
+      border-radius: 5px; /* Example: set border radius */
+      padding: 16px; /* Set padding if necessary */
+      
+      /* Ensure equal height */
+      display: flex;
+      flex-direction: column;
+    }
+  
+    .equal-height-container {
+      display: flex;
+      flex-wrap: wrap;
+      
+      .border2 {
+        flex: 1;
+      }
+    }
+  }
+  
+  .payment-header{
+    max-width: 100%; 
+    height: auto;
+    padding-bottom: 10px;
+
+    .img-fluid{
+        max-width: 50%;
+        padding-top: 10px;
+        height:auto ;
+    }
+  }
+  .container-fluid{
+    .border2{
+        border: #007bff;
+    }
+  }
+  .btn-secondary{
+    background-color: red;
+  }
+  .btn-outline-primary{
+    background-color: white;
+    color: black;
+    font-weight: bolder;
+  }
