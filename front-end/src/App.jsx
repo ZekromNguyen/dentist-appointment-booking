@@ -63,6 +63,8 @@ import Admin from './pages/Admin/Admin';
 import System from './routes/System';
 import Doctor from './pages/Doctor/Doctor';
 import Booking from './components/Booking/Booking';
+import Payment from './components/PaymentPage/Payment';
+import BookingHistory from './components/BookingHistory/BookingHistory';
 
 function App() {
 
@@ -77,7 +79,8 @@ function App() {
           <Route path="/forgotPassword" element={<ForgotPassword />} />
           <Route path="/ResetPassword" element={<ResetPassword />} />
           <Route path="/booking" element={<Booking />} />
-
+          <Route path="/payment" element={<Payment />} />
+          <Route path="/bookinghistory" element={<BookingHistory />} />
           <Route path="/admin/*" element={<Admin />}>
             <Route path="system/*" element={<System />} />
           </Route>
