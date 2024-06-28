@@ -103,18 +103,20 @@ class AccountService {
     });
     return newCustomer;
   }
-  async createDentist(dentistName, accountId, clinicID) {
+  async createDentist(dentistName, accountId, clinicID, imagePath) {
     try {
       console.log("Creating dentist with data:", {
         dentistName,
         accountId,
         clinicID,
+        imagePath,
       });
 
       const newDentist = await Dentist.create({
         DentistName: dentistName,
         AccountID: accountId,
         ClinicID: clinicID,
+        ImagePath: imagePath,
       });
 
       console.log(newDentist);

@@ -128,6 +128,7 @@ class DentistService {
             "DentistName",
             "ClinicID",
             "Description",
+            "ImagePath",
           ],
         });
       } else if (DentistID) {
@@ -140,6 +141,7 @@ class DentistService {
             "DentistName",
             "ClinicID",
             "Description",
+            "ImagePath",
           ],
         });
       }

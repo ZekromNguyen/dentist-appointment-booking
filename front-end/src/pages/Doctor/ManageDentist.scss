@@ -1,0 +1,73 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    text-align: center;
+    margin-top: 20px;
+}
+
+table {
+    width: 1000px;
+    margin: 20px auto;
+    border-collapse: collapse;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    /* Tạo bóng cho bảng */
+}
+
+thead {
+    background-color: #007bff;
+    /* Màu nền của tiêu đề bảng */
+    color: white;
+}
+
+thead th {
+    padding: 8px;
+    text-align: left;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    /* Kẻ đường viền rõ ràng cho cột tiêu đề */
+}
+
+tbody tr {
+    border-bottom: 1px solid #dee2e6;
+    /* Đường kẻ dưới mỗi hàng */
+}
+
+tbody tr:last-child {
+    border-bottom: none;
+    /* Bỏ đường kẻ dưới hàng cuối cùng */
+}
+
+tbody td {
+    padding: 8px;
+    color: #495057;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    /* Kẻ đường viền rõ ràng cho từng ô */
+}
+
+tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}

@@ -47,6 +47,8 @@ let initAllWebRoutes = (app) => {
   //get CustomerName và SlotTime customer DentistName của 1 bookingdetail nếu đã booking
   //ex: /getBookingDetail?BookingDetailID=1
 
+  router.get("/getAllBooking", BookingController.getAllBooking);
+
   ///////////////////////////user
   router.post("/handleCreateUser", AccountController.handleCreateUser);
   router.get("/getAllUser", AccountController.handleGetAllUser);

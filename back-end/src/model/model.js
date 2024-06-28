@@ -34,7 +34,7 @@ BookingDetail.belongsTo(DentistSchedule, { foreignKey: "ScheduleID" });
 DentistSchedule.hasOne(BookingDetail, { foreignKey: "ScheduleID" });
 
 BookingDetail.belongsTo(Booking, { foreignKey: "BookingID" });
-Booking.hasOne(BookingDetail, { foreignKey: "BookingID" });
+Booking.hasMany(BookingDetail, { foreignKey: "BookingID" });
 
 export {
   sequelize,

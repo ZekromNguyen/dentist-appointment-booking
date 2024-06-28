@@ -117,6 +117,7 @@ class DoctorManage extends Component {
               <tr>
                 <th>DentistID</th>
                 <th>DentistName</th>
+                <th>DentistImage</th>
                 <th>AccountID</th>
                 <th>ClinicID</th>
                 <th>Description</th>
@@ -128,16 +129,19 @@ class DoctorManage extends Component {
                 <tr key={index}>
                   <td>{item.DentistID}</td>
                   <td>{item.DentistName}</td>
+                  <td>
+                    <img
+                      src={`http://localhost:3000/${item.ImagePath}`} // Đảm bảo rằng đường dẫn URL là đúng
+                      alt={`${item.DentistName}'s profile`}
+                      style={{ width: '100px', height: '100px', objectFit: 'cover' }}
+                    />
+                  </td>
                   <td>{item.AccountID}</td>
                   <td>{item.ClinicID}</td>
                   <td>{item.Description}</td>
                   <td>
-                    <button onClick={() => this.handleEditDoctor(item)}>
-                      Edit
-                    </button>
-                    <button onClick={() => this.handleDeleteDoctor(item)}>
-                      Delete
-                    </button>
+                    <button onClick={() => this.handleEditDoctor(item)}>Edit</button>
+                    <button onClick={() => this.handleDeleteDoctor(item)}>Delete</button>
                   </td>
                 </tr>
               ))}

@@ -40,7 +40,7 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import UserManage from '../System/UserManage';
 import DoctorManage from '../System/DoctorManage';
 import ScheduleManage from '../System/ScheduleManage'
-
+import BookingManager from '../System/BookingManager';
 
 
 class System extends Component {
@@ -53,6 +53,7 @@ class System extends Component {
                         <Route path="user-manage" element={<UserManage />} />
                         <Route path="doctor-manage" element={<DoctorManage />} />
                         <Route path="manage-schedule" element={<ScheduleManage />} />
+                        <Route path="manage-booking" element={<BookingManager />} />
                         <Route path="*" element={<Navigate to={systemMenuPath} />} />
                     </Routes>
                 </div>

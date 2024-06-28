@@ -21,7 +21,7 @@
 }
 
 .home-header-container {
-    height: 80px;
+    height: 100px;
     width: 100%;
     padding: 0 20px;
 
@@ -39,55 +39,77 @@
 
             .header-logo {
                 background: url('/clinic.png') center center no-repeat;
-                height: 100%;
-                width: 100%;
+                height: 70%;
+                width: 50%;
                 display: flex;
                 background-size: 90% 50%;
             }
         }
 
         .content-option {
-            width: 50%;
+            width: 40%;
             display: flex;
             justify-content: space-between;
             align-items: center;
 
         }
 
-        .content-login {
+        .content-auth {
             display: flex;
             align-items: center;
-            margin-left: 10px;
-            width: 7%;
+            justify-content: space-between;
+            width: 160px;
+            /* Adjust as needed */
+            margin: 10px auto;
+            /* Center the content horizontally and add top margin */
+        }
 
+        .content-login-register {
+            margin-top: 20px;
+            margin-left: 30px;
+            margin-right: 40px;
+        }
+
+        .icon-user {
+            margin-right: 8px;
+        }
+
+        .auth-left {
+            display: flex;
+            align-items: center;
         }
 
         .seperate {
+            margin: 0 12px;
             font-weight: 400;
-            font-size: 200%;
-            margin-top: -20%;
+            font-size: 1em;
+        }
+
+        .auth-right {
+            display: flex;
+            align-items: center;
         }
 
         .Login {
-            margin: 10px;
+            margin-left: 10px;
         }
 
         .content-register {
-            width: 5%;
+            width: 15%;
             display: flex;
             align-items: center;
 
         }
 
         .content-support {
-            width: 20%;
+            width: 30%;
             display: flex;
             align-items: center;
-            padding: 8px;
+            padding: 20px;
         }
 
         .support-child {
-            margin-right: 10px;
+            margin-right: 20px;
             cursor: pointer;
         }
 
@@ -96,7 +118,7 @@
         }
 
         .translate {
-            margin-left: 10px;
+            margin-left: 20px;
             cursor: pointer;
         }
 

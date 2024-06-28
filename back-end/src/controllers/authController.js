@@ -2,6 +2,7 @@ import AccountService from "../service/authService";
 import transporter from "../config/email";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
+import upload from "../config/multer";
 class AccountController {
   async login(req, res) {
     const { email, password } = req.body;
@@ -180,38 +181,104 @@ class AccountController {
       res.status(500).send("Database insert error");
     }
   }
-  async registerDentist(req, res) {
-    const { username, password, email, phone, roleID, dentistName, clinicID } =
-      req.body;
-    try {
-      if (!username || !password || !email || !phone || !dentistName) {
+
+  registerDentist = async (req, res) => {
+    upload(req, res, async (err) => {
+      if (err) {
+        console.error("Error uploading image:", err);
+        return res.status(500).json({ message: "Failed to upload image" });
+      }
+
+      const { username, password, email, phone, dentistName, clinicID } =
+        req.body;
+
+      if (
+        !username ||
+        !password ||
+        !email ||
+        !phone ||
+        !dentistName ||
+        !clinicID
+      ) {
         return res.status(400).json({ message: "All fields are required" });
       }
-      const hashedPassword = bcrypt.hashSync(password, 10);
-      const newAccount = await AccountService.createAccountDentistOrOwner(
-        username,
-        hashedPassword,
-        phone,
-        email,
-        roleID
-      );
-      if (newAccount.error) {
-        return res.status(400).json({ error: newAccount.error });
+
+      try {
+        // Hash the password
+        const hashedPassword = bcrypt.hashSync(password, 10);
+
+        // Set roleID for dentists (hardcoded to 2)
+        const roleID = 2;
+
+        // Create the account
+        const newAccount = await AccountService.createAccountDentistOrOwner(
+          username,
+          hashedPassword,
+          phone,
+          email,
+          roleID
+        );
+
+        if (newAccount.error) {
+          return res.status(400).json({ error: newAccount.error });
+        }
+
+        // Get image path from uploaded file
+        const imagePath = req.file ? `uploads/${req.file.filename}` : null;
+
+        // Create dentist information with the image path
+        const newDentist = await AccountService.createDentist(
+          dentistName,
+          newAccount.AccountID,
+          clinicID,
+          imagePath
+        );
+
+        console.log("Account created:", newAccount);
+        console.log("Dentist created:", newDentist);
+
+        return res
+          .status(200)
+          .json({ message: "Dentist registered successfully" });
+      } catch (err) {
+        console.error("Error creating dentist account:", err);
+        res.status(500).send("Database insert error");
       }
-      const newDentist = await AccountService.createDentist(
-        dentistName,
-        newAccount.AccountID,
-        clinicID
-      );
-      console.log("Account create:", newAccount);
-      console.log("Customer create:", newDentist);
-      return res
-        .status(200)
-        .json({ message: "Account dentist create successfully" });
-    } catch (err) {
-      res.status(500).send("Database insert error");
-    }
-  }
+    });
+  };
+
+  // async registerDentist(req, res) {
+  //   const { username, password, email, phone, roleID, dentistName, clinicID } =
+  //     req.body;
+  //   try {
+  //     if (!username || !password || !email || !phone || !dentistName) {
+  //       return res.status(400).json({ message: "All fields are required" });
+  //     }
+  //     const hashedPassword = bcrypt.hashSync(password, 10);
+  //     const newAccount = await AccountService.createAccountDentistOrOwner(
+  //       username,
+  //       hashedPassword,
+  //       phone,
+  //       email,
+  //       roleID
+  //     );
+  //     if (newAccount.error) {
+  //       return res.status(400).json({ error: newAccount.error });
+  //     }
+  //     const newDentist = await AccountService.createDentist(
+  //       dentistName,
+  //       newAccount.AccountID,
+  //       clinicID
+  //     );
+  //     console.log("Account create:", newAccount);
+  //     console.log("Customer create:", newDentist);
+  //     return res
+  //       .status(200)
+  //       .json({ message: "Account dentist create successfully" });
+  //   } catch (err) {
+  //     res.status(500).send("Database insert error");
+  //   }
+  // }
   async showLogin(req, res) {
     res.render("login", {
       usernameOrEmail: "",

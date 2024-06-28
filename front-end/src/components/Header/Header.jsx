@@ -67,10 +67,14 @@ export default function Header() {
                         </div>
                     ) : (
                         <div className="content-auth">
-                            <FaUser className="icon-user" />
-                            <Link to="/Login" className="Login">Login</Link>
-                            <div className="seperate">|</div>
-                            <Link to="/Register" className="register">Sign up</Link>
+                            <div className="auth-left">
+                                <FaUser className="icon-user" />
+                                <Link to="/Login" className="Login">Login</Link>
+                            </div>
+                            <div className='auth-right'>
+                                <div className="seperate">|</div>
+                                <Link to="/Register" className="register">Sign up</Link>
+                            </div>
                         </div>
                     )}
                 </div>
@@ -95,9 +99,3 @@ export default function Header() {
     );
 }
 
-// const mapStateToProps = state => {
-//     return {
-//         lang: state.app.languge,
-//         contentOfConfirmModal: state.app.contentOfConfirmModal
-//     }
-// }

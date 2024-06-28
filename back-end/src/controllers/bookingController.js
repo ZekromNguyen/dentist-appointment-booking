@@ -36,16 +36,17 @@ class BookingController {
       if (!Array.isArray(bookings)) {
         return res.status(400).json({ message: "Invalid data format" });
       }
-  
+
       const results = [];
       for (const booking of bookings) {
-        const { customerId, price, status, typeBook, date, scheduleId } = booking;
+        const { customerId, price, status, typeBook, date, scheduleId } =
+          booking;
         const currentDateTime = new Date(); // Lấy thời gian hiện tại
         const currentDateTimeGMT7 = new Date(
           currentDateTime.getTime() + 7 * 60 * 60 * 1000
         );
         console.log(booking);
-  
+
         const newBooking = await BookingService.createBooking(
           customerId,
           status,
@@ -54,7 +55,7 @@ class BookingController {
         if (!newBooking) {
           return res.status(400).json({ message: "Failed to create Booking" });
         }
-  
+
         const newBookingDetail = await BookingService.createBookingDetail(
           currentDateTimeGMT7,
           typeBook,
@@ -65,25 +66,27 @@ class BookingController {
           scheduleId
         );
         if (!newBookingDetail) {
-          return res.status(400).json({ message: "Failed to create BookingDetail" });
+          return res
+            .status(400)
+            .json({ message: "Failed to create BookingDetail" });
         }
-  
+
         results.push({
           booking: newBooking,
-          bookingDetail: newBookingDetail
+          bookingDetail: newBookingDetail,
         });
       }
-  
+
       res.status(200).json({
         message: "All bookings created successfully",
-        results: results
+        results: results,
       });
     } catch (error) {
       console.error("Error creating bookings in controller:", error);
       res.status(500).send("Internal Server Error");
     }
   }
-  
+
   // async createBooking(req, res) {
   //   try {
   //     const { customerId, price, status, typeBook, date, scheduleId } =
@@ -144,6 +147,20 @@ class BookingController {
       res.status(500).json({ message: "Internal server error" });
     }
   }
+
+  async getAllBooking(req, res) {
+    try {
+      const bookings = await BookingService.getAllBooking();
+      if (!bookings || bookings.length === 0) {
+        res.status(404).json({ message: "Success, Not found" });
+      }
+      res.status(200).json({ message: "Success", bookings });
+    } catch (error) {
+      console.error("Error get all booking in controller:", error);
+      res.status(500).json({ message: "Internal Server Error" });
+    }
+  }
+
   async showPaymentPage(req, res) {
     try {
       const { bookingId } = req.params;
