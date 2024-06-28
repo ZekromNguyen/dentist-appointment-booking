@@ -166,13 +166,14 @@ const deleteUser = async (id) => {
     }
 };
 
-const handelAddUser = async ({ username, password, email, phone }) => {
+const handelAddUser = async ({ username, password, email, phone, roleID }) => {
     try {
         const response = await axios.post("http://localhost:3000/handleCreateUser", {
             username,
             password,
             email,
             phone,
+            roleID
         });
         return response.data; // Assuming the backend returns appropriate data
     } catch (error) {
@@ -190,24 +191,48 @@ const handleEditUser = async (userData) => {
     }
 };
 
-// Đăng ký tài khoản
-const registerDentist = async (username, password, email, phone, dentistName, clinicID, roleID) => {
+// // Đăng ký tài khoản
+// const registerDentist = async (username, password, email, phone, dentistName, clinicID, roleID) => {
+//     try {
+//         const response = await axios.post("http://localhost:3000/registerDentist", {
+//             username,
+//             password,
+//             email,
+//             phone,
+//             dentistName,
+//             clinicID,
+//             roleID // Include roleID in the request body
+//         });
+//         return response;
+//     } catch (error) {
+//         console.error("Error during registration:", error);
+//         throw error;
+//     }
+// };
+const registerDentist = async (username, password, email, phone, dentistName, clinicID, roleID, imageFile) => {
     try {
-        const response = await axios.post("http://localhost:3000/registerDentist", {
-            username,
-            password,
-            email,
-            phone,
-            dentistName,
-            clinicID,
-            roleID // Include roleID in the request body
+        const formData = new FormData();
+        formData.append('username', username);
+        formData.append('password', password);
+        formData.append('email', email);
+        formData.append('phone', phone);
+        formData.append('dentistName', dentistName);
+        formData.append('clinicID', clinicID);
+        formData.append('image', imageFile); // Thêm hình ảnh vào FormData
+
+        const response = await axios.post('http://localhost:3000/registerDentist', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data', // Đặt loại nội dung là multipart/form-data cho việc tải lên file
+            },
         });
+
         return response;
     } catch (error) {
-        console.error("Error during registration:", error);
+        console.error('Error during registration:', error);
         throw error;
     }
 };
+
 
 const getAllDentist = async (DentistID) => {
     try {

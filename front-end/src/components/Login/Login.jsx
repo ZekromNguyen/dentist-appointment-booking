@@ -51,12 +51,15 @@ export default function Login() {
                 } else if (Role === 2) {
                     toast.success("Chúc mừng bạn đăng nhập thành công");
                     navigate("/Doctor");
+                } else if (Role === 3) {
+                    toast.success("Chúc mừng bạn đăng nhập thành công");
+                    navigate("/ClinicOwner");
                 } else if (Role === 4) {
                     toast.success("Chúc mừng bạn đăng nhập thành công");
-                    navigate("/Admin");
+                    navigate("/Admin")
                 }
-            } else if (response && response.data && response.data.error) {
-                toast.error(response.data.error);
+                // } else if (response && response.data && response.data.error) {
+                //     toast.error(response.data.error);
             } else {
                 toast.error("Nhập sai tài khoản hoặc mật khẩu. Vui lòng thử lại.");
             }
@@ -64,7 +67,6 @@ export default function Login() {
             toast.error("Lỗi ngoài.");
         }
     };
-
     const handleKeyPress = (event) => {
         if (event.key === 'Enter') {
             handleLogin();

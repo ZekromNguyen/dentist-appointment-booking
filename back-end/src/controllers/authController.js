@@ -491,12 +491,11 @@ class AccountController {
   }
 
   async handleCreateUser(req, res) {
-    const { username, password, email, phone } = req.body;
-    const roleID = 1; // Assuming roleID for customer
+    const { username, password, email, phone, roleID } = req.body;
     const saltRounds = 10; // Number of salt rounds
 
     try {
-      if (!username || !password || !email || !phone) {
+      if (!username || !password || !email || !phone || !roleID) {
         return res.status(400).json({ message: "All fields are required" });
       }
 

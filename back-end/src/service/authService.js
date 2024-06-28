@@ -262,7 +262,7 @@ class AccountService {
     await account.save();
     return account;
   }
-  async resetNewPassword() {}
+  async resetNewPassword() { }
 
   async createSchedule({ DentistID, day, stime, etime }) {
     try {

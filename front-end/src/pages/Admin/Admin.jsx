@@ -1,40 +1,25 @@
-// import React from 'react';
-// import HeaderSystem from '../../components/HeaderSystem/HeaderSystem';
-// import "./admin.scss";
+import HeaderAdmin from '../../componentsAdmin/HeaderAdmin/HeaderAdmin'
+import HomeAdmin from '../../componentsAdmin/HomeAdmin/HomeAdmin'
+import Sidebar from '../../componentsAdmin/Sidebar/Sidebar'
+import { useState } from 'react'
+import './admin.scss'
 
+import React from 'react'
 
-// function Admin() {
-//   return (
-//     <div className='Admin-page'>
-//       <div className='header'>
-//         <HeaderSystem />
-//       </div>
-//     </div>
-//   )
-// }
-// export default Admin;
+export default function Admin() {
+    const [openSidebarToggle, setOpenSidebarToggle] = useState(false)
 
-import React from 'react';
-import { Outlet, Link } from 'react-router-dom';
-import HeaderSystemAdmin from '../../components/HeaderSystem/HeaderSystemAdmin';
-import "./admin.scss";
+    const OpenSidebar = () => {
+        setOpenSidebarToggle(!openSidebarToggle)
+    }
 
-function Admin() {
-  return (
-    <div className='Admin-page'>
-      <div className='header'>
-        <HeaderSystemAdmin />
-        <nav>
-          <Link to="/admin/system/user-manage"></Link>
-        </nav>
-      </div>
-      <div className='content'>
-        <Outlet />
-      </div>
-    </div>
-  );
+    return (
+        <div className='body-admin'>
+            <div className='grid-container'>
+                <HeaderAdmin OpenSidebar={OpenSidebar} />
+                <Sidebar openSidebarToggle={openSidebarToggle} OpenSidebar={OpenSidebar} />
+                <div className='img-admin'></div>
+            </div>
+        </div>
+    )
 }
-
-export default Admin;
-
-

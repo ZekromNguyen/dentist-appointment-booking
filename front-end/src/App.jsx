@@ -59,13 +59,13 @@ import ForgotPassword from './components/ForgotPassword/ForgotPassword';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ResetPassword from './components/ForgotPassword/ResetPassword';
-import Admin from './pages/Admin/Admin';
+import ClinicOwner from './pages/ClinicOwner/ClinicOwner';
 import System from './routes/System';
 import Doctor from './pages/Doctor/Doctor';
 import Booking from './components/Booking/Booking';
 import Payment from './components/PaymentPage/Payment';
 import BookingHistory from './components/BookingHistory/BookingHistory';
-
+import AdminRoutes from './AdminRoutes/AdminRoutes';
 function App() {
 
   return (
@@ -81,12 +81,14 @@ function App() {
           <Route path="/booking" element={<Booking />} />
           <Route path="/payment" element={<Payment />} />
           <Route path="/bookinghistory" element={<BookingHistory />} />
-          <Route path="/admin/*" element={<Admin />}>
+          <Route path="/ClinicOwner/*" element={<ClinicOwner />}>
             <Route path="system/*" element={<System />} />
           </Route>
           <Route path="/doctor/*" element={<Doctor />}>
             <Route path="system/*" element={<System />} />
           </Route>
+
+          <Route path="admin/*" element={<AdminRoutes />} />
 
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>

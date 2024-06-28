@@ -15,7 +15,6 @@ class HeaderSystemAdmin extends Component {
             <div className="header-container">
                 <div className="header-tabs-container">
                     <Navigator menus={adminMenu} />
-                    
                 </div>
                 <div className="btn btn-logout" onClick={processLogout}>
                     <i className="fas fa-sign-out-alt">

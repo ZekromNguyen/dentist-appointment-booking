@@ -1,0 +1,154 @@
+.User-redux-container {
+    background-color: #1d2634;
+    color: #fff;
+    /* Text color for contrast */
+    min-height: 100vh;
+    /* Ensure full height */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.User-redux-body {
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 900px;
+    /* Adjust to your layout */
+    margin: 0 auto;
+    /* Center horizontally */
+    margin-top: 20px;
+    /* Adjust spacing as needed */
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.row {
+    margin-bottom: 15px;
+}
+
+.col-12 {
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+.col-3,
+.col-9 {
+    padding: 0 10px;
+}
+
+.form-control,
+.select-control {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+
+    &:focus {
+        border-color: #007bff;
+        outline: 0;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+}
+
+.label-upload {
+    cursor: pointer;
+    color: #007bff;
+    margin-top: 10px;
+    display: inline-block;
+
+    &:hover {
+        text-decoration: underline;
+    }
+}
+
+.preview-img-container {
+    position: relative;
+    margin-top: 10px;
+}
+
+.preview-image {
+    height: 150px;
+    width: 150px;
+    background-size: cover;
+    background-position: center;
+    border: 1px solid #ddd;
+    margin-top: 10px;
+    border-radius: 5px;
+}
+
+.Editbutton,
+.Deletebutton {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    width: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    margin-top: 10px;
+
+    &:hover {
+        background-color: #0056b3;
+    }
+}
+
+#accounts {
+    margin-top: 20px;
+    margin-left: 10%;
+    width: 100%;
+}
+
+#accounts td,
+#accounts th {
+    border: 1px solid #ddd;
+    padding: 8px;
+    background-color: white;
+    color: black;
+}
+
+#accounts tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+#accounts tr:hover {
+    background-color: #ddd;
+}
+
+#accounts th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: darkgray;
+
+    color: black;
+}
+
+.manage-title {
+    display: flex;
+    justify-content: center;
+    font-size: 40px;
+    margin-left: 20%;
+    margin-top: 20px;
+    color: #fff;
+}
+
+.Addbutton {
+    margin-top: 20px;
+    margin-left: 10%;
+    border-radius: 10px;
+    color: white;
+    background-color: cadetblue;
+}
