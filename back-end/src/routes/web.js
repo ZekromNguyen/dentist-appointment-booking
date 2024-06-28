@@ -4,6 +4,7 @@ import AccountController from "../controllers/authController";
 import DentistController from "../controllers/dentistController";
 import BookingController from "../controllers/bookingController";
 import dentistController from "../controllers/dentistController";
+import TreatmentController, { upload } from '../controllers/treatmentController';
 // init all web routes
 
 let router = express.Router();
@@ -68,6 +69,9 @@ let initAllWebRoutes = (app) => {
 
   router.get("/payment/:bookingId", BookingController.showPaymentPage);
   router.post("/payment", BookingController.processPayment);
+
+  router.get('/treatment', TreatmentController.getAllTreatments);
+  router.post('/treatments', upload.single('Result'), TreatmentController.createTreatment);
 
   return app.use("/", router);
 };

@@ -1,7 +1,7 @@
 import { Model, DataTypes } from "sequelize";
 import sequelize from "../config/database";
 
-class Clinic extends Model {}
+class Clinic extends Model { }
 Clinic.init(
   {
     ClinicID: {
