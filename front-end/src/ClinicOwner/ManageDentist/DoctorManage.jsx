@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { getAllDentist, deleteDentist, handleEditDentist } from '../Service/userService';
+import { getAllDentist, deleteDentist, handleEditDentist } from '../../Service/userService';
 import ModelAddDentist from './ModelAddDentist';
 import ModelEditDentist from './ModelEditDentist';
 import './DoctorManage.scss'; // Ensure correct SCSS path

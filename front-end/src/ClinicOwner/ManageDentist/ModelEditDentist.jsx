@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button, FormGroup, Label, Input } from 'reactstrap';
 import { ToastContainer, toast } from 'react-toastify';
 import _ from 'lodash';
-import { handleEditDentist } from '../Service/userService';
+import { handleEditDentist } from '../../Service/userService';
 
 class ModelEditDentist extends Component {
     constructor(props) {

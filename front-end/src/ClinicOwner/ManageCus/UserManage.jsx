@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { getAllUSer, deleteUser, handleEditUser } from '../Service/userService';
-import ModelUser from './ModelUser';
+import { getAllUSer, deleteUser, handleEditUser, getAllCustomer } from '../../Service/userService';
+import ModelUser from '../ModelAddAccount/ModelUser';
 import ModelEdit from './ModelEdit';
-import ModelAddDentist from './ModelAddDentist'; // Import the new component
 import './UserManage.scss';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -12,15 +11,29 @@ class UserManage extends Component {
         super(props);
         this.state = {
             arrUser: [],
+            arrCustomer: [],
+            combinedArray: [], // State to hold combined data
             isOpenModalUser: false,
             isOpenModalEdit: false,
-            isOpenModalAddDentist: false, // Add state for the new modal
+            isOpenModalAddDentist: false,
             userEdit: {}
         };
     }
 
     async componentDidMount() {
         await this.handleGetAllUsers();
+        await this.handleGetAllCustomers();
+        this.combineUserData(); // Combine data after fetching both users and customers
+    }
+
+    handleGetAllCustomers = async () => {
+        let response = await getAllCustomer('ALL');
+        if (response && response.errCode === 0) {
+            this.setState({
+                arrCustomer: response.account
+            });
+        }
+        console.log('get cus from back-end', response);
     }
 
     handleGetAllUsers = async () => {
@@ -33,27 +46,30 @@ class UserManage extends Component {
         console.log('get user from back-end', response);
     };
 
+    combineUserData = () => {
+        const { arrUser, arrCustomer } = this.state;
+
+        // Combine user and customer data based on AccountID
+        const combinedArray = arrUser.map(user => {
+            const customer = arrCustomer.find(cust => cust.AccountID === user.AccountID) || {};
+            return {
+                ...user,
+                ...customer
+            };
+        });
+
+        this.setState({ combinedArray });
+    }
+
     handleAddNewUser = () => {
         this.setState({
             isOpenModalUser: true
         });
     };
 
-    handleAddNewDentist = () => {
-        this.setState({
-            isOpenModalAddDentist: true // Open the new modal
-        });
-    };
-
     toggleUserModal = () => {
         this.setState({
             isOpenModalUser: !this.state.isOpenModalUser
-        });
-    };
-
-    toggleAddDentistModal = () => {
-        this.setState({
-            isOpenModalAddDentist: !this.state.isOpenModalAddDentist // Toggle the new modal
         });
     };
 
@@ -68,11 +84,11 @@ class UserManage extends Component {
         try {
             let res = await deleteUser(user.AccountID);
             if (res && res.errCode === 0) {
-                // Remove the deleted user from the state array
                 const updatedUsers = this.state.arrUser.filter(item => item.AccountID !== user.AccountID);
                 this.setState({
                     arrUser: updatedUsers
                 });
+                this.combineUserData(); // Update combined data after deleting
             } else {
                 alert(res.errMessage);
             }
@@ -93,21 +109,23 @@ class UserManage extends Component {
 
     handleUserUpdated = () => {
         this.setState({
-            isOpenModalEdit: false, // Close the edit modal after updating
-            isOpenModalAddDentist: false // Close the dentist modal after adding
+            isOpenModalEdit: false,
+            isOpenModalAddDentist: false
         });
         this.handleGetAllUsers();
+        this.handleGetAllCustomers();
     };
 
     handleUpdated = async (user) => {
         let res = await handleEditUser(user);
         console.log('user', res);
-        this.handleUserUpdated(); // Call handleUserUpdated after updating user
+        this.handleUserUpdated();
     };
 
     render() {
         console.log('check render', this.state.arrUser);
-        let arrUser = this.state.arrUser;
+        console.log('check cus', this.state.arrCustomer);
+        console.log('combined array', this.state.combinedArray);
         return (
             <div className='Manage-user'>
                 <ModelUser
@@ -120,26 +138,19 @@ class UserManage extends Component {
                         isOpen={this.state.isOpenModalEdit}
                         toggleFromParent={this.toggleEditModal}
                         currentUser={this.state.userEdit}
-                        editUser={this.handleUpdated} // Pass the callback to handle user update
-                        onUserUpdated={this.handleUserUpdated} // Pass handleUserUpdated as prop
+                        editUser={this.handleUpdated}
+                        onUserUpdated={this.handleUserUpdated}
                     />}
-                {this.state.isOpenModalAddDentist && // Add the new modal
-                    <ModelAddDentist
-                        isOpen={this.state.isOpenModalAddDentist}
-                        toggleFromParent={this.toggleAddDentistModal}
-                        onDentistAdded={this.handleUserUpdated} // Handle dentist added
-                    />}
-                <div className='mt-100'>Manage CRUD User</div>
-                <button className='btn btn-primary px-3' onClick={this.handleAddNewUser}>
-                    Add new user
-                </button>
-                <button className='btn btn-primary px-3 ml-2' onClick={this.handleAddNewDentist}>
-                    Add new dentist
+                <div className='User-title'>Manage Customer</div>
+                <button className='buttonAddUser' onClick={this.handleAddNewUser}>
+                    Add new customer
                 </button>
                 <div className='user-table mt-30 mx-10'>
-                    <table id='customers'>
+                    <table id='combined'>
                         <thead>
                             <tr>
+                                <th>CustomerID</th>
+                                <th>CustomerName</th>
                                 <th>AccountID</th>
                                 <th>UserName</th>
                                 <th>Phone</th>
@@ -150,22 +161,22 @@ class UserManage extends Component {
                             </tr>
                         </thead>
                         <tbody>
-                            {arrUser && arrUser.map((item, index) => {
-                                return (
-                                    <tr key={index}>
-                                        <td>{item.AccountID}</td>
-                                        <td>{item.UserName}</td>
-                                        <td>{item.Phone}</td>
-                                        <td>{item.Email}</td>
-                                        <td>{item.RoleID}</td>
-                                        <td>{item.IsActive.data}</td>
-                                        <td>
-                                            <button onClick={() => { this.handleEdit(item) }}>Edit</button>
-                                            <button onClick={() => { this.handleDelete(item) }}>Delete</button>
-                                        </td>
-                                    </tr>
-                                );
-                            })}
+                            {this.state.combinedArray && this.state.combinedArray.map((item, index) => (
+                                <tr key={index}>
+                                    <td>{item.CustomerID}</td>
+                                    <td>{item.CustomerName}</td>
+                                    <td>{item.AccountID}</td>
+                                    <td>{item.UserName}</td>
+                                    <td>{item.Phone}</td>
+                                    <td>{item.Email}</td>
+                                    <td>{item.RoleID}</td>
+                                    <td>{item.IsActive ? item.IsActive.data : 'N/A'}</td>
+                                    <td>
+                                        <button onClick={() => { this.handleEdit(item) }}>Edit</button>
+                                        <button onClick={() => { this.handleDelete(item) }}>Delete</button>
+                                    </td>
+                                </tr>
+                            ))}
                         </tbody>
                     </table>
                 </div>

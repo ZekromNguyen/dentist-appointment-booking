@@ -606,6 +606,25 @@ class AccountController {
       });
     }
   }
+
+  //////////////customer
+  async handleGetAllCustomer(req, res) {
+    let CustomerID = req.query.CustomerID; // All, id
+    if (!CustomerID) {
+      return res.status(200).json({
+        errCode: 1,
+        errMessage: "Missing required patameter",
+        account: [],
+      });
+    }
+    let account = await AccountService.getAllCustomer(CustomerID);
+
+    return res.status(200).json({
+      errCode: 0,
+      errMessage: "OK",
+      account,
+    });
+  }
   //****************************************** New API Get ALL Dentist (Nam )****************************** */
   async handleGetAllDentists(req, res) {
     try {

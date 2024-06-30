@@ -550,6 +550,41 @@ class AccountService {
       throw new Error('Error creating account without verification');
     }
   }
+  //////////////////////////////customer////////// 
+  async getAllCustomer(CustomerID) {
+    try {
+      let account = "";
+      if (CustomerID === "ALL") {
+        account = await Customer.findAll({
+          raw: true,
+          attributes: [
+            "CustomerID",
+            "CustomerName",
+            "AccountID",
+          ],
+        });
+      } else if (CustomerID) {
+        account = await Customer.findOne({
+          where: { CustomerID: CustomerID },
+          raw: true,
+          attributes: [
+            "CustomerID",
+            "CustomerName",
+            "AccountID",
+          ],
+        });
+      }
+
+      if (!account) {
+        console.log(`Account with ID ${CustomerID} not found`);
+      }
+      return account;
+    } catch (e) {
+      console.error("Error in getAllUsers:", e);
+      throw e;
+    }
+  }
+
   //**********************************New API Get ALL Dentist****************************8 */
   async getAllDentists() {
     try {

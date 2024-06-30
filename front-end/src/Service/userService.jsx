@@ -254,6 +254,21 @@ const getAllDentist = async (DentistID) => {
         throw new Error("Error getting AccountID from account: " + error.message);
     }
 };
+
+/////////////customer 
+const getAllCustomer = async (CustomerID) => {
+    try {
+        const response = await axios.get(
+            `http://localhost:3000/handleGetAllCustomer?id=${CustomerID}`,
+            {
+                params: { CustomerID: CustomerID },
+            }
+        );
+        return response.data; // Return the data from the response
+    } catch (error) {
+        throw new Error("Error getting AccountID from account: " + error.message);
+    }
+};
 // Xóa bác sĩ nha khoa
 const deleteDentist = async (DentistID) => {
     try {
@@ -298,7 +313,8 @@ export {
     registerDentist,
     getAllDentist,
     deleteDentist,
-    handleEditDentist
+    handleEditDentist,
+    getAllCustomer
 };
 
 

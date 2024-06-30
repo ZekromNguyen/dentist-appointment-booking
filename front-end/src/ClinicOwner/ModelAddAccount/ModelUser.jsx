@@ -5,7 +5,7 @@ import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import './model.scss';
 import { ToastContainer, toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
-import { handelAddUser } from '../Service/userService';
+import { handelAddUser } from '../../Service/userService';
 
 const ModelUser = (props) => {
     const [username, setUsername] = useState('');

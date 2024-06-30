@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { getAllUSer, deleteUser, handleEditUser } from '../../Service/userService';
-import ModelUser from '../../System/ModelUser';
-import ModelEdit from '../../System/ModelEdit';
+import ModelUser from '../../ClinicOwner/ModelAddAccount/ModelUser';
+import ModelEdit from '../../ClinicOwner/ManageCus/ModelEdit';
 import './manage.scss';
 import 'bootstrap/dist/css/bootstrap.min.css';
 

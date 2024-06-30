@@ -37,10 +37,10 @@
 import React, { Component } from 'react';
 import { connect } from "react-redux";
 import { Navigate, Route, Routes } from 'react-router-dom';
-import UserManage from '../System/UserManage';
-import DoctorManage from '../System/DoctorManage';
-import ScheduleManage from '../System/ScheduleManage'
-import BookingManager from '../System/BookingManager';
+import UserManage from '../ClinicOwner/ManageCus/UserManage';
+import DoctorManage from '../ClinicOwner/ManageDentist/DoctorManage';
+import ScheduleManage from '../ClinicOwner/ScheduleManage'
+import BookingManager from '../ClinicOwner/BookingManager';
 
 
 class System extends Component {

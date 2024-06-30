@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from 'reactstrap';
-import { deleteDentist } from '../Service/userService';
+import { deleteDentist } from '../../Service/userService';
 
 class ModelDeleteDentist extends Component {
     handleDeleteDentist = async () => {
