@@ -107,12 +107,13 @@ class AccountService {
     });
     return newCustomer;
   }
-  async createDentist(dentistName, accountId, clinicID, imagePath) {
+  async createDentist(dentistName, accountId, clinicID, description, imagePath) {
     try {
       console.log("Creating dentist with data:", {
         dentistName,
         accountId,
         clinicID,
+        description,
         imagePath,
       });
 
@@ -120,6 +121,7 @@ class AccountService {
         DentistName: dentistName,
         AccountID: accountId,
         ClinicID: clinicID,
+        Description: description,
         ImagePath: imagePath,
       });
 
@@ -490,6 +492,7 @@ class AccountService {
             additionalData.DentistName,
             newAccount.AccountID,
             additionalData.ClinicID,
+            additionalData.Description,
             additionalData.ImagePath
           );
           break;
@@ -516,11 +519,26 @@ class AccountService {
     }
   }
 
-
+  // async createAccountWithoutVerification(username, password, phone, email, roleID, additionalData = {}) {
+  //   try {
+  //     const result = await this.createUser(username, password, phone, email, roleID, additionalData);
+  //     return result.newAccount;
+  //   } catch (error) {
+  //     if (error.message === 'Username already exists') {
+  //       throw new Error('Username already exists');
+  //     }
+  //     if (error.message === 'Email already exists') {
+  //       throw new Error('Email already exists');
+  //     }
+  //     console.error('Error creating account without verification:', error);
+  //     throw new Error('Error creating account without verification');
+  //   }
+  // }
   async createAccountWithoutVerification(username, password, phone, email, roleID, additionalData = {}) {
     try {
       const result = await this.createUser(username, password, phone, email, roleID, additionalData);
-      return result.newAccount;
+      console.log('Result from createUser:', result); // Logging result for debugging
+      return { newAccount: result.newAccount, additionalEntity: result.additionalEntity };
     } catch (error) {
       if (error.message === 'Username already exists') {
         throw new Error('Username already exists');
@@ -532,7 +550,6 @@ class AccountService {
       throw new Error('Error creating account without verification');
     }
   }
-
   //**********************************New API Get ALL Dentist****************************8 */
   async getAllDentists() {
     try {

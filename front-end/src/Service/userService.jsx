@@ -166,7 +166,7 @@ const deleteUser = async (id) => {
     }
 };
 
-const handelAddUser = async ({ username, password, email, phone, roleID, name, clinicID, dentistName, imagePath, clinicOwnerName }) => {
+const handelAddUser = async ({ username, password, email, phone, roleID, name, clinicID, dentistName, description, imagePath, clinicOwnerName }) => {
     try {
         const response = await axios.post("http://localhost:3000/handleCreateUser", {
             username,
@@ -177,6 +177,7 @@ const handelAddUser = async ({ username, password, email, phone, roleID, name, c
             name,
             clinicID,
             dentistName,
+            description,
             imagePath,
             clinicOwnerName
         });

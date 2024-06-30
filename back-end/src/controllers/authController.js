@@ -491,8 +491,8 @@ class AccountController {
   }
   //////////////////////////admin///////////////////////////////////////////////
   async handleCreateUser(req, res) {
-    const { username, password, email, phone, roleID, name, clinicID, dentistName, imagePath, clinicOwnerName } = req.body;
-    const saltRounds = 10; // Số lượng vòng salt
+    const { username, password, email, phone, roleID, name, clinicID, dentistName, description, imagePath, clinicOwnerName } = req.body;
+    const saltRounds = 10; // Number of salt rounds for bcrypt hashing
 
     try {
       if (!username || !password || !email || !phone || !roleID) {
@@ -501,9 +501,7 @@ class AccountController {
 
       // Validate password length or complexity if needed
       if (password.length < 8) {
-        return res
-          .status(400)
-          .json({ message: "Password must be at least 8 characters long" });
+        return res.status(400).json({ message: "Password must be at least 8 characters long" });
       }
 
       // Hash the password using bcrypt
@@ -519,21 +517,25 @@ class AccountController {
       } else if (roleID === "2") { // Dentist
         additionalData.DentistName = dentistName;
         additionalData.ClinicID = clinicID;
-        additionalData.ImagePath = imagePath;
+        additionalData.Description = description;
+        additionalData.ImagePath = imagePath; // Đảm bảo ImagePath được thiết lập ở đây
       } else if (roleID === "3") { // ClinicOwner
         additionalData.ClinicID = clinicID;
         additionalData.ClinicOwnerName = clinicOwnerName;
       }
 
       // Call your service method to create the account
-      const { newAccount } = await AccountService.createAccountWithoutVerification(username, hashedPassword, phone, email, roleID, additionalData);
+      const result = await AccountService.createAccountWithoutVerification(username, hashedPassword, phone, email, roleID, additionalData);
 
-      if (newAccount) {
-        return res
-          .status(200)
-          .json({ message: "Account created successfully" });
+      console.log('Result from AccountService:', result); // Logging result for debugging
+
+      if (result && result.newAccount) {
+        return res.status(200).json({ message: "Account created successfully", newAccount: result.newAccount });
+      } else {
+        return res.status(400).json({ message: "Failed to create account" });
       }
     } catch (err) {
+      console.error('Error in handleCreateUser:', err);
       // Handle specific errors if needed
       if (err.message === "Email already exists") {
         return res.status(400).json({ error: "Email already taken" });
@@ -545,9 +547,10 @@ class AccountController {
         return res.status(400).json({ error: "CustomerName is required" });
       }
       // Handle generic error
-      res.status(500).json({ message: "Database insert error" });
+      return res.status(500).json({ message: "Database insert error" });
     }
   }
+
 
 
   ///////////////////////////////////////////

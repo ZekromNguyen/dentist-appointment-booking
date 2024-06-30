@@ -16,7 +16,8 @@ const ModelUser = (props) => {
     const [name, setName] = useState('');
     const [clinicID, setClinicID] = useState('');
     const [dentistName, setDentistName] = useState('');
-    const [imagePath, setImagePath] = useState('');
+    const [description, setDescription] = useState(''); // State for storing description
+    const [imagePath, setImagePath] = useState(''); // State for storing image path
     const [clinicOwnerName, setClinicOwnerName] = useState('');
     const [checkInput, setCheckInput] = useState({
         isValidUsername: true,
@@ -38,7 +39,7 @@ const ModelUser = (props) => {
         let file = data[0];
         if (file) {
             let objectUrl = URL.createObjectURL(file);
-            setImagePath(objectUrl);
+            setImagePath(objectUrl); // Set imagePath state with the object URL
         }
     };
 
@@ -87,11 +88,11 @@ const ModelUser = (props) => {
             newCheckInput.isValidRoleID = true;
         }
 
-        if (roleID === "1" && !name) { // Kiểm tra khi là khách hàng (roleID = 1) thì phải có tên khách hàng
+        if (roleID === "1" && !name) {
             newCheckInput.isValidName = false;
             toast.error("Tên khách hàng bắt buộc");
             isValid = false;
-        } else {
+        } else if (roleID !== "2") {
             newCheckInput.isValidName = true;
         }
 
@@ -109,15 +110,15 @@ const ModelUser = (props) => {
                     email,
                     phone,
                     roleID,
-                    name: roleID === "1" ? name : '', // Set name only if roleID is 1
-                    clinicID: roleID === "2" ? clinicID : '', // Set clinicID only if roleID is 2
-                    dentistName: roleID === "2" ? dentistName : '', // Set dentistName only if roleID is 2
-                    imagePath: roleID === "2" ? imagePath : '', // Set imagePath only if roleID is 2
-                    clinicOwnerName: roleID === "3" ? clinicOwnerName : '' // Set clinicOwnerName only if roleID is 3
+                    name,
+                    clinicID,
+                    dentistName,
+                    description, // Pass description to backend
+                    imagePath, // Pass imagePath to backend
+                    clinicOwnerName
                 });
                 if (response && response.message === "Account created successfully") {
                     toast.success("Đăng ký thành công");
-                    // Reset form fields after successful addition
                     setUsername('');
                     setPassword('');
                     setEmail('');
@@ -126,9 +127,9 @@ const ModelUser = (props) => {
                     setName('');
                     setClinicID('');
                     setDentistName('');
+                    setDescription(''); // Reset description state
                     setImagePath('');
                     setClinicOwnerName('');
-                    // Reset validation state
                     setCheckInput({
                         isValidUsername: true,
                         isValidPassword: true,
@@ -208,6 +209,12 @@ const ModelUser = (props) => {
                                             onChange={(event) => setClinicID(event.target.value)}
                                             value={clinicID} />
                                     </div>
+                                    <div className="col-12">
+                                        <label>Description</label>
+                                        <textarea className="form-control"
+                                            onChange={(event) => setDescription(event.target.value)}
+                                            value={description}></textarea>
+                                    </div>
                                     <div className="col-6">
                                         <label>Image</label>
                                         <input className="form-control"
@@ -234,13 +241,15 @@ const ModelUser = (props) => {
                                     </div>
                                 </>
                             )}
-                            <div className="col-6">
-                                <label>Name</label>
-                                <input className={checkInput.isValidName ? "form-control" : "is-invalid form-control"}
-                                    type="text"
-                                    onChange={(event) => setName(event.target.value)}
-                                    value={name} />
-                            </div>
+                            {roleID !== "2" && (
+                                <div className="col-6">
+                                    <label>Name</label>
+                                    <input className={checkInput.isValidName ? "form-control" : "is-invalid form-control"}
+                                        type="text"
+                                        onChange={(event) => setName(event.target.value)}
+                                        value={name} />
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
