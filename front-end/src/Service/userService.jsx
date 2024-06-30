@@ -166,14 +166,19 @@ const deleteUser = async (id) => {
     }
 };
 
-const handelAddUser = async ({ username, password, email, phone, roleID }) => {
+const handelAddUser = async ({ username, password, email, phone, roleID, name, clinicID, dentistName, imagePath, clinicOwnerName }) => {
     try {
         const response = await axios.post("http://localhost:3000/handleCreateUser", {
             username,
             password,
             email,
             phone,
-            roleID
+            roleID,
+            name,
+            clinicID,
+            dentistName,
+            imagePath,
+            clinicOwnerName
         });
         return response.data; // Assuming the backend returns appropriate data
     } catch (error) {
@@ -181,6 +186,7 @@ const handelAddUser = async ({ username, password, email, phone, roleID }) => {
         throw error;
     }
 };
+
 
 const handleEditUser = async (userData) => {
     try {

@@ -1,5 +1,6 @@
-import { Sequelize } from "sequelize";
+import Sequelize from 'sequelize';
 import bcrypt from "bcrypt";
+
 import {
   Dentist,
   Customer,
@@ -9,6 +10,9 @@ import {
 } from "../model/model";
 
 class AccountService {
+  constructor(sequelize) {
+    this.sequelize = sequelize;
+  }
   async createAccountCustomer(
     username,
     hashedPassword,
@@ -356,6 +360,9 @@ class AccountService {
         RoleID: roleID,
       });
 
+
+
+
       return newAccount;
     } catch (error) {
       console.error("Error inserting into the database:", error);
@@ -430,6 +437,102 @@ class AccountService {
       throw e;
     }
   }
+
+  ////////////////////////////admin ////////////////////////
+  async createUser(username, password, phone, email, roleID, additionalData = {}) {
+    try {
+      // Chuyển đổi roleID thành số nguyên nếu cần
+      roleID = parseInt(roleID); // Chắc chắn rằng roleID là số nguyên
+
+      // Hash mật khẩu
+      const hashedPassword = bcrypt.hashSync(password, 10);
+
+      // Kiểm tra xem tài khoản với cùng một email hoặc tên người dùng đã tồn tại hay chưa
+      const existingAccount = await Account.findOne({
+        where: {
+          [Sequelize.Op.or]: [{ Email: email }, { UserName: username }],
+        },
+      });
+
+      if (existingAccount) {
+        if (existingAccount.UserName === username) {
+          throw new Error('Tên người dùng đã tồn tại');
+        }
+        if (existingAccount.Email === email) {
+          throw new Error('Email đã tồn tại');
+        }
+      }
+
+      // Tạo tài khoản mới
+      const newAccount = await Account.create({
+        UserName: username,
+        Password: hashedPassword,
+        Phone: phone,
+        Email: email,
+        RoleID: roleID,
+        IsActive: true, // Kích hoạt nếu không phải là khách hàng
+      });
+
+      // Chèn vào các bảng bổ sung dựa trên roleID
+      let additionalEntity;
+      switch (roleID) {
+        case 1: // Khách hàng
+          if (!additionalData.CustomerName) {
+            throw new Error('Tên khách hàng là bắt buộc');
+          }
+          additionalEntity = await this.createCustomer(
+            additionalData.CustomerName,
+            newAccount.AccountID
+          );
+          break;
+        case 2: // Nha sĩ
+          additionalEntity = await this.createDentist(
+            additionalData.DentistName,
+            newAccount.AccountID,
+            additionalData.ClinicID,
+            additionalData.ImagePath
+          );
+          break;
+        case 3: // Chủ phòng khám
+          additionalEntity = await this.createClinicOwner(
+            additionalData.ClinicID,
+            additionalData.ClinicOwnerName,
+            newAccount.AccountID
+          );
+          break;
+        case 4: // Admin
+          // Xử lý logic tạo admin tại đây nếu cần
+          break;
+        default:
+          throw new Error('roleID không hợp lệ');
+      }
+
+      return { newAccount, additionalEntity };
+    } catch (error) {
+      if (error.message === 'roleID không hợp lệ') {
+        throw new Error('roleID không hợp lệ');
+      }
+      throw error; // Ném bất kỳ lỗi không mong đợi nào khác
+    }
+  }
+
+
+  async createAccountWithoutVerification(username, password, phone, email, roleID, additionalData = {}) {
+    try {
+      const result = await this.createUser(username, password, phone, email, roleID, additionalData);
+      return result.newAccount;
+    } catch (error) {
+      if (error.message === 'Username already exists') {
+        throw new Error('Username already exists');
+      }
+      if (error.message === 'Email already exists') {
+        throw new Error('Email already exists');
+      }
+      console.error('Error creating account without verification:', error);
+      throw new Error('Error creating account without verification');
+    }
+  }
+
   //**********************************New API Get ALL Dentist****************************8 */
   async getAllDentists() {
     try {

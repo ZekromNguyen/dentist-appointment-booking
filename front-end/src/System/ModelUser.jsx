@@ -13,12 +13,18 @@ const ModelUser = (props) => {
     const [email, setEmail] = useState('');
     const [phone, setPhone] = useState('');
     const [roleID, setRoleID] = useState('');
+    const [name, setName] = useState('');
+    const [clinicID, setClinicID] = useState('');
+    const [dentistName, setDentistName] = useState('');
+    const [imagePath, setImagePath] = useState('');
+    const [clinicOwnerName, setClinicOwnerName] = useState('');
     const [checkInput, setCheckInput] = useState({
         isValidUsername: true,
         isValidPassword: true,
         isValidEmail: true,
         isValidPhone: true,
-        isValidRoleID: true // Initial state for RoleID validation
+        isValidRoleID: true,
+        isValidName: true
     });
 
     let navigate = useNavigate();
@@ -32,7 +38,7 @@ const ModelUser = (props) => {
         let file = data[0];
         if (file) {
             let objectUrl = URL.createObjectURL(file);
-            setPreviewImgURL(objectUrl);
+            setImagePath(objectUrl);
         }
     };
 
@@ -81,6 +87,14 @@ const ModelUser = (props) => {
             newCheckInput.isValidRoleID = true;
         }
 
+        if (roleID === "1" && !name) { // Kiểm tra khi là khách hàng (roleID = 1) thì phải có tên khách hàng
+            newCheckInput.isValidName = false;
+            toast.error("Tên khách hàng bắt buộc");
+            isValid = false;
+        } else {
+            newCheckInput.isValidName = true;
+        }
+
         setCheckInput(newCheckInput);
         return isValid;
     };
@@ -89,7 +103,18 @@ const ModelUser = (props) => {
         let check = isValidInputs();
         if (check === true) {
             try {
-                const response = await handelAddUser({ username, password, email, phone, roleID });
+                const response = await handelAddUser({
+                    username,
+                    password,
+                    email,
+                    phone,
+                    roleID,
+                    name: roleID === "1" ? name : '', // Set name only if roleID is 1
+                    clinicID: roleID === "2" ? clinicID : '', // Set clinicID only if roleID is 2
+                    dentistName: roleID === "2" ? dentistName : '', // Set dentistName only if roleID is 2
+                    imagePath: roleID === "2" ? imagePath : '', // Set imagePath only if roleID is 2
+                    clinicOwnerName: roleID === "3" ? clinicOwnerName : '' // Set clinicOwnerName only if roleID is 3
+                });
                 if (response && response.message === "Account created successfully") {
                     toast.success("Đăng ký thành công");
                     // Reset form fields after successful addition
@@ -98,13 +123,19 @@ const ModelUser = (props) => {
                     setEmail('');
                     setPhone('');
                     setRoleID('');
+                    setName('');
+                    setClinicID('');
+                    setDentistName('');
+                    setImagePath('');
+                    setClinicOwnerName('');
                     // Reset validation state
                     setCheckInput({
                         isValidUsername: true,
                         isValidPassword: true,
                         isValidEmail: true,
                         isValidPhone: true,
-                        isValidRoleID: true
+                        isValidRoleID: true,
+                        isValidName: true
                     });
                 } else {
                     toast.error(response.error || "Đã xảy ra lỗi, vui lòng thử lại.");
@@ -155,12 +186,60 @@ const ModelUser = (props) => {
                                 <select className={checkInput.isValidRoleID ? "form-control" : "is-invalid form-control"}
                                     onChange={(event) => setRoleID(event.target.value)}
                                     value={roleID}>
-                                    <option>Choose role...</option>
+                                    <option value="">Choose role...</option>
                                     <option value="1">Customer</option>
                                     <option value="2">Dentist</option>
                                     <option value="3">Clinic Owner</option>
-                                    <option value="4">Admin</option>
                                 </select >
+                            </div>
+                            {roleID === "2" && (
+                                <>
+                                    <div className="col-6">
+                                        <label>Dentist Name</label>
+                                        <input className="form-control"
+                                            type="text"
+                                            onChange={(event) => setDentistName(event.target.value)}
+                                            value={dentistName} />
+                                    </div>
+                                    <div className="col-6">
+                                        <label>Clinic ID</label>
+                                        <input className="form-control"
+                                            type="text"
+                                            onChange={(event) => setClinicID(event.target.value)}
+                                            value={clinicID} />
+                                    </div>
+                                    <div className="col-6">
+                                        <label>Image</label>
+                                        <input className="form-control"
+                                            type="file"
+                                            onChange={handleOnChangeImage} />
+                                    </div>
+                                </>
+                            )}
+                            {roleID === "3" && (
+                                <>
+                                    <div className="col-6">
+                                        <label>Clinic ID</label>
+                                        <input className="form-control"
+                                            type="text"
+                                            onChange={(event) => setClinicID(event.target.value)}
+                                            value={clinicID} />
+                                    </div>
+                                    <div className="col-6">
+                                        <label>Clinic Owner Name</label>
+                                        <input className="form-control"
+                                            type="text"
+                                            onChange={(event) => setClinicOwnerName(event.target.value)}
+                                            value={clinicOwnerName} />
+                                    </div>
+                                </>
+                            )}
+                            <div className="col-6">
+                                <label>Name</label>
+                                <input className={checkInput.isValidName ? "form-control" : "is-invalid form-control"}
+                                    type="text"
+                                    onChange={(event) => setName(event.target.value)}
+                                    value={name} />
                             </div>
                         </div>
                     </div>

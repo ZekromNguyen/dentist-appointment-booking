@@ -489,10 +489,10 @@ class AccountController {
       account,
     });
   }
-
+  //////////////////////////admin///////////////////////////////////////////////
   async handleCreateUser(req, res) {
-    const { username, password, email, phone, roleID } = req.body;
-    const saltRounds = 10; // Number of salt rounds
+    const { username, password, email, phone, roleID, name, clinicID, dentistName, imagePath, clinicOwnerName } = req.body;
+    const saltRounds = 10; // Số lượng vòng salt
 
     try {
       if (!username || !password || !email || !phone || !roleID) {
@@ -509,14 +509,24 @@ class AccountController {
       // Hash the password using bcrypt
       const hashedPassword = bcrypt.hashSync(password, saltRounds);
 
+      // Prepare additional data based on role
+      const additionalData = {};
+      if (roleID === "1") { // Customer
+        if (!name) {
+          return res.status(400).json({ message: "CustomerName is required" });
+        }
+        additionalData.CustomerName = name;
+      } else if (roleID === "2") { // Dentist
+        additionalData.DentistName = dentistName;
+        additionalData.ClinicID = clinicID;
+        additionalData.ImagePath = imagePath;
+      } else if (roleID === "3") { // ClinicOwner
+        additionalData.ClinicID = clinicID;
+        additionalData.ClinicOwnerName = clinicOwnerName;
+      }
+
       // Call your service method to create the account
-      const newAccount = await AccountService.createAccountWithoutVerification({
-        username,
-        hashedPassword,
-        phone,
-        email,
-        roleID,
-      });
+      const { newAccount } = await AccountService.createAccountWithoutVerification(username, hashedPassword, phone, email, roleID, additionalData);
 
       if (newAccount) {
         return res
@@ -531,11 +541,16 @@ class AccountController {
       if (err.message === "Username already exists") {
         return res.status(400).json({ error: "Username already taken" });
       }
+      if (err.message === "CustomerName is required") {
+        return res.status(400).json({ error: "CustomerName is required" });
+      }
       // Handle generic error
       res.status(500).json({ message: "Database insert error" });
     }
   }
 
+
+  ///////////////////////////////////////////
   async handleDeleteUser(req, res) {
     const { AccountID } = req.body;
     if (!AccountID) {
