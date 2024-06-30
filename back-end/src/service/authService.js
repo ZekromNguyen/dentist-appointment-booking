@@ -551,36 +551,73 @@ class AccountService {
     }
   }
   //////////////////////////////customer////////// 
-  async getAllCustomer(CustomerID) {
+  getAllCustomer = async (CustomerID) => {
     try {
-      let account = "";
-      if (CustomerID === "ALL") {
-        account = await Customer.findAll({
-          raw: true,
-          attributes: [
-            "CustomerID",
-            "CustomerName",
-            "AccountID",
-          ],
+      let customers;
+      if (CustomerID === 'ALL') {
+        customers = await Customer.findAll({
+          include: [{
+            model: Account,
+            attributes: ['UserName', 'Phone', 'Email', 'RoleID', 'IsActive']
+          }]
         });
-      } else if (CustomerID) {
-        account = await Customer.findOne({
-          where: { CustomerID: CustomerID },
-          raw: true,
-          attributes: [
-            "CustomerID",
-            "CustomerName",
-            "AccountID",
-          ],
+      } else {
+        customers = await Customer.findOne({
+          where: { CustomerID },
+          include: [{
+            model: Account,
+            attributes: ['UserName', 'Phone', 'Email', 'RoleID', 'IsActive']
+          }]
         });
+      }
+      return customers;
+    } catch (error) {
+      console.error('Error fetching customer data:', error);
+      throw error;
+    }
+  };
+  ///////////////////////
+  async handleUpdateCustomer(data) {
+    try {
+      if (!data.CustomerID) {
+        return {
+          errCode: 2,
+          errMessage: "Customer ID is not provided",
+        };
       }
 
-      if (!account) {
-        console.log(`Account with ID ${CustomerID} not found`);
+      let customer = await Customer.findOne({
+        where: { CustomerID: data.CustomerID },
+        include: [{ model: Account, as: 'Account' }] // Include Account model
+      });
+
+      if (!customer) {
+        return {
+          errCode: 2,
+          errMessage: "Customer does not exist",
+        };
       }
-      return account;
+
+      // Update customer fields
+      customer.CustomerName = data.CustomerName || customer.CustomerName;
+      await customer.save();
+
+      // Update Account fields if provided
+      if (customer.Account) {
+        customer.Account.UserName = data.UserName || customer.Account.UserName;
+        customer.Account.Email = data.Email || customer.Account.Email;
+        customer.Account.Phone = data.Phone || customer.Account.Phone;
+        customer.Account.RoleID = data.RoleID || customer.Account.RoleID;
+        customer.Account.IsActive = data.IsActive !== undefined ? data.IsActive : customer.Account.IsActive;
+        await customer.Account.save();
+      }
+
+      return {
+        errCode: 0,
+        message: "Customer information updated successfully",
+      };
     } catch (e) {
-      console.error("Error in getAllUsers:", e);
+      console.error("Error updating customer information:", e);
       throw e;
     }
   }

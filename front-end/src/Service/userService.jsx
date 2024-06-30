@@ -198,6 +198,19 @@ const handleEditUser = async (userData) => {
     }
 };
 
+const handleEditCustomer = async (userData) => {
+    try {
+        const response = await axios.put("http://localhost:3000/editCustomer", userData);
+        return response.data; // Assuming backend returns a JSON response
+    } catch (error) {
+        throw error; // Propagate the error for handling in the calling code
+    }
+};
+
+
+
+
+
 // // Đăng ký tài khoản
 // const registerDentist = async (username, password, email, phone, dentistName, clinicID, roleID) => {
 //     try {
@@ -314,7 +327,8 @@ export {
     getAllDentist,
     deleteDentist,
     handleEditDentist,
-    getAllCustomer
+    getAllCustomer,
+    handleEditCustomer
 };
 
 

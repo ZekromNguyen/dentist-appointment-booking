@@ -57,6 +57,9 @@ let initAllWebRoutes = (app) => {
   router.delete("/deleteUser", AccountController.handleDeleteUser);
   router.get("/handleGetAllCustomer", AccountController.handleGetAllCustomer);
 
+  ///////////////////////////customer
+  router.put("/editCustomer", AccountController.handleUpdateCustomer);
+
   /////////////////////////////dentist
   router.get("/handleGetAllDentist", dentistController.handleGetAllDentist);
   router.delete("/handleDeleteDentist", dentistController.handleDeleteDentist);

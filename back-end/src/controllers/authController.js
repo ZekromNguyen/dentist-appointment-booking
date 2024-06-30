@@ -472,6 +472,11 @@ class AccountController {
     res.render("dentist");
   }
 
+
+
+
+  ///////////////////////////////user//////////////////////
+  ///// Lấy hết account 
   async handleGetAllUser(req, res) {
     let AccountID = req.query.AccountID; // All, id
     if (!AccountID) {
@@ -489,6 +494,119 @@ class AccountController {
       account,
     });
   }
+
+  //////// Xoá tài khoản user
+  async handleDeleteUser(req, res) {
+    const { AccountID } = req.body;
+    if (!AccountID) {
+      return res.status(400).json({
+        errCode: 1,
+        errMessage: "Missing required parameter",
+      });
+    }
+    try {
+      const message = await AccountService.deleteUser(AccountID);
+      return res.status(200).json(message);
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      return res.status(500).json({
+        errCode: 1,
+        errMessage: "Error deleting user",
+      });
+    }
+  }
+
+  ////////////////Update tài khoản user
+  async handleEditUser(req, res) {
+    try {
+      let data = req.body;
+
+      // Kiểm tra xem AccountID có tồn tại và không phải là undefined
+      if (!data.AccountID) {
+        return res.status(400).json({
+          errCode: 2,
+          errMessage: "ID người dùng không được cung cấp",
+        });
+      }
+
+      // Gọi service để thực hiện cập nhật thông tin người dùng
+      let message = await AccountService.handleUpdateUser(data);
+
+      // Kiểm tra kết quả từ service
+      if (message.errCode !== undefined && message.errCode !== 0) {
+        // Nếu có lỗi từ service thì trả về lỗi
+        return res.status(400).json(message);
+      }
+
+      // Trả về kết quả thành công nếu không có lỗi
+      return res.status(200).json(message);
+    } catch (error) {
+      console.error("Error in handleEditUser:", error);
+      // Trả về lỗi nếu có lỗi xảy ra trong quá trình xử lý
+      return res.status(500).json({
+        errCode: 1,
+        errMessage: "Có lỗi xảy ra, vui lòng thử lại sau",
+      });
+    }
+  }
+  //////////////////////////////////////////////////////////
+
+
+
+  //////////////customer////////////////////////////////////////
+  async handleGetAllCustomer(req, res) {
+    let CustomerID = req.query.CustomerID; // All, id
+    if (!CustomerID) {
+      return res.status(200).json({
+        errCode: 1,
+        errMessage: "Missing required parameter",
+        account: [],
+      });
+    }
+    try {
+      let account = await AccountService.getAllCustomer(CustomerID);
+      return res.status(200).json({
+        errCode: 0,
+        errMessage: "OK",
+        account,
+      });
+    } catch (error) {
+      console.error('Error fetching customer data:', error);
+      return res.status(500).json({
+        errCode: 2,
+        errMessage: "Server error",
+        account: [],
+      });
+    }
+  }
+
+  ///////update customer 
+  async handleUpdateCustomer(req, res) {
+    try {
+      let data = req.body;
+
+      // Call service to update customer information
+      let message = await AccountService.handleUpdateCustomer(data);
+
+      // Check service response
+      if (message.errCode !== undefined && message.errCode !== 0) {
+        // Return error if there's an issue from the service
+        return res.status(400).json(message);
+      }
+
+      // Return success if no errors
+      return res.status(200).json(message);
+    } catch (error) {
+      console.error("Error in handleUpdateCustomer:", error);
+      // Return error if there's an exception during processing
+      return res.status(500).json({
+        errCode: 1,
+        errMessage: "An error occurred, please try again later",
+      });
+    }
+  }
+
+
   //////////////////////////admin///////////////////////////////////////////////
   async handleCreateUser(req, res) {
     const { username, password, email, phone, roleID, name, clinicID, dentistName, description, imagePath, clinicOwnerName } = req.body;
@@ -552,79 +670,7 @@ class AccountController {
   }
 
 
-
-  ///////////////////////////////////////////
-  async handleDeleteUser(req, res) {
-    const { AccountID } = req.body;
-    if (!AccountID) {
-      return res.status(400).json({
-        errCode: 1,
-        errMessage: "Missing required parameter",
-      });
-    }
-    try {
-      const message = await AccountService.deleteUser(AccountID);
-      return res.status(200).json(message);
-    } catch (error) {
-      console.error("Error deleting user:", error);
-      return res.status(500).json({
-        errCode: 1,
-        errMessage: "Error deleting user",
-      });
-    }
-  }
-
-  async handleEditUser(req, res) {
-    try {
-      let data = req.body;
-
-      // Kiểm tra xem AccountID có tồn tại và không phải là undefined
-      if (!data.AccountID) {
-        return res.status(400).json({
-          errCode: 2,
-          errMessage: "ID người dùng không được cung cấp",
-        });
-      }
-
-      // Gọi service để thực hiện cập nhật thông tin người dùng
-      let message = await AccountService.handleUpdateUser(data);
-
-      // Kiểm tra kết quả từ service
-      if (message.errCode !== undefined && message.errCode !== 0) {
-        // Nếu có lỗi từ service thì trả về lỗi
-        return res.status(400).json(message);
-      }
-
-      // Trả về kết quả thành công nếu không có lỗi
-      return res.status(200).json(message);
-    } catch (error) {
-      console.error("Error in handleEditUser:", error);
-      // Trả về lỗi nếu có lỗi xảy ra trong quá trình xử lý
-      return res.status(500).json({
-        errCode: 1,
-        errMessage: "Có lỗi xảy ra, vui lòng thử lại sau",
-      });
-    }
-  }
-
-  //////////////customer
-  async handleGetAllCustomer(req, res) {
-    let CustomerID = req.query.CustomerID; // All, id
-    if (!CustomerID) {
-      return res.status(200).json({
-        errCode: 1,
-        errMessage: "Missing required patameter",
-        account: [],
-      });
-    }
-    let account = await AccountService.getAllCustomer(CustomerID);
-
-    return res.status(200).json({
-      errCode: 0,
-      errMessage: "OK",
-      account,
-    });
-  }
+  /////////////////////////////////////////////////////////////////////////
   //****************************************** New API Get ALL Dentist (Nam )****************************** */
   async handleGetAllDentists(req, res) {
     try {
