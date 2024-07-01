@@ -229,7 +229,7 @@ const handleEditCustomer = async (userData) => {
 //         throw error;
 //     }
 // };
-const registerDentist = async (username, password, email, phone, dentistName, clinicID, roleID, imageFile) => {
+const registerDentist = async (username, password, email, phone, dentistName, clinicID, roleID, imageFile, description) => {
     try {
         const formData = new FormData();
         formData.append('username', username);
@@ -238,11 +238,13 @@ const registerDentist = async (username, password, email, phone, dentistName, cl
         formData.append('phone', phone);
         formData.append('dentistName', dentistName);
         formData.append('clinicID', clinicID);
-        formData.append('image', imageFile); // Thêm hình ảnh vào FormData
+        formData.append('roleID', roleID); // Add roleID to FormData
+        formData.append('image', imageFile); // Add image to FormData
+        formData.append('description', description); // Add description to FormData
 
         const response = await axios.post('http://localhost:3000/registerDentist', formData, {
             headers: {
-                'Content-Type': 'multipart/form-data', // Đặt loại nội dung là multipart/form-data cho việc tải lên file
+                'Content-Type': 'multipart/form-data', // Set content type to multipart/form-data for file uploads
             },
         });
 

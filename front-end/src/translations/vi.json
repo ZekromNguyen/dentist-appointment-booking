@@ -1,6 +1,5 @@
 {
   "menu": {
-
     "admin": {
       "User": "Manage",
       "user-manage": "Manage Account",
@@ -12,11 +11,13 @@
       "manage-specialty": "Manage Specialty",
       "handbook": "Handbook",
       "manage-handbook": "Manage Handbook"
-    
-  },
-  "doctor": {
-    "manage-schedule": "Manage Schedule "
-  }
+    },
+    "doctor": {
+      "manage-schedule": "Manage Schedule "
+    },
+    "ClinicOwner": {
+      "User": "Manage"
+    }
   },
   "manager-user": {
     "add": "Manage User",
@@ -28,8 +29,7 @@
     "role": "Role",
     "save": "Lưu"
   },
-
-  "manage-schedule" :{
-    "title":"Manage doctor's schedule"
+  "manage-schedule": {
+    "title": "Manage doctor's schedule"
   }
-  }
+}

@@ -189,17 +189,9 @@ class AccountController {
         return res.status(500).json({ message: "Failed to upload image" });
       }
 
-      const { username, password, email, phone, dentistName, clinicID } =
-        req.body;
+      const { username, password, email, phone, dentistName, clinicID, description } = req.body;
 
-      if (
-        !username ||
-        !password ||
-        !email ||
-        !phone ||
-        !dentistName ||
-        !clinicID
-      ) {
+      if (!username || !password || !email || !phone || !dentistName || !clinicID || !description) {
         return res.status(400).json({ message: "All fields are required" });
       }
 
@@ -226,26 +218,26 @@ class AccountController {
         // Get image path from uploaded file
         const imagePath = req.file ? `uploads/${req.file.filename}` : null;
 
-        // Create dentist information with the image path
+        // Create dentist information with the image path and description
         const newDentist = await AccountService.createDentist(
           dentistName,
           newAccount.AccountID,
           clinicID,
+          description,
           imagePath
         );
 
         console.log("Account created:", newAccount);
         console.log("Dentist created:", newDentist);
 
-        return res
-          .status(200)
-          .json({ message: "Dentist registered successfully" });
+        return res.status(200).json({ message: "Dentist registered successfully" });
       } catch (err) {
         console.error("Error creating dentist account:", err);
         res.status(500).send("Database insert error");
       }
     });
   };
+
 
   // async registerDentist(req, res) {
   //   const { username, password, email, phone, roleID, dentistName, clinicID } =
@@ -613,40 +605,47 @@ class AccountController {
     const saltRounds = 10; // Number of salt rounds for bcrypt hashing
 
     try {
+      // Validate required fields
       if (!username || !password || !email || !phone || !roleID) {
         return res.status(400).json({ message: "All fields are required" });
       }
 
-      // Validate password length or complexity if needed
-      if (password.length < 8) {
-        return res.status(400).json({ message: "Password must be at least 8 characters long" });
-      }
-
       // Hash the password using bcrypt
-      const hashedPassword = bcrypt.hashSync(password, saltRounds);
+      const hashedPassword = await bcrypt.hash(password, saltRounds);
 
       // Prepare additional data based on role
       const additionalData = {};
-      if (roleID === "1") { // Customer
-        if (!name) {
-          return res.status(400).json({ message: "CustomerName is required" });
-        }
-        additionalData.CustomerName = name;
-      } else if (roleID === "2") { // Dentist
-        additionalData.DentistName = dentistName;
-        additionalData.ClinicID = clinicID;
-        additionalData.Description = description;
-        additionalData.ImagePath = imagePath; // Đảm bảo ImagePath được thiết lập ở đây
-      } else if (roleID === "3") { // ClinicOwner
-        additionalData.ClinicID = clinicID;
-        additionalData.ClinicOwnerName = clinicOwnerName;
+      switch (roleID) {
+        case "1": // Customer
+          if (!name) {
+            return res.status(400).json({ message: "CustomerName is required" });
+          }
+          additionalData.CustomerName = name;
+          break;
+        case "2": // Dentist
+          if (!dentistName || !clinicID || !description || !imagePath) {
+            return res.status(400).json({ message: "All fields for Dentist are required" });
+          }
+          additionalData.DentistName = dentistName;
+          additionalData.ClinicID = clinicID;
+          additionalData.Description = description;
+          additionalData.ImagePath = imagePath;
+          break;
+        case "3": // ClinicOwner
+          if (!clinicID || !clinicOwnerName) {
+            return res.status(400).json({ message: "All fields for ClinicOwner are required" });
+          }
+          additionalData.ClinicID = clinicID;
+          additionalData.ClinicOwnerName = clinicOwnerName;
+          break;
+        default:
+          return res.status(400).json({ message: "Invalid role ID" });
       }
 
-      // Call your service method to create the account
-      const result = await AccountService.createAccountWithoutVerification(username, hashedPassword, phone, email, roleID, additionalData);
+      // Call AuthService method to create the account
+      const result = await AccountService.createUser(username, hashedPassword, phone, email, roleID, additionalData);
 
-      console.log('Result from AccountService:', result); // Logging result for debugging
-
+      // Handle the response based on the result
       if (result && result.newAccount) {
         return res.status(200).json({ message: "Account created successfully", newAccount: result.newAccount });
       } else {
@@ -661,13 +660,14 @@ class AccountController {
       if (err.message === "Username already exists") {
         return res.status(400).json({ error: "Username already taken" });
       }
-      if (err.message === "CustomerName is required") {
-        return res.status(400).json({ error: "CustomerName is required" });
+      if (err.message === "CustomerName is required" || err.message === "All fields for Dentist are required" || err.message === "All fields for ClinicOwner are required") {
+        return res.status(400).json({ error: err.message });
       }
       // Handle generic error
       return res.status(500).json({ message: "Database insert error" });
     }
   }
+
 
 
   /////////////////////////////////////////////////////////////////////////

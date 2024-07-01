@@ -12,7 +12,8 @@ class ModelAddDentist extends Component {
             phone: '',
             dentistName: '',
             clinicID: '',
-            image: null // State to store the selected image file
+            image: null, // State to store the selected image file
+            description: '' // State for description field
         };
     }
 
@@ -27,13 +28,17 @@ class ModelAddDentist extends Component {
         });
     };
 
+    handleDescriptionChange = (event) => {
+        this.setState({ description: event.target.value });
+    };
+
     handleSubmit = async (event) => {
         event.preventDefault();
 
-        const { username, password, email, phone, dentistName, clinicID, image } = this.state;
+        const { username, password, email, phone, dentistName, clinicID, image, description } = this.state;
 
         // Validate input fields and image selection
-        if (!username || !password || !email || !phone || !dentistName || !clinicID || !image) {
+        if (!username || !password || !email || !phone || !dentistName || !clinicID || !image || !description) {
             alert('Please fill in all fields and select an image.');
             return;
         }
@@ -48,6 +53,7 @@ class ModelAddDentist extends Component {
             formData.append('dentistName', dentistName);
             formData.append('clinicID', clinicID);
             formData.append('image', image); // Append image file to FormData
+            formData.append('description', description); // Append description to FormData
 
             // Send POST request to backend
             const response = await axios.post('http://localhost:3000/registerDentist', formData, {
@@ -84,7 +90,7 @@ class ModelAddDentist extends Component {
 
     render() {
         const { isOpen, toggleFromParent } = this.props;
-        const { username, password, email, phone, dentistName, clinicID } = this.state;
+        const { username, password, email, phone, dentistName, clinicID, description } = this.state;
 
         return (
             <Modal show={isOpen} onHide={toggleFromParent}>
@@ -156,6 +162,18 @@ class ModelAddDentist extends Component {
                                 name="clinicID"
                                 value={clinicID}
                                 onChange={this.handleInputChange}
+                                required
+                            />
+                        </Form.Group>
+                        <Form.Group controlId="formDescription">
+                            <Form.Label>Description</Form.Label>
+                            <Form.Control
+                                as="textarea"
+                                rows={3}
+                                placeholder="Enter description"
+                                name="description"
+                                value={description}
+                                onChange={this.handleDescriptionChange}
                                 required
                             />
                         </Form.Group>

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { getAllUSer, deleteUser, handleEditUser } from '../../Service/userService';
-import ModelUser from '../../ClinicOwner/ModelAddAccount/ModelUser';
+import ModelUser from '../ModelAddAccount/ModelUser';
 import ModelEdit from '../../ClinicOwner/ManageCus/ModelEdit';
 import './manage.scss';
 import 'bootstrap/dist/css/bootstrap.min.css';

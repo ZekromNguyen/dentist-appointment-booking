@@ -1,13 +1,11 @@
 import { useState } from "react";
 import "./login.css";
 import Footer from '../../components/Footer/Footer';
-// import Header from '../../components/Header/Header';
 import { FaChevronLeft } from "react-icons/fa6";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify';
 import { login } from "../../Service/userService";
-// import { loginSuccess, setUserRole } from "../../store/actions";
 
 export default function Login() {
     let navigate = useNavigate();
@@ -39,9 +37,8 @@ export default function Login() {
             let response = await login(email, password);
             console.log(">>check response", response.data.message);
 
-            console.log(">>check response 2", response.data);
-            localStorage.setItem('account', JSON.stringify(response.data.user));
             if (response && response.data && response.data.message === "Login successfully") {
+                localStorage.setItem('account', JSON.stringify(response.data.user));
                 const Role = response.data.user.RoleID; // Đảm bảo rằng `RoleID` tồn tại trong đối tượng user
                 console.log('check role', Role);
 
@@ -56,17 +53,16 @@ export default function Login() {
                     navigate("/ClinicOwner");
                 } else if (Role === 4) {
                     toast.success("Chúc mừng bạn đăng nhập thành công");
-                    navigate("/Admin")
+                    navigate("/Admin");
                 }
-                // } else if (response && response.data && response.data.error) {
-                //     toast.error(response.data.error);
             } else {
-                toast.error("Nhập sai tài khoản hoặc mật khẩu. Vui lòng thử lại.");
+                toast.error(response.data.error || "Nhập sai tài khoản hoặc mật khẩu. Vui lòng thử lại.");
             }
         } catch (error) {
             toast.error("Lỗi ngoài.");
         }
     };
+
     const handleKeyPress = (event) => {
         if (event.key === 'Enter') {
             handleLogin();
@@ -144,5 +140,3 @@ export default function Login() {
         </div>
     );
 }
-
-

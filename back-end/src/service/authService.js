@@ -441,15 +441,12 @@ class AccountService {
   }
 
   ////////////////////////////admin ////////////////////////
-  async createUser(username, password, phone, email, roleID, additionalData = {}) {
+  async createUser(username, hashedPassword, phone, email, roleID, additionalData = {}) {
     try {
-      // Chuyển đổi roleID thành số nguyên nếu cần
-      roleID = parseInt(roleID); // Chắc chắn rằng roleID là số nguyên
+      // Convert roleID to integer if necessary
+      roleID = parseInt(roleID);
 
-      // Hash mật khẩu
-      const hashedPassword = bcrypt.hashSync(password, 10);
-
-      // Kiểm tra xem tài khoản với cùng một email hoặc tên người dùng đã tồn tại hay chưa
+      // Check if an account with the same email or username already exists
       const existingAccount = await Account.findOne({
         where: {
           [Sequelize.Op.or]: [{ Email: email }, { UserName: username }],
@@ -458,36 +455,36 @@ class AccountService {
 
       if (existingAccount) {
         if (existingAccount.UserName === username) {
-          throw new Error('Tên người dùng đã tồn tại');
+          throw new Error('Username already exists');
         }
         if (existingAccount.Email === email) {
-          throw new Error('Email đã tồn tại');
+          throw new Error('Email already exists');
         }
       }
 
-      // Tạo tài khoản mới
+      // Create a new account
       const newAccount = await Account.create({
         UserName: username,
         Password: hashedPassword,
         Phone: phone,
         Email: email,
         RoleID: roleID,
-        IsActive: true, // Kích hoạt nếu không phải là khách hàng
+        IsActive: true, // Activate if not a customer
       });
 
-      // Chèn vào các bảng bổ sung dựa trên roleID
+      // Insert into additional tables based on roleID
       let additionalEntity;
       switch (roleID) {
-        case 1: // Khách hàng
+        case 1: // Customer
           if (!additionalData.CustomerName) {
-            throw new Error('Tên khách hàng là bắt buộc');
+            throw new Error('Customer name is required');
           }
           additionalEntity = await this.createCustomer(
             additionalData.CustomerName,
             newAccount.AccountID
           );
           break;
-        case 2: // Nha sĩ
+        case 2: // Dentist
           additionalEntity = await this.createDentist(
             additionalData.DentistName,
             newAccount.AccountID,
@@ -496,60 +493,29 @@ class AccountService {
             additionalData.ImagePath
           );
           break;
-        case 3: // Chủ phòng khám
+        case 3: // Clinic Owner
           additionalEntity = await this.createClinicOwner(
             additionalData.ClinicID,
             additionalData.ClinicOwnerName,
             newAccount.AccountID
           );
           break;
-        case 4: // Admin
-          // Xử lý logic tạo admin tại đây nếu cần
+        case 4: // Admin - Handle admin creation logic here if needed
           break;
         default:
-          throw new Error('roleID không hợp lệ');
+          throw new Error('Invalid roleID');
       }
 
       return { newAccount, additionalEntity };
     } catch (error) {
-      if (error.message === 'roleID không hợp lệ') {
-        throw new Error('roleID không hợp lệ');
+      if (error.message === 'Invalid roleID') {
+        throw new Error('Invalid roleID');
       }
-      throw error; // Ném bất kỳ lỗi không mong đợi nào khác
+      throw error; // Throw any other unexpected errors
     }
   }
 
-  // async createAccountWithoutVerification(username, password, phone, email, roleID, additionalData = {}) {
-  //   try {
-  //     const result = await this.createUser(username, password, phone, email, roleID, additionalData);
-  //     return result.newAccount;
-  //   } catch (error) {
-  //     if (error.message === 'Username already exists') {
-  //       throw new Error('Username already exists');
-  //     }
-  //     if (error.message === 'Email already exists') {
-  //       throw new Error('Email already exists');
-  //     }
-  //     console.error('Error creating account without verification:', error);
-  //     throw new Error('Error creating account without verification');
-  //   }
-  // }
-  async createAccountWithoutVerification(username, password, phone, email, roleID, additionalData = {}) {
-    try {
-      const result = await this.createUser(username, password, phone, email, roleID, additionalData);
-      console.log('Result from createUser:', result); // Logging result for debugging
-      return { newAccount: result.newAccount, additionalEntity: result.additionalEntity };
-    } catch (error) {
-      if (error.message === 'Username already exists') {
-        throw new Error('Username already exists');
-      }
-      if (error.message === 'Email already exists') {
-        throw new Error('Email already exists');
-      }
-      console.error('Error creating account without verification:', error);
-      throw new Error('Error creating account without verification');
-    }
-  }
+
   //////////////////////////////customer////////// 
   getAllCustomer = async (CustomerID) => {
     try {

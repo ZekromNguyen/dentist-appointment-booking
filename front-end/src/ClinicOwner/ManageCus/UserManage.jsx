@@ -199,7 +199,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { getAllCustomer, deleteUser, handleEditUser } from '../../Service/userService';
-import ModelUser from '../ModelAddAccount/ModelUser';
+import ModelUser from '../ModelAddCus/ModelAddCus';
 import ModelEdit from './ModelEdit';
 import './UserManage.scss';
 import 'bootstrap/dist/css/bootstrap.min.css';
