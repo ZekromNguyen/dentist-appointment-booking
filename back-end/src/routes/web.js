@@ -4,7 +4,9 @@ import AccountController from "../controllers/authController";
 import DentistController from "../controllers/dentistController";
 import BookingController from "../controllers/bookingController";
 import dentistController from "../controllers/dentistController";
-import TreatmentController, { upload } from '../controllers/treatmentController';
+import TreatmentController, {
+  upload,
+} from "../controllers/treatmentController";
 // init all web routes
 
 let router = express.Router();
@@ -48,6 +50,7 @@ let initAllWebRoutes = (app) => {
   //get CustomerName và SlotTime customer DentistName của 1 bookingdetail nếu đã booking
   //ex: /getBookingDetail?BookingDetailID=1
 
+  router.get("/getAllClinic", AccountController.getAllClinic);
   router.get("/getAllBooking", BookingController.getAllBooking);
 
   ///////////////////////////user
@@ -74,8 +77,12 @@ let initAllWebRoutes = (app) => {
   router.get("/payment/:bookingId", BookingController.showPaymentPage);
   router.post("/payment", BookingController.processPayment);
 
-  router.get('/treatment', TreatmentController.getAllTreatments);
-  router.post('/treatments', upload.single('Result'), TreatmentController.createTreatment);
+  router.get("/treatment", TreatmentController.getAllTreatments);
+  router.post(
+    "/treatments",
+    upload.single("Result"),
+    TreatmentController.createTreatment
+  );
 
   return app.use("/", router);
 };

@@ -6,28 +6,33 @@ import { Link, useNavigate } from "react-router-dom";
 import { FaUserClock } from "react-icons/fa";
 import { TfiHeadphoneAlt } from "react-icons/tfi";
 import { MdGTranslate } from "react-icons/md";
-import { checkSession, logout } from '../../Service/userService';
+import { logout } from '../../Service/userService';
 // import { FormattedMessage } from 'react-intl';
 
 
 export default function Header() {
-    const [user, setUser] = useState(null);
+    const [account, setAccount] = useState(null);
     const navigate = useNavigate();
+
+    const getAccount = async () => {
+        try {
+            var accountData = localStorage.getItem('account');
+            const account1 = JSON.parse(accountData);
+            setAccount(account1);
+        } catch (error) {
+            console.error('Error during getAccount:', error);
+        }
+    }
+
     useEffect(() => {
-        // Kiểm tra session khi component được mount
-        const fetchSession = async () => {
-            const userData = await checkSession();
-            if (userData) {
-                setUser(userData);
-            }
-        };
-        fetchSession();
+        getAccount();
     }, []);
 
     const handleLogout = async () => {
         try {
             await logout();
-            setUser(null);
+            localStorage.removeItem('account');
+            setAccount(null);
             navigate('/');
         } catch (error) {
             console.error('Error during logout:', error);
@@ -60,9 +65,9 @@ export default function Header() {
                     </div>
                 </div>
                 <div className="content-login-register">
-                    {user ? (
+                    {account ? (
                         <div className="logged-in">
-                            <span>Xin chào, {user.user}</span>
+                            <span>Xin chào, {account.user}</span>
                             <button onClick={handleLogout}>Logout</button>
                         </div>
                     ) : (

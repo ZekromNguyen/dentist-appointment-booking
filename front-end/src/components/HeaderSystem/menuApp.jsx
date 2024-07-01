@@ -13,7 +13,11 @@ export const adminMenu = [
             },
             {
                 name: 'menu.doctor.manage-schedule',
-                link: '/ClinicOwner/system/manage-schedule' // Đây là mục quản lý lịch khám bệnh cho admin
+                link: '/ClinicOwner/system/manage-schedule' // Đây là mục quản lý lịch khám bệnh cho owner
+            },
+            {
+                name: 'menu.admin.manage-booking',
+                link: '/ClinicOwner/system/manage-booking' // Đây là mục quản lý đặt chỗ cho owner
             },
         ]
     },

@@ -189,9 +189,25 @@ class AccountController {
         return res.status(500).json({ message: "Failed to upload image" });
       }
 
-      const { username, password, email, phone, dentistName, clinicID, description } = req.body;
+      const {
+        username,
+        password,
+        email,
+        phone,
+        dentistName,
+        clinicID,
+        description,
+      } = req.body;
 
-      if (!username || !password || !email || !phone || !dentistName || !clinicID || !description) {
+      if (
+        !username ||
+        !password ||
+        !email ||
+        !phone ||
+        !dentistName ||
+        !clinicID ||
+        !description
+      ) {
         return res.status(400).json({ message: "All fields are required" });
       }
 
@@ -230,14 +246,15 @@ class AccountController {
         console.log("Account created:", newAccount);
         console.log("Dentist created:", newDentist);
 
-        return res.status(200).json({ message: "Dentist registered successfully" });
+        return res
+          .status(200)
+          .json({ message: "Dentist registered successfully" });
       } catch (err) {
         console.error("Error creating dentist account:", err);
         res.status(500).send("Database insert error");
       }
     });
   };
-
 
   // async registerDentist(req, res) {
   //   const { username, password, email, phone, roleID, dentistName, clinicID } =
@@ -464,11 +481,22 @@ class AccountController {
     res.render("dentist");
   }
 
-
-
+  // get all clinic
+  async getAllClinic(req, res) {
+    try {
+      const clinics = await AccountService.getAllClinic();
+      if (!clinics || clinics.length === 0) {
+        res.status(404).json({ message: "Success, Not found clinc" });
+      }
+      res.status(200).json({ message: "Success", clinics });
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching all clinic" });
+      console.error("Error fetching all clinic", error);
+    }
+  }
 
   ///////////////////////////////user//////////////////////
-  ///// Lấy hết account 
+  ///// Lấy hết account
   async handleGetAllUser(req, res) {
     let AccountID = req.query.AccountID; // All, id
     if (!AccountID) {
@@ -543,8 +571,6 @@ class AccountController {
   }
   //////////////////////////////////////////////////////////
 
-
-
   //////////////customer////////////////////////////////////////
   async handleGetAllCustomer(req, res) {
     let CustomerID = req.query.CustomerID; // All, id
@@ -563,7 +589,7 @@ class AccountController {
         account,
       });
     } catch (error) {
-      console.error('Error fetching customer data:', error);
+      console.error("Error fetching customer data:", error);
       return res.status(500).json({
         errCode: 2,
         errMessage: "Server error",
@@ -572,7 +598,7 @@ class AccountController {
     }
   }
 
-  ///////update customer 
+  ///////update customer
   async handleUpdateCustomer(req, res) {
     try {
       let data = req.body;
@@ -598,10 +624,21 @@ class AccountController {
     }
   }
 
-
   //////////////////////////admin///////////////////////////////////////////////
   async handleCreateUser(req, res) {
-    const { username, password, email, phone, roleID, name, clinicID, dentistName, description, imagePath, clinicOwnerName } = req.body;
+    const {
+      username,
+      password,
+      email,
+      phone,
+      roleID,
+      name,
+      clinicID,
+      dentistName,
+      description,
+      imagePath,
+      clinicOwnerName,
+    } = req.body;
     const saltRounds = 10; // Number of salt rounds for bcrypt hashing
 
     try {
@@ -618,13 +655,17 @@ class AccountController {
       switch (roleID) {
         case "1": // Customer
           if (!name) {
-            return res.status(400).json({ message: "CustomerName is required" });
+            return res
+              .status(400)
+              .json({ message: "CustomerName is required" });
           }
           additionalData.CustomerName = name;
           break;
         case "2": // Dentist
           if (!dentistName || !clinicID || !description || !imagePath) {
-            return res.status(400).json({ message: "All fields for Dentist are required" });
+            return res
+              .status(400)
+              .json({ message: "All fields for Dentist are required" });
           }
           additionalData.DentistName = dentistName;
           additionalData.ClinicID = clinicID;
@@ -633,7 +674,9 @@ class AccountController {
           break;
         case "3": // ClinicOwner
           if (!clinicID || !clinicOwnerName) {
-            return res.status(400).json({ message: "All fields for ClinicOwner are required" });
+            return res
+              .status(400)
+              .json({ message: "All fields for ClinicOwner are required" });
           }
           additionalData.ClinicID = clinicID;
           additionalData.ClinicOwnerName = clinicOwnerName;
@@ -643,16 +686,26 @@ class AccountController {
       }
 
       // Call AuthService method to create the account
-      const result = await AccountService.createUser(username, hashedPassword, phone, email, roleID, additionalData);
+      const result = await AccountService.createUser(
+        username,
+        hashedPassword,
+        phone,
+        email,
+        roleID,
+        additionalData
+      );
 
       // Handle the response based on the result
       if (result && result.newAccount) {
-        return res.status(200).json({ message: "Account created successfully", newAccount: result.newAccount });
+        return res.status(200).json({
+          message: "Account created successfully",
+          newAccount: result.newAccount,
+        });
       } else {
         return res.status(400).json({ message: "Failed to create account" });
       }
     } catch (err) {
-      console.error('Error in handleCreateUser:', err);
+      console.error("Error in handleCreateUser:", err);
       // Handle specific errors if needed
       if (err.message === "Email already exists") {
         return res.status(400).json({ error: "Email already taken" });
@@ -660,15 +713,17 @@ class AccountController {
       if (err.message === "Username already exists") {
         return res.status(400).json({ error: "Username already taken" });
       }
-      if (err.message === "CustomerName is required" || err.message === "All fields for Dentist are required" || err.message === "All fields for ClinicOwner are required") {
+      if (
+        err.message === "CustomerName is required" ||
+        err.message === "All fields for Dentist are required" ||
+        err.message === "All fields for ClinicOwner are required"
+      ) {
         return res.status(400).json({ error: err.message });
       }
       // Handle generic error
       return res.status(500).json({ message: "Database insert error" });
     }
   }
-
-
 
   /////////////////////////////////////////////////////////////////////////
   //****************************************** New API Get ALL Dentist (Nam )****************************** */
