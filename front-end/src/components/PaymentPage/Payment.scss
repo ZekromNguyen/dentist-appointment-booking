@@ -1,16 +1,17 @@
 .container-fluid {
     max-width: 80%;
-    padding-top: 10px;
+    padding-top: 2px;
     
     .border-box {
-      max-width: 60%;
+      max-width: 30%;
       margin: 0 auto;
     }
     
     .img-fluid {
-      max-width: 80%;
+      max-width: 60%;
       display: block;
       margin: 0 auto;
+      padding-top: 10px;
     }
   
     .border1 {
@@ -89,6 +90,12 @@
     }
   }
   .container-fluid{
+    .payment-container{
+      padding-left: 6%;
+      max-width: 90%;
+
+    }
+    max-width: 100%;
     .border2{
         border: #007bff;
     }
@@ -101,3 +108,4 @@
     color: black;
     font-weight: bolder;
   }
+ 

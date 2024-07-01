@@ -63,6 +63,8 @@ let initAllWebRoutes = (app) => {
   router.get("/scheduleSlot", DentistController.getAvailableSlotN);
   router.get("/scheduleDentist", DentistController.getDentistSchedules);
   router.get("/getCustomerId", AccountController.getCustomerId);
+  router.get("/bookings", BookingController.showAllBooking);
+  router.get("/bookingdetails/:bookingId", BookingController.showAllBookingDetails);
 
   router.get("/payment/:bookingId", BookingController.showPaymentPage);
   router.post("/payment", BookingController.processPayment);

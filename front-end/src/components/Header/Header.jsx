@@ -50,7 +50,7 @@ export default function Header() {
                         <div className="sub">Sống tốt mỗi ngày</div>
                     </div>
                     <div className="child-option3">
-                        <a href="/booking" className="booking-link">
+                        <a href="/bookingpage" className="bookingpage-link">
                             <div><b>Đặt lịch</b></div>
                         </a>
                     </div>

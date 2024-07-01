@@ -1,5 +1,4 @@
 
-
 // import React, { useEffect, useState } from 'react';
 // import { FormattedMessage } from 'react-intl';
 // import axios from 'axios';
@@ -13,12 +12,23 @@
 //   const [slots, setSlots] = useState([]);
 //   const [selectedSlots, setSelectedSlots] = useState([]);
 //   const [schedules, setSchedules] = useState([]);
+//   const [bookedSchedules, setBookedSchedules] = useState([]);
 //   const [error, setError] = useState('');
 //   const [isScheduleVisible, setIsScheduleVisible] = useState(true);
+//   const [isBookedScheduleVisible, setIsBookedScheduleVisible] = useState(true); // State for booked schedule visibility
+//   const [selectedOption, setSelectedOption] = useState('dentist-schedule'); // State for selected option
 //   const currentDate = new Date().toISOString().split('T')[0];
 
 //   const toggleScheduleVisibility = () => {
 //     setIsScheduleVisible(!isScheduleVisible);
+//   };
+
+//   const toggleBookedScheduleVisibility = () => {
+//     setIsBookedScheduleVisible(!isBookedScheduleVisible);
+//   };
+
+//   const handleOptionChange = (event) => {
+//     setSelectedOption(event.target.value);
 //   };
 
 //   // Get API All Dentist
@@ -27,6 +37,7 @@
 //       try {
 //         const response = await axios.get('http://localhost:3000/getAllDentists');
 //         setDentists(Array.isArray(response.data.dentists) ? response.data.dentists : []);
+//         console.log('check dentist', response);
 //       } catch (error) {
 //         console.error('Error fetching dentists:', error);
 //       }
@@ -41,7 +52,7 @@
 //       try {
 //         const response = await axios.get('http://localhost:3000/scheduleSlot');
 //         setSlots(Array.isArray(response.data) ? response.data : []);
-//         console.log('checkslotId', response.data);
+//         console.log('check availableSlot', response);
 //       } catch (error) {
 //         console.error('Error fetching slots:', error);
 //       }
@@ -55,8 +66,12 @@
 //     const fetchSchedules = async () => {
 //       try {
 //         const response = await axios.get('http://localhost:3000/scheduleDentist');
-//         console.log('Schedule', response.data);
-//         setSchedules(Array.isArray(response.data) ? response.data : []);
+//         const allSchedules = Array.isArray(response.data) ? response.data : [];
+//         console.log('check dentistSchedule', allSchedules);
+//         setSchedules(allSchedules);
+//         // Filter and set booked schedules
+//         const booked = allSchedules.filter(schedule => schedule.Status === 'Booked');
+//         setBookedSchedules(booked);
 //       } catch (error) {
 //         console.error('Error fetching schedules:', error);
 //       }
@@ -75,7 +90,6 @@
 //   };
 
 //   const handleTimeClick = (slotId) => {
-//     console.log('Selected SlotID:', slotId);
 //     if (selectedSlots.includes(slotId)) {
 //       setSelectedSlots(selectedSlots.filter(id => id !== slotId));
 //     } else {
@@ -116,6 +130,7 @@
 //       setSelectedDate('');
 //       setSelectedSlots([]);
 //       setError('');
+//       window.location.reload();
 //     } catch (error) {
 //       console.error('Error creating schedule:', error);
 //       setError('Error creating schedule');
@@ -123,6 +138,7 @@
 //   };
 
 //   // Filter available slots based on existing schedules
+//   //slots is all slot
 //   const filteredSlots = slots.filter(slot =>
 //     !schedules.some(schedule =>
 //       schedule.DentistID === selectedDentist &&
@@ -130,6 +146,12 @@
 //       schedule.SlotID === slot.SlotID
 //     )
 //   );
+//   console.log('check filteredSlots', filteredSlots);
+//   console.log('Selected Dentist:', selectedDentist);
+//   console.log('Selected Date:', selectedDate);
+//   console.log('Schedules:', schedules);
+//   console.log('Slots:', slots);
+
 
 //   return (
 //     <div>
@@ -148,7 +170,6 @@
 //                 value={selectedDentist}
 //                 onChange={(e) => {
 //                   setSelectedDentist(e.target.value);
-//                   console.log('Selected Dentist ID:', e.target.value);
 //                 }}
 //               >
 //                 <option value="">Chọn bác sĩ</option>
@@ -188,13 +209,13 @@
 //         <div className="row">
 //           <div className="col-md-12 pick-hour-container">
 //             <div className="Time-slot-container">
-//               {filteredSlots.map((availableslot) => (
+//               {filteredSlots.map((filteredSlots) => (
 //                 <div
-//                   key={availableslot.SlotID}
-//                   className={`hour-slot ${selectedSlots.includes(availableslot.SlotID) ? 'selected' : ''}`}
-//                   onClick={() => handleTimeClick(availableslot.SlotID)}
+//                   key={filteredSlots.SlotID}
+//                   className={`hour-slot ${selectedSlots.includes(filteredSlots.SlotID) ? 'selected' : ''}`}
+//                   onClick={() => handleTimeClick(filteredSlots.SlotID)}
 //                 >
-//                   {availableslot.Time}
+//                   {filteredSlots.Time}
 //                 </div>
 //               ))}
 //             </div>
@@ -202,37 +223,92 @@
 //         </div>
 
 //         {error && <div className="alert alert-danger">{error}</div>}
+
+//         {/* Move the option selector here */}
+//         <div className="row">
+//           <div className="col-md-6">
+//             <div className="option-selector">
+//               <select onChange={handleOptionChange} value={selectedOption} className="form-control">
+//                 <option value="dentist-schedule">Dentist Schedule</option>
+//                 <option value="booked-schedule">Booked Schedule</option>
+//               </select>
+//             </div>
+//           </div>
+//         </div>
 //       </div>
 
-//       <div className="container dentist-schedule-container">
-//         <button className="btn btn-toggle" onClick={toggleScheduleVisibility}>
-//           {isScheduleVisible ? 'Hide Schedule' : 'Show Schedule'}
-//         </button>
-//         <div className={`row schedule-table ${isScheduleVisible ? 'visible' : 'hidden'}`}>
-//           <div className="col-md-12">
-//             <div className="table-background"></div>
-//             <table className="table">
-//               <thead>
-//                 <tr>
-//                   <th scope="col">ScheduleID</th>
-//                   <th scope="col">Dentist Name</th>
-//                   <th scope="col">Date</th>
-//                   <th scope="col">SlotTime</th>
-//                   <th scope="col">Status</th>
-//                 </tr>
-//               </thead>
-//               <tbody>
-//                 {schedules.map((schedule, index) => (
-//                   <tr key={schedule.ScheduleID}>
-//                     <td>{schedule.ScheduleID}</td>
-//                     <td>{dentists.find(dentist => dentist.DentistID === schedule.DentistID)?.DentistName}</td>
-//                     <td>{schedule.Date}</td>
-//                     <td>{slots.find(availableslot => availableslot.SlotID === schedule.SlotID)?.Time}</td>
-//                     <td>{schedule.Status}</td>
-//                   </tr>
-//                 ))}
-//               </tbody>
-//             </table>
+//       <div className="container">
+//         <div className="row">
+//           <div className="col-md-6">
+//             {selectedOption === 'dentist-schedule' && (
+//               <div className="dentist-schedule-container">
+//                 <button className="btn btn-toggle" onClick={toggleScheduleVisibility}>
+//                   {isScheduleVisible ? 'Hide Schedule' : 'Show Schedule'}
+//                 </button>
+//                 <div className={`schedule-table ${isScheduleVisible ? 'visible' : 'hidden'}`}>
+//                   <table className="table">
+//                     <thead>
+//                       <tr>
+//                         <th scope="col">ScheduleID</th>
+//                         <th scope="col">Dentist Name</th>
+//                         <th scope="col">Date</th>
+//                         <th scope="col">Slot Time</th>
+//                         <th scope="col">Status</th>
+//                       </tr>
+//                     </thead>
+//                     <tbody>
+//                       {schedules.map((schedule) => (
+//                         schedule.Status === 'Available' && (
+//                           <tr key={schedule.ScheduleID}>
+//                             <td>{schedule.ScheduleID}</td>
+//                             <td>{dentists.find(dentist => dentist.DentistID === schedule.DentistID)?.DentistName}</td>
+//                             <td>{schedule.Date}</td>
+//                             <td>{slots.find(availableslot => availableslot.SlotID === schedule.SlotID)?.Time}</td>
+//                             <td>{schedule.Status}</td>
+//                           </tr>
+//                         )
+//                       ))}
+//                     </tbody>
+//                   </table>
+//                 </div>
+//               </div>
+//             )}
+//           </div>
+
+//           <div className="col-md-6">
+//             {selectedOption === 'booked-schedule' && (
+//               <div className="booked-schedule-container">
+//                 <button className="btn btn-toggle" onClick={toggleBookedScheduleVisibility}>
+//                   {isBookedScheduleVisible ? 'Hide Booked Schedules' : 'Show Booked Schedules'}
+//                 </button>
+//                 <div className={`schedule-table ${isBookedScheduleVisible ? 'visible' : 'hidden'}`}>
+//                   <table className="table">
+//                     <thead>
+//                       <tr>
+//                         <th scope="col">ScheduleID</th>
+//                         <th scope="col">Dentist Name</th>
+//                         <th scope="col">Date</th>
+//                         <th scope="col">Slot Time</th>
+//                         <th scope="col">Status</th>
+//                       </tr>
+//                     </thead>
+//                     <tbody>
+//                       {bookedSchedules.map((schedule) => (
+//                         schedule.Status === 'Booked' && (
+//                           <tr key={schedule.ScheduleID}>
+//                             <td>{schedule.ScheduleID}</td>
+//                             <td>{dentists.find(dentist => dentist.DentistID === schedule.DentistID)?.DentistName}</td>
+//                             <td>{schedule.Date}</td>
+//                             <td>{slots.find(availableslot => availableslot.SlotID === schedule.SlotID)?.Time}</td>
+//                             <td>{schedule.Status}</td>
+//                           </tr>
+//                         )
+//                       ))}
+//                     </tbody>
+//                   </table>
+//                 </div>
+//               </div>
+//             )}
 //           </div>
 //         </div>
 //       </div>
@@ -241,8 +317,684 @@
 // }
 
 
+
+
+
+// import React, { useEffect, useState } from 'react';
+// import { FormattedMessage } from 'react-intl';
+// import axios from 'axios';
+// import './ScheduleManage.scss';
+// import 'bootstrap/dist/css/bootstrap.min.css';
+
+// export default function ScheduleManage(props) {
+//   const [dentists, setDentists] = useState([]);
+//   const [selectedDentist, setSelectedDentist] = useState('');
+//   const [selectedDate, setSelectedDate] = useState('');
+//   const [slots, setSlots] = useState([]);
+//   const [selectedSlots, setSelectedSlots] = useState([]);
+//   const [schedules, setSchedules] = useState([]);
+//   const [availableSlots, setAvailableSlots] = useState([]);
+//   const [bookedSchedules, setBookedSchedules] = useState([]);
+//   const [error, setError] = useState('');
+//   const [isScheduleVisible, setIsScheduleVisible] = useState(true);
+//   const [isBookedScheduleVisible, setIsBookedScheduleVisible] = useState(true); // State for booked schedule visibility
+//   const [selectedOption, setSelectedOption] = useState('dentist-schedule'); // State for selected option
+//   const currentDate = new Date().toISOString().split('T')[0];
+
+//   const toggleScheduleVisibility = () => {
+//     setIsScheduleVisible(!isScheduleVisible);
+//   };
+
+//   const toggleBookedScheduleVisibility = () => {
+//     setIsBookedScheduleVisible(!isBookedScheduleVisible);
+//   };
+
+//   const handleOptionChange = (event) => {
+//     setSelectedOption(event.target.value);
+//   };
+
+//   // Get API All Dentist
+//   useEffect(() => {
+//     const fetchDentists = async () => {
+//       try {
+//         const response = await axios.get('http://localhost:3000/getAllDentists');
+//         setDentists(Array.isArray(response.data.dentists) ? response.data.dentists : []);
+//         console.log('check dentist', response);
+//       } catch (error) {
+//         console.error('Error fetching dentists:', error);
+//       }
+//     };
+
+//     fetchDentists();
+//   }, []);
+
+//   // Get API All Slot
+//   useEffect(() => {
+//     const fetchSlots = async () => {
+//       try {
+//         const response = await axios.get('http://localhost:3000/scheduleSlot');
+//         setSlots(Array.isArray(response.data) ? response.data : []);
+//         console.log('check availableSlot', response);
+//       } catch (error) {
+//         console.error('Error fetching slots:', error);
+//       }
+//     };
+
+//     fetchSlots();
+//   }, []);
+
+
+  
+//   //**************************Get Slot By Dentist and Date*******************************/
+
+//   useEffect(() => {
+//     const fetchAvailableSlots = async () => {
+//       if (selectedDentist.id && selectedDate) {
+//         try {
+//           const formattedDate = selectedDate;
+//           const response = await axios.get(`http://localhost:3000/slotsByDate`, {
+//             params: {
+//               dentistID: selectedDentist.id,
+//               date: formattedDate
+//             }
+//           });
+//           if (!response.status === 200) {
+//             throw new Error('Failed to fetch slots');
+//           }
+//           setAvailableSlots(response.data);
+//         } catch (error) {
+//           console.error('Error fetching slots:', error);
+//         }
+//       }
+//     };
+//     fetchAvailableSlots();
+//   }, [selectedDentist, selectedDate]);
+
+//   // Get API All DentistSchedule
+//   useEffect(() => {
+//     const fetchSchedules = async () => {
+//       try {
+//         const response = await axios.get('http://localhost:3000/scheduleDentist');
+//         const allSchedules = Array.isArray(response.data) ? response.data : [];
+//         console.log('check dentistSchedule', allSchedules);
+//         setSchedules(allSchedules);
+//         // Filter and set booked schedules
+//         const booked = allSchedules.filter(schedule => schedule.Status === 'Booked');
+//         setBookedSchedules(booked);
+//       } catch (error) {
+//         console.error('Error fetching schedules:', error);
+//       }
+//     };
+
+//     fetchSchedules();
+//   }, []);
+
+
+//   const handleDateChange = (e) => {
+//     const selected = e.target.value;
+//     if (selected >= currentDate) {
+//       setSelectedDate(selected);
+//     } else {
+//       alert('Vui lòng chọn một ngày sau ngày hiện tại.');
+//     }
+//   };
+
+//   const handleTimeClick = (slotId) => {
+//     if (selectedSlots.includes(slotId)) {
+//       setSelectedSlots(selectedSlots.filter(id => id !== slotId));
+//     } else {
+//       setSelectedSlots([...selectedSlots, slotId]);
+//     }
+//   };
+
+//   const handleSave = async () => {
+//     if (!selectedDentist || !selectedDate || selectedSlots.length === 0) {
+//       setError('Please fill in all fields');
+//       return;
+//     }
+
+//     // Check if the dentist already has a schedule on the selected date and time slot
+//     const existingSchedule = schedules.find(schedule =>
+//       schedule.DentistID === selectedDentist &&
+//       schedule.Date === selectedDate &&
+//       selectedSlots.includes(schedule.SlotID)
+//     );
+
+//     if (existingSchedule) {
+//       setError('This dentist is already scheduled for one or more of the selected slots on this date.');
+//       return;
+//     }
+
+//     try {
+//       const newSchedules = await Promise.all(selectedSlots.map(async (slotId) => {
+//         const response = await axios.post('http://localhost:3000/schedule', {
+//           date: selectedDate,
+//           slotId: slotId,
+//           dentistId: selectedDentist
+//         });
+//         return response.data.newSchedule;
+//       }));
+
+//       setSchedules([...schedules, ...newSchedules]);
+//       setSelectedDentist('');
+//       setSelectedDate('');
+//       setSelectedSlots([]);
+//       setError('');
+//       window.location.reload();
+//     } catch (error) {
+//       console.error('Error creating schedule:', error);
+//       setError('Error creating schedule');
+//     }
+//   };
+
+
+
+//   return (
+//     <div>
+//       <div className="container manage-schedule-container">
+//         <div className="m-s-title">
+//           <FormattedMessage id="manage-schedule.title" />
+//         </div>
+
+//         <div className="row">
+//           <div className="col-md-4">
+//             <div className="form-group">
+//               <label htmlFor="dentistSelect">Chọn bác sĩ</label>
+//               <select
+//                 id="dentistSelect"
+//                 className="form-control"
+//                 value={selectedDentist}
+//                 onChange={(e) => {
+//                   setSelectedDentist(e.target.value);
+//                 }}
+//               >
+//                 <option value="">Chọn bác sĩ</option>
+//                 {dentists.map((dentist) => (
+//                   <option key={dentist.DentistID} value={dentist.DentistID}>
+//                     {dentist.DentistName}
+//                   </option>
+//                 ))}
+//               </select>
+//             </div>
+//           </div>
+
+//           <div className="col-md-4">
+//             <div className="form-group">
+//               <label htmlFor="dateSelect">Chọn ngày</label>
+//               <input
+//                 id="dateSelect"
+//                 type="date"
+//                 className="form-control"
+//                 value={selectedDate}
+//                 min={currentDate}
+//                 onChange={handleDateChange}
+//               />
+//             </div>
+//           </div>
+
+//           <div className="col-md-4">
+//             <div className="form-group">
+//               <label>&nbsp;</label>
+//               <button className="btn btn-primary" onClick={handleSave}>
+//                 Save
+//               </button>
+//             </div>
+//           </div>
+//         </div>
+
+//         <div className="row">
+//           <div className="col-md-12 pick-hour-container">
+//             <div className="Time-slot-container">
+//               {slots.map((availableSlot) => (
+//                 <div
+//                   key={availableSlot.SlotID}
+//                   className={`hour-slot ${selectedSlots.includes(availableSlot.SlotID) ? 'selected' : ''}`}
+//                   onClick={() => handleTimeClick(availableSlot.SlotID)}
+//                 >
+//                   {availableSlot.Time}
+//                 </div>
+//               ))}
+//             </div>
+//           </div>
+//         </div>
+
+//         {error && <div className="alert alert-danger">{error}</div>}
+
+//         {/* Move the option selector here */}
+//         <div className="row">
+//           <div className="col-md-6">
+//             <div className="option-selector">
+//               <select onChange={handleOptionChange} value={selectedOption} className="form-control">
+//                 <option value="dentist-schedule">Dentist Schedule</option>
+//                 <option value="booked-schedule">Booked Schedule</option>
+//               </select>
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+
+//       <div className="container">
+//         <div className="row">
+//           <div className="col-md-6">
+//             {selectedOption === 'dentist-schedule' && (
+//               <div className="dentist-schedule-container">
+//                 <button className="btn btn-toggle" onClick={toggleScheduleVisibility}>
+//                   {isScheduleVisible ? 'Hide Schedule' : 'Show Schedule'}
+//                 </button>
+//                 <div className={`schedule-table ${isScheduleVisible ? 'visible' : 'hidden'}`}>
+//                   <table className="table">
+//                     <thead>
+//                       <tr>
+//                         <th scope="col">ScheduleID</th>
+//                         <th scope="col">Dentist Name</th>
+//                         <th scope="col">Date</th>
+//                         <th scope="col">Slot Time</th>
+//                         <th scope="col">Status</th>
+//                       </tr>
+//                     </thead>
+//                     <tbody>
+//                       {schedules.map((schedule) => (
+//                         schedule.Status === 'Available' && (
+//                           <tr key={schedule.ScheduleID}>
+//                             <td>{schedule.ScheduleID}</td>
+//                             <td>{dentists.find(dentist => dentist.DentistID === schedule.DentistID)?.DentistName}</td>
+//                             <td>{schedule.Date}</td>
+//                             <td>{slots.find(availableslot => availableslot.SlotID === schedule.SlotID)?.Time}</td>
+//                             <td>{schedule.Status}</td>
+//                           </tr>
+//                         )
+//                       ))}
+//                     </tbody>
+//                   </table>
+//                 </div>
+//               </div>
+//             )}
+//           </div>
+
+//           <div className="col-md-6">
+//             {selectedOption === 'booked-schedule' && (
+//               <div className="booked-schedule-container">
+//                 <button className="btn btn-toggle" onClick={toggleBookedScheduleVisibility}>
+//                   {isBookedScheduleVisible ? 'Hide Booked Schedules' : 'Show Booked Schedules'}
+//                 </button>
+//                 <div className={`schedule-table ${isBookedScheduleVisible ? 'visible' : 'hidden'}`}>
+//                   <table className="table">
+//                     <thead>
+//                       <tr>
+//                         <th scope="col">ScheduleID</th>
+//                         <th scope="col">Dentist Name</th>
+//                         <th scope="col">Date</th>
+//                         <th scope="col">Slot Time</th>
+//                         <th scope="col">Status</th>
+//                       </tr>
+//                     </thead>
+//                     <tbody>
+//                       {bookedSchedules.map((schedule) => (
+//                         schedule.Status === 'Booked' && (
+//                           <tr key={schedule.ScheduleID}>
+//                             <td>{schedule.ScheduleID}</td>
+//                             <td>{dentists.find(dentist => dentist.DentistID === schedule.DentistID)?.DentistName}</td>
+//                             <td>{schedule.Date}</td>
+//                             <td>{slots.find(availableslot => availableslot.SlotID === schedule.SlotID)?.Time}</td>
+//                             <td>{schedule.Status}</td>
+//                           </tr>
+//                         )
+//                       ))}
+//                     </tbody>
+//                   </table>
+//                 </div>
+//               </div>
+//             )}
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }
+
+
+
+
+
+// import React, { useEffect, useState } from 'react';
+// import axios from 'axios';
+// import './ScheduleManage.scss';
+// import 'bootstrap/dist/css/bootstrap.min.css';
+
+// export default function ScheduleManage(props) {
+//   const [dentists, setDentists] = useState([]);
+//   const [selectedDentist, setSelectedDentist] = useState('');
+//   const [selectedDate, setSelectedDate] = useState('');
+//   const [slots, setSlots] = useState([]);
+//   const [selectedSlots, setSelectedSlots] = useState([]);
+//   const [schedules, setSchedules] = useState([]);
+//   const [availableSlots, setAvailableSlots] = useState([]);
+//   const [bookedSchedules, setBookedSchedules] = useState([]);
+//   const [remainingSlots, setRemainingSlots] = useState([]);
+//   const [error, setError] = useState('');
+//   const [isScheduleVisible, setIsScheduleVisible] = useState(true);
+//   const [isBookedScheduleVisible, setIsBookedScheduleVisible] = useState(true); // State for booked schedule visibility
+//   const [selectedOption, setSelectedOption] = useState('dentist-schedule'); // State for selected option
+//   const currentDate = new Date().toISOString().split('T')[0];
+
+//   const toggleScheduleVisibility = () => {
+//     setIsScheduleVisible(!isScheduleVisible);
+//   };
+
+//   const toggleBookedScheduleVisibility = () => {
+//     setIsBookedScheduleVisible(!isBookedScheduleVisible);
+//   };
+
+//   const handleOptionChange = (event) => {
+//     setSelectedOption(event.target.value);
+//   };
+
+//   // Get API All Dentist
+//   useEffect(() => {
+//     const fetchDentists = async () => {
+//       try {
+//         const response = await axios.get('http://localhost:3000/getAllDentists');
+//         setDentists(Array.isArray(response.data.dentists) ? response.data.dentists : []);
+//       } catch (error) {
+//         console.error('Error fetching dentists:', error);
+//       }
+//     };
+
+//     fetchDentists();
+//   }, []);
+
+//   // Get API All Slot
+//   useEffect(() => {
+//     const fetchSlots = async () => {
+//       try {
+//         const response = await axios.get('http://localhost:3000/scheduleSlot');
+//         setSlots(Array.isArray(response.data) ? response.data : []);
+//       } catch (error) {
+//         console.error('Error fetching slots:', error);
+//       }
+//     };
+
+//     fetchSlots();
+//   }, []);
+
+//   //**************************Get Slot By Dentist and Date*******************************/
+//   useEffect(() => {
+//     const fetchAvailableSlots = async () => {
+//       if (selectedDentist && selectedDate) {
+//         try {
+//           const response = await axios.get('http://localhost:3000/slotsByDate', {
+//             params: {
+//               dentistID: selectedDentist,
+//               date: selectedDate,
+//             },
+//           });
+//           console.log('check availableSlots',response.data);
+//           if (response.status !== 200) {
+//             throw new Error('Failed to fetch slots');
+//           }
+//           setAvailableSlots(response.data);
+//         } catch (error) {
+//           console.error('Error fetching slots:', error);
+//         }
+//       }
+//     };
+//     fetchAvailableSlots();
+//   }, [selectedDentist, selectedDate]);
+
+//   // Get API All DentistSchedule
+//   useEffect(() => {
+//     const fetchSchedules = async () => {
+//       try {
+//         const response = await axios.get('http://localhost:3000/scheduleDentist');
+//         const allSchedules = Array.isArray(response.data) ? response.data : [];
+//         setSchedules(allSchedules);
+//         // Filter and set booked schedules
+//         const booked = allSchedules.filter(schedule => schedule.Status === 'Booked');
+//         setBookedSchedules(booked);
+//       } catch (error) {
+//         console.error('Error fetching schedules:', error);
+//       }
+//     };
+
+//     fetchSchedules();
+//   }, []);
+
+//   // Filter remaining slots based on availableSlots
+//   useEffect(() => {
+//     if (slots.length > 0 && availableSlots.length > 0) {
+//       // Extract slotIDs from availableSlots
+//       const availableSlotIDs = availableSlots.map(slot => slot.SlotID);
+
+//       // Find remaining slots by filtering out availableSlotIDs from slots
+//       const remainingSlots = slots.filter(slot => !availableSlotIDs.includes(slot.SlotID));
+
+//       setRemainingSlots(remainingSlots);
+//     }
+//   }, [slots, availableSlots]);
+
+//   const handleDateChange = (e) => {
+//     const selected = e.target.value;
+//     if (selected >= currentDate) {
+//       setSelectedDate(selected);
+//     } else {
+//       alert('Vui lòng chọn một ngày sau ngày hiện tại.');
+//     }
+//   };
+
+//   const handleTimeClick = (slotId) => {
+//     if (selectedSlots.includes(slotId)) {
+//       setSelectedSlots(selectedSlots.filter(id => id !== slotId));
+//     } else {
+//       setSelectedSlots([...selectedSlots, slotId]);
+//     }
+//   };
+
+//   const handleSave = async () => {
+//     if (!selectedDentist || !selectedDate || selectedSlots.length === 0) {
+//       setError('Please fill in all fields');
+//       return;
+//     }
+
+//     // Check if the dentist already has a schedule on the selected date and time slot
+//     const existingSchedule = schedules.find(schedule =>
+//       schedule.DentistID === selectedDentist &&
+//       schedule.Date === selectedDate &&
+//       selectedSlots.includes(schedule.SlotID)
+//     );
+
+//     if (existingSchedule) {
+//       setError('This dentist is already scheduled for one or more of the selected slots on this date.');
+//       return;
+//     }
+
+//     try {
+//       const newSchedules = await Promise.all(selectedSlots.map(async (slotId) => {
+//         const response = await axios.post('http://localhost:3000/schedule', {
+//           date: selectedDate,
+//           slotId: slotId,
+//           dentistId: selectedDentist
+//         });
+//         return response.data.newSchedule;
+//       }));
+
+//       setSchedules([...schedules, ...newSchedules]);
+//       setSelectedDentist('');
+//       setSelectedDate('');
+//       setSelectedSlots([]);
+//       setError('');
+//       window.location.reload();
+//     } catch (error) {
+//       console.error('Error creating schedule:', error);
+//       setError('Error creating schedule');
+//     }
+//   };
+
+//   return (
+//     <div>
+//       <div className="container manage-schedule-container">
+//         <div className="m-s-title">
+//           Quản lý lịch làm việc
+//         </div>
+
+//         <div className="row">
+//           <div className="col-md-4">
+//             <div className="form-group">
+//               <label htmlFor="dentistSelect">Chọn bác sĩ</label>
+//               <select
+//                 id="dentistSelect"
+//                 className="form-control"
+//                 value={selectedDentist}
+//                 onChange={(e) => {
+//                   setSelectedDentist(e.target.value);
+//                 }}
+//               >
+//                 <option value="">Chọn bác sĩ</option>
+//                 {dentists.map((dentist) => (
+//                   <option key={dentist.DentistID} value={dentist.DentistID}>
+//                     {dentist.DentistName}
+//                   </option>
+//                 ))}
+//               </select>
+//             </div>
+//           </div>
+
+//           <div className="col-md-4">
+//             <div className="form-group">
+//               <label htmlFor="dateSelect">Chọn ngày</label>
+//               <input
+//                 id="dateSelect"
+//                 type="date"
+//                 className="form-control"
+//                 value={selectedDate}
+//                 min={currentDate}
+//                 onChange={handleDateChange}
+//               />
+//             </div>
+//           </div>
+
+//           <div className="col-md-4">
+//             <div className="form-group">
+//               <label>&nbsp;</label>
+//               <button className="btn btn-primary" onClick={handleSave}>
+//                 Save
+//               </button>
+//             </div>
+//           </div>
+//         </div>
+
+//         <div className="row">
+//           <div className="col-md-12 pick-hour-container">
+//             <div className="Time-slot-container">
+//               {remainingSlots.map((remainingSlot) => (
+//                 <div
+//                   key={remainingSlot.SlotID}
+//                   className={`hour-slot ${selectedSlots.includes(remainingSlot.SlotID) ? 'selected' : ''}`}
+//                   onClick={() => handleTimeClick(remainingSlot.SlotID)}
+//                 >
+//                   {remainingSlot.Time}
+//                 </div>
+//               ))}
+//             </div>
+//           </div>
+//         </div>
+
+//         {error && <div className="alert alert-danger">{error}</div>}
+
+//         {/* Move the option selector here */}
+//         <div className="row">
+//           <div className="col-md-6">
+//             <div className="option-selector">
+//               <select onChange={handleOptionChange} value={selectedOption} className="form-control">
+//                 <option value="dentist-schedule">Dentist Schedule</option>
+//                 <option value="booked-schedule">Booked Schedule</option>
+//               </select>
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+
+//       <div className="container">
+//         <div className="row">
+//           <div className="col-md-6">
+//             {selectedOption === 'dentist-schedule' && (
+//               <div className="dentist-schedule-container">
+//                 <button className="btn btn-toggle" onClick={toggleScheduleVisibility}>
+//                   {isScheduleVisible ? 'Hide Schedule' : 'Show Schedule'}
+//                 </button>
+//                 <div className={`schedule-table ${isScheduleVisible ? 'visible' : 'hidden'}`}>
+//                   <table className="table">
+//                     <thead>
+//                       <tr>
+//                         <th scope="col">ScheduleID</th>
+//                         <th scope="col">Dentist Name</th>
+//                         <th scope="col">Date</th>
+//                         <th scope="col">Slot Time</th>
+//                         <th scope="col">Status</th>
+//                       </tr>
+//                     </thead>
+//                     <tbody>
+//                       {schedules.map((schedule) => (
+//                         schedule.Status === 'Available' && (
+//                           <tr key={schedule.ScheduleID}>
+//                             <td>{schedule.ScheduleID}</td>
+//                             <td>{dentists.find(dentist => dentist.DentistID === schedule.DentistID)?.DentistName}</td>
+//                             <td>{schedule.Date}</td>
+//                             <td>{slots.find(availableslot => availableslot.SlotID === schedule.SlotID)?.Time}</td>
+//                             <td>{schedule.Status}</td>
+//                           </tr>
+//                         )
+//                       ))}
+//                     </tbody>
+//                   </table>
+//                 </div>
+//               </div>
+//             )}
+//           </div>
+
+//           <div className="col-md-6">
+//             {selectedOption === 'booked-schedule' && (
+//               <div className="booked-schedule-container">
+//                 <button className="btn btn-toggle" onClick={toggleBookedScheduleVisibility}>
+//                   {isBookedScheduleVisible ? 'Hide Booked Schedules' : 'Show Booked Schedules'}
+//                 </button>
+//                 <div className={`schedule-table ${isBookedScheduleVisible ? 'visible' : 'hidden'}`}>
+//                   <table className="table">
+//                     <thead>
+//                       <tr>
+//                         <th scope="col">ScheduleID</th>
+//                         <th scope="col">Dentist Name</th>
+//                         <th scope="col">Date</th>
+//                         <th scope="col">Slot Time</th>
+//                         <th scope="col">Status</th>
+//                       </tr>
+//                     </thead>
+//                     <tbody>
+//                       {bookedSchedules.map((schedule) => (
+//                         schedule.Status === 'Booked' && (
+//                           <tr key={schedule.ScheduleID}>
+//                             <td>{schedule.ScheduleID}</td>
+//                             <td>{dentists.find(dentist => dentist.DentistID === schedule.DentistID)?.DentistName}</td>
+//                             <td>{schedule.Date}</td>
+//                             <td>{slots.find(availableslot => availableslot.SlotID === schedule.SlotID)?.Time}</td>
+//                             <td>{schedule.Status}</td>
+//                           </tr>
+//                         )
+//                       ))}
+//                     </tbody>
+//                   </table>
+//                 </div>
+//               </div>
+//             )}
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }
+
+
+
 import React, { useEffect, useState } from 'react';
-import { FormattedMessage } from 'react-intl';
 import axios from 'axios';
 import './ScheduleManage.scss';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -254,7 +1006,9 @@ export default function ScheduleManage(props) {
   const [slots, setSlots] = useState([]);
   const [selectedSlots, setSelectedSlots] = useState([]);
   const [schedules, setSchedules] = useState([]);
+  const [availableSlots, setAvailableSlots] = useState([]);
   const [bookedSchedules, setBookedSchedules] = useState([]);
+  const [remainingSlots, setRemainingSlots] = useState([]);
   const [error, setError] = useState('');
   const [isScheduleVisible, setIsScheduleVisible] = useState(true);
   const [isBookedScheduleVisible, setIsBookedScheduleVisible] = useState(true); // State for booked schedule visibility
@@ -301,6 +1055,30 @@ export default function ScheduleManage(props) {
     fetchSlots();
   }, []);
 
+  //**************************Get Slot By Dentist and Date*******************************/
+  useEffect(() => {
+    const fetchAvailableSlots = async () => {
+      if (selectedDentist && selectedDate) {
+        try {
+          const response = await axios.get('http://localhost:3000/slotsByDate', {
+            params: {
+              dentistID: selectedDentist,
+              date: selectedDate,
+            },
+          });
+          console.log('check availableSlots', response.data);
+          if (response.status !== 200) {
+            throw new Error('Failed to fetch slots');
+          }
+          setAvailableSlots(response.data);
+        } catch (error) {
+          console.error('Error fetching slots:', error);
+        }
+      }
+    };
+    fetchAvailableSlots();
+  }, [selectedDentist, selectedDate]);
+
   // Get API All DentistSchedule
   useEffect(() => {
     const fetchSchedules = async () => {
@@ -308,7 +1086,6 @@ export default function ScheduleManage(props) {
         const response = await axios.get('http://localhost:3000/scheduleDentist');
         const allSchedules = Array.isArray(response.data) ? response.data : [];
         setSchedules(allSchedules);
-
         // Filter and set booked schedules
         const booked = allSchedules.filter(schedule => schedule.Status === 'Booked');
         setBookedSchedules(booked);
@@ -319,6 +1096,24 @@ export default function ScheduleManage(props) {
 
     fetchSchedules();
   }, []);
+
+  // Filter remaining slots based on availableSlots
+  useEffect(() => {
+    if (slots.length > 0) {
+      if (availableSlots.length > 0) {
+        // Extract slotIDs from availableSlots
+        const availableSlotIDs = availableSlots.map(slot => slot.SlotID);
+
+        // Find remaining slots by filtering out availableSlotIDs from slots
+        const remainingSlots = slots.filter(slot => !availableSlotIDs.includes(slot.SlotID));
+
+        setRemainingSlots(remainingSlots);
+      } else {
+        // If no available slots found, show all slots
+        setRemainingSlots(slots);
+      }
+    }
+  }, [slots, availableSlots]);
 
   const handleDateChange = (e) => {
     const selected = e.target.value;
@@ -370,26 +1165,18 @@ export default function ScheduleManage(props) {
       setSelectedDate('');
       setSelectedSlots([]);
       setError('');
+      window.location.reload();
     } catch (error) {
       console.error('Error creating schedule:', error);
       setError('Error creating schedule');
     }
   };
 
-  // Filter available slots based on existing schedules
-  const filteredSlots = slots.filter(slot =>
-    !schedules.some(schedule =>
-      schedule.DentistID === selectedDentist &&
-      schedule.Date === selectedDate &&
-      schedule.SlotID === slot.SlotID
-    )
-  );
-
   return (
     <div>
       <div className="container manage-schedule-container">
         <div className="m-s-title">
-          <FormattedMessage id="manage-schedule.title" />
+          Quản lý lịch làm việc
         </div>
 
         <div className="row">
@@ -441,111 +1228,113 @@ export default function ScheduleManage(props) {
         <div className="row">
           <div className="col-md-12 pick-hour-container">
             <div className="Time-slot-container">
-              {filteredSlots.map((availableslot) => (
-                <div
-                  key={availableslot.SlotID}
-                  className={`hour-slot ${selectedSlots.includes(availableslot.SlotID) ? 'selected' : ''}`}
-                  onClick={() => handleTimeClick(availableslot.SlotID)}
-                >
-                  {availableslot.Time}
-                </div>
-              ))}
+              {remainingSlots.length > 0 ? (
+                remainingSlots.map((remainingSlot) => (
+                  <div
+                    key={remainingSlot.SlotID}
+                    className={`hour-slot ${selectedSlots.includes(remainingSlot.SlotID) ? 'selected' : ''}`}
+                    onClick={() => handleTimeClick(remainingSlot.SlotID)}
+                  >
+                    {remainingSlot.Time}
+                  </div>
+                ))
+              ) : (
+                <p>No slots available.</p>
+              )}
             </div>
           </div>
         </div>
 
         {error && <div className="alert alert-danger">{error}</div>}
+
+        {/* Move the option selector here */}
+        <div className="row">
+          <div className="col-md-6">
+            <div className="option-selector">
+              <select onChange={handleOptionChange} value={selectedOption} className="form-control">
+                <option value="dentist-schedule">Dentist Schedule</option>
+                <option value="booked-schedule">Booked Schedule</option>
+              </select>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className="container">
-  <div className="row">
-    <div className="col-md-6">
-      <div className="option-selector">
-        <select onChange={handleOptionChange} value={selectedOption} className="form-control">
-          <option value="dentist-schedule">Dentist Schedule</option>
-          <option value="booked-schedule">Booked Schedule</option>
-        </select>
+        <div className="row">
+          <div className="col-md-6">
+            {selectedOption === 'dentist-schedule' && (
+              <div className="dentist-schedule-container">
+                <button className="btn btn-toggle" onClick={toggleScheduleVisibility}>
+                  {isScheduleVisible ? 'Hide Schedule' : 'Show Schedule'}
+                </button>
+                <div className={`schedule-table ${isScheduleVisible ? 'visible' : 'hidden'}`}>
+                  <table className="table">
+                    <thead>
+                      <tr>
+                        <th scope="col">ScheduleID</th>
+                        <th scope="col">Dentist Name</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Slot Time</th>
+                        <th scope="col">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {schedules.map((schedule) => (
+                        schedule.Status === 'Available' && (
+                          <tr key={schedule.ScheduleID}>
+                            <td>{schedule.ScheduleID}</td>
+                            <td>{dentists.find(dentist => dentist.DentistID === schedule.DentistID)?.DentistName}</td>
+                            <td>{schedule.Date}</td>
+                            <td>{slots.find(availableslot => availableslot.SlotID === schedule.SlotID)?.Time}</td>
+                            <td>{schedule.Status}</td>
+                          </tr>
+                        )
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="col-md-6">
+            {selectedOption === 'booked-schedule' && (
+              <div className="booked-schedule-container">
+                <button className="btn btn-toggle" onClick={toggleBookedScheduleVisibility}>
+                  {isBookedScheduleVisible ? 'Hide Booked Schedules' : 'Show Booked Schedules'}
+                </button>
+                <div className={`schedule-table ${isBookedScheduleVisible ? 'visible' : 'hidden'}`}>
+                  <table className="table">
+                    <thead>
+                      <tr>
+                        <th scope="col">ScheduleID</th>
+                        <th scope="col">Dentist Name</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Slot Time</th>
+                        <th scope="col">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {bookedSchedules.map((schedule) => (
+                        schedule.Status === 'Booked' && (
+                          <tr key={schedule.ScheduleID}>
+                            <td>{schedule.ScheduleID}</td>
+                            <td>{dentists.find(dentist => dentist.DentistID === schedule.DentistID)?.DentistName}</td>
+                            <td>{schedule.Date}</td>
+                            <td>{slots.find(availableslot => availableslot.SlotID === schedule.SlotID)?.Time}</td>
+                            <td>{schedule.Status}</td>
+                          </tr>
+                        )
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-
-  <div className="row">
-    <div className="col-md-6">
-      {selectedOption === 'dentist-schedule' && (
-        <div className="dentist-schedule-container">
-          <button className="btn btn-toggle" onClick={toggleScheduleVisibility}>
-            {isScheduleVisible ? 'Hide Schedule' : 'Show Schedule'}
-          </button>
-          <div className={`schedule-table ${isScheduleVisible ? 'visible' : 'hidden'}`}>
-            <table className="table">
-              <thead>
-                <tr>
-                  <th scope="col">ScheduleID</th>
-                  <th scope="col">Dentist Name</th>
-                  <th scope="col">Date</th>
-                  <th scope="col">Slot Time</th>
-                  <th scope="col">Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {schedules.map((schedule) => (
-                  schedule.Status === 'Available' && (
-                    <tr key={schedule.ScheduleID}>
-                      <td>{schedule.ScheduleID}</td>
-                      <td>{dentists.find(dentist => dentist.DentistID === schedule.DentistID)?.DentistName}</td>
-                      <td>{schedule.Date}</td>
-                      <td>{slots.find(availableslot => availableslot.SlotID === schedule.SlotID)?.Time}</td>
-                      <td>{schedule.Status}</td>
-                    </tr>
-                  )
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
-    </div>
-
-    <div className="col-md-6">
-      {selectedOption === 'booked-schedule' && (
-        <div className="booked-schedule-container">
-          <button className="btn btn-toggle" onClick={toggleBookedScheduleVisibility}>
-            {isBookedScheduleVisible ? 'Hide Booked Schedules' : 'Show Booked Schedules'}
-          </button>
-          <div className={`schedule-table ${isBookedScheduleVisible ? 'visible' : 'hidden'}`}>
-            <table className="table">
-              <thead>
-                <tr>
-                  <th scope="col">ScheduleID</th>
-                  <th scope="col">Dentist Name</th>
-                  <th scope="col">Date</th>
-                  <th scope="col">Slot Time</th>
-                  <th scope="col">Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {bookedSchedules.map((schedule) => (
-                  schedule.Status === 'Booked' && (
-                    <tr key={schedule.ScheduleID}>
-                      <td>{schedule.ScheduleID}</td>
-                      <td>{dentists.find(dentist => dentist.DentistID === schedule.DentistID)?.DentistName}</td>
-                      <td>{schedule.Date}</td>
-                      <td>{slots.find(availableslot => availableslot.SlotID === schedule.SlotID)?.Time}</td>
-                      <td>{schedule.Status}</td>
-                    </tr>
-                  )
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
-    </div>
-  </div>
-</div>
-
     </div>
   );
 }
-
-

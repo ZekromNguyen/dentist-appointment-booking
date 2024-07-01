@@ -164,6 +164,33 @@ class BookingService {
       throw error;
     }
   }
+
+  async getAllBookingInfo() {
+    try {
+      const bookings = await Booking.findAll({
+      });
+      return bookings;
+    } catch (error) {
+      console.error("Error fetching booking information:", error);
+      throw error;
+    }
+  }
+
+
+  async getAllBookingDetails(bookingId) {
+    try {
+      const bookingDetails = await BookingDetail.findAll({
+        where: {
+          BookingID: bookingId,
+        },
+      });
+      return bookingDetails;
+    } catch (error) {
+      console.error("Error fetching booking details:", error);
+      throw error;
+    }
+  }
 }
+
 
 export default new BookingService();

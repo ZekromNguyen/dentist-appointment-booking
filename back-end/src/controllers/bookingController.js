@@ -36,7 +36,7 @@ class BookingController {
       if (!Array.isArray(bookings)) {
         return res.status(400).json({ message: "Invalid data format" });
       }
-  
+
       const results = [];
       for (const booking of bookings) {
         const { customerId, price, status, typeBook, date, scheduleId } = booking;
@@ -45,7 +45,7 @@ class BookingController {
           currentDateTime.getTime() + 7 * 60 * 60 * 1000
         );
         console.log(booking);
-  
+
         const newBooking = await BookingService.createBooking(
           customerId,
           status,
@@ -54,7 +54,7 @@ class BookingController {
         if (!newBooking) {
           return res.status(400).json({ message: "Failed to create Booking" });
         }
-  
+
         const newBookingDetail = await BookingService.createBookingDetail(
           currentDateTimeGMT7,
           typeBook,
@@ -67,13 +67,13 @@ class BookingController {
         if (!newBookingDetail) {
           return res.status(400).json({ message: "Failed to create BookingDetail" });
         }
-  
+
         results.push({
           booking: newBooking,
           bookingDetail: newBookingDetail
         });
       }
-  
+
       res.status(200).json({
         message: "All bookings created successfully",
         results: results
@@ -83,7 +83,7 @@ class BookingController {
       res.status(500).send("Internal Server Error");
     }
   }
-  
+
   // async createBooking(req, res) {
   //   try {
   //     const { customerId, price, status, typeBook, date, scheduleId } =
@@ -185,5 +185,58 @@ class BookingController {
       res.status(500).send("Internal Server Error");
     }
   }
+  async showAllBooking(req, res) {
+    try {
+      // Gọi service để lấy thông tin đặt chỗ
+      const bookings = await BookingService.getAllBookingInfo();
+
+      if (!bookings || bookings.length === 0) {
+        return res.status(404).json({ message: "Bookings not found" });
+      }
+
+      res.status(200).json(bookings);
+    } catch (error) {
+      console.error("Error fetching bookings:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  }
+
+  async getAllBookingDetailsByBookingID(req, res) {
+    try {
+      const { bookingId } = req.params;
+      
+      // Gọi service để lấy thông tin chi tiết đặt chỗ
+      const bookingDetails = await BookingService.getAllBookingDetailsByBookingID(bookingId);
+
+      if (!bookingDetails || bookingDetails.length === 0) {
+        return res.status(404).json({ message: "Booking details not found" });
+      }
+
+      res.status(200).json(bookingDetails);
+    } catch (error) {
+      console.error("Error fetching booking details:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  }
+
+  async showAllBookingDetails(req, res) {
+    try {
+      const { bookingId } = req.params;
+      
+      // Gọi service để lấy thông tin chi tiết đặt chỗ
+      const bookingDetails = await BookingService.getAllBookingDetails(bookingId);
+
+      if (!bookingDetails || bookingDetails.length === 0) {
+        return res.status(404).json({ message: "Booking details not found" });
+      }
+
+      res.status(200).json(bookingDetails);
+    } catch (error) {
+      console.error("Error fetching booking details:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  }
+
+
 }
 export default new BookingController();
