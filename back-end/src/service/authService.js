@@ -1,4 +1,4 @@
-import Sequelize from 'sequelize';
+import Sequelize from "sequelize";
 import bcrypt from "bcrypt";
 
 import {
@@ -8,6 +8,7 @@ import {
   DentistSchedule,
   Account,
 } from "../model/model";
+import Clinic from "../model/clinic";
 
 class AccountService {
   constructor(sequelize) {
@@ -107,7 +108,13 @@ class AccountService {
     });
     return newCustomer;
   }
-  async createDentist(dentistName, accountId, clinicID, description, imagePath) {
+  async createDentist(
+    dentistName,
+    accountId,
+    clinicID,
+    description,
+    imagePath
+  ) {
     try {
       console.log("Creating dentist with data:", {
         dentistName,
@@ -268,7 +275,7 @@ class AccountService {
     await account.save();
     return account;
   }
-  async resetNewPassword() { }
+  async resetNewPassword() {}
 
   async createSchedule({ DentistID, day, stime, etime }) {
     try {
@@ -362,9 +369,6 @@ class AccountService {
         RoleID: roleID,
       });
 
-
-
-
       return newAccount;
     } catch (error) {
       console.error("Error inserting into the database:", error);
@@ -444,7 +448,14 @@ class AccountService {
 
 
   ////////////////////////////admin ////////////////////////
-  async createUser(username, hashedPassword, phone, email, roleID, additionalData = {}) {
+  async createUser(
+    username,
+    hashedPassword,
+    phone,
+    email,
+    roleID,
+    additionalData = {}
+  ) {
     try {
       // Convert roleID to integer if necessary
       roleID = parseInt(roleID);
@@ -458,10 +469,10 @@ class AccountService {
 
       if (existingAccount) {
         if (existingAccount.UserName === username) {
-          throw new Error('Username already exists');
+          throw new Error("Username already exists");
         }
         if (existingAccount.Email === email) {
-          throw new Error('Email already exists');
+          throw new Error("Email already exists");
         }
       }
 
@@ -480,7 +491,7 @@ class AccountService {
       switch (roleID) {
         case 1: // Customer
           if (!additionalData.CustomerName) {
-            throw new Error('Customer name is required');
+            throw new Error("Customer name is required");
           }
           additionalEntity = await this.createCustomer(
             additionalData.CustomerName,
@@ -505,42 +516,45 @@ class AccountService {
         case 4: // Admin - Handle admin creation logic here if needed
           break;
         default:
-          throw new Error('Invalid roleID');
+          throw new Error("Invalid roleID");
       }
 
       return { newAccount, additionalEntity };
     } catch (error) {
-      if (error.message === 'Invalid roleID') {
-        throw new Error('Invalid roleID');
+      if (error.message === "Invalid roleID") {
+        throw new Error("Invalid roleID");
       }
       throw error; // Throw any other unexpected errors
     }
   }
 
-
-  //////////////////////////////customer////////// 
+  //////////////////////////////customer//////////
   getAllCustomer = async (CustomerID) => {
     try {
       let customers;
-      if (CustomerID === 'ALL') {
+      if (CustomerID === "ALL") {
         customers = await Customer.findAll({
-          include: [{
-            model: Account,
-            attributes: ['UserName', 'Phone', 'Email', 'RoleID', 'IsActive']
-          }]
+          include: [
+            {
+              model: Account,
+              attributes: ["UserName", "Phone", "Email", "RoleID", "IsActive"],
+            },
+          ],
         });
       } else {
         customers = await Customer.findOne({
           where: { CustomerID },
-          include: [{
-            model: Account,
-            attributes: ['UserName', 'Phone', 'Email', 'RoleID', 'IsActive']
-          }]
+          include: [
+            {
+              model: Account,
+              attributes: ["UserName", "Phone", "Email", "RoleID", "IsActive"],
+            },
+          ],
         });
       }
       return customers;
     } catch (error) {
-      console.error('Error fetching customer data:', error);
+      console.error("Error fetching customer data:", error);
       throw error;
     }
   };
@@ -556,7 +570,7 @@ class AccountService {
 
       let customer = await Customer.findOne({
         where: { CustomerID: data.CustomerID },
-        include: [{ model: Account, as: 'Account' }] // Include Account model
+        include: [{ model: Account, as: "Account" }], // Include Account model
       });
 
       if (!customer) {
@@ -576,7 +590,10 @@ class AccountService {
         customer.Account.Email = data.Email || customer.Account.Email;
         customer.Account.Phone = data.Phone || customer.Account.Phone;
         customer.Account.RoleID = data.RoleID || customer.Account.RoleID;
-        customer.Account.IsActive = data.IsActive !== undefined ? data.IsActive : customer.Account.IsActive;
+        customer.Account.IsActive =
+          data.IsActive !== undefined
+            ? data.IsActive
+            : customer.Account.IsActive;
         await customer.Account.save();
       }
 
@@ -625,6 +642,16 @@ class AccountService {
     } catch (error) {
       console.error("Error fetching customer information:", error);
       throw new Error("Error fetching customer information");
+    }
+  }
+  async getAllClinic() {
+    try {
+      const clinics = await Clinic.findAll();
+      const clinicIDS = clinics.map((clinic) => clinic.toJSON());
+      return clinicIDS;
+    } catch (error) {
+      console.error("Error fetching all clinic :", error);
+      throw new Error("Error fetching all clinic");
     }
   }
 }

@@ -1,3 +1,4 @@
+// Import necessary modules/components
 import React, { Component } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import axios from 'axios';
@@ -6,16 +7,36 @@ class ModelAddDentist extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            clinics: [], // Array to store clinics fetched from API
             username: '',
             password: '',
             email: '',
             phone: '',
             dentistName: '',
-            clinicID: '',
+            clinicID: '', // State to store selected clinic ID
             image: null, // State to store the selected image file
             description: '' // State for description field
         };
     }
+
+    componentDidMount() {
+        // Fetch clinics data when component mounts
+        this.fetchClinics();
+    }
+
+    fetchClinics = async () => {
+        try {
+            const response = await axios.get('http://localhost:3000/getAllClinic');
+            if (response.data && response.data.clinics) {
+                this.setState({
+                    clinics: response.data.clinics,
+                });
+            }
+        } catch (error) {
+            console.error('Error fetching clinics:', error);
+            // Handle error as needed
+        }
+    };
 
     handleInputChange = (event) => {
         const { name, value } = event.target;
@@ -90,7 +111,7 @@ class ModelAddDentist extends Component {
 
     render() {
         const { isOpen, toggleFromParent } = this.props;
-        const { username, password, email, phone, dentistName, clinicID, description } = this.state;
+        const { username, password, email, phone, dentistName, clinicID, description, clinics } = this.state;
 
         return (
             <Modal show={isOpen} onHide={toggleFromParent}>
@@ -157,13 +178,19 @@ class ModelAddDentist extends Component {
                         <Form.Group controlId="formClinicID">
                             <Form.Label>Clinic ID</Form.Label>
                             <Form.Control
-                                type="text"
-                                placeholder="Enter clinic ID"
+                                as="select"
                                 name="clinicID"
                                 value={clinicID}
                                 onChange={this.handleInputChange}
                                 required
-                            />
+                            >
+                                <option value="">Select clinic</option>
+                                {clinics.map((clinic) => (
+                                    <option key={clinic.clinicID} value={clinic.clinicID}>
+                                        {clinic.ClinicName} {/* Make sure the property name matches */}
+                                    </option>
+                                ))}
+                            </Form.Control>
                         </Form.Group>
                         <Form.Group controlId="formDescription">
                             <Form.Label>Description</Form.Label>
