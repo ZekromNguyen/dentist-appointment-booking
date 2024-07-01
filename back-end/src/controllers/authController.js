@@ -626,7 +626,7 @@ class AccountController {
 
   //////////////////////////admin///////////////////////////////////////////////
   async handleCreateUser(req, res) {
-    const { username, password, email, phone, roleID, name, clinicID, dentistName, description, imagePath, clinicOwnerName } = req.body;
+    const { username, password, email, phone, roleID, name, clinicID, dentistName, description, clinicOwnerName } = req.body;
     const saltRounds = 10; // Number of salt rounds for bcrypt hashing
 
     try {
@@ -643,14 +643,12 @@ class AccountController {
       switch (roleID) {
         case "1": // Customer
           if (!name) {
-            return res
-              .status(400)
-              .json({ message: "CustomerName is required" });
+            return res.status(400).json({ message: "CustomerName is required" });
           }
           additionalData.CustomerName = name;
           break;
         case "2": // Dentist
-          if (!dentistName || !clinicID || !description || !imagePath) {
+          if (!dentistName || !clinicID || !description) {
             return res.status(400).json({ message: "All fields for Dentist are required" });
           }
           additionalData.DentistName = dentistName;
@@ -659,9 +657,7 @@ class AccountController {
           break;
         case "3": // ClinicOwner
           if (!clinicID || !clinicOwnerName) {
-            return res
-              .status(400)
-              .json({ message: "All fields for ClinicOwner are required" });
+            return res.status(400).json({ message: "All fields for ClinicOwner are required" });
           }
           additionalData.ClinicID = clinicID;
           additionalData.ClinicOwnerName = clinicOwnerName;
@@ -671,26 +667,16 @@ class AccountController {
       }
 
       // Call AuthService method to create the account
-      const result = await AccountService.createUser(
-        username,
-        hashedPassword,
-        phone,
-        email,
-        roleID,
-        additionalData
-      );
+      const result = await AccountService.createUser(username, hashedPassword, phone, email, roleID, additionalData);
 
       // Handle the response based on the result
       if (result && result.newAccount) {
-        return res.status(200).json({
-          message: "Account created successfully",
-          newAccount: result.newAccount,
-        });
+        return res.status(200).json({ message: "Account created successfully", newAccount: result.newAccount });
       } else {
         return res.status(400).json({ message: "Failed to create account" });
       }
     } catch (err) {
-      console.error("Error in handleCreateUser:", err);
+      console.error('Error in handleCreateUser:', err);
       // Handle specific errors if needed
       if (err.message === "Email already exists") {
         return res.status(400).json({ error: "Email already taken" });
@@ -698,17 +684,14 @@ class AccountController {
       if (err.message === "Username already exists") {
         return res.status(400).json({ error: "Username already taken" });
       }
-      if (
-        err.message === "CustomerName is required" ||
-        err.message === "All fields for Dentist are required" ||
-        err.message === "All fields for ClinicOwner are required"
-      ) {
+      if (err.message === "CustomerName is required" || err.message === "All fields for Dentist are required" || err.message === "All fields for ClinicOwner are required") {
         return res.status(400).json({ error: err.message });
       }
       // Handle generic error
       return res.status(500).json({ message: "Database insert error" });
     }
   }
+
 
   /////////////////////////////////////////////////////////////////////////
   //****************************************** New API Get ALL Dentist (Nam )****************************** */
