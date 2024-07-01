@@ -601,7 +601,7 @@ class AccountController {
 
   //////////////////////////admin///////////////////////////////////////////////
   async handleCreateUser(req, res) {
-    const { username, password, email, phone, roleID, name, clinicID, dentistName, description, imagePath, clinicOwnerName } = req.body;
+    const { username, password, email, phone, roleID, name, clinicID, dentistName, description, clinicOwnerName } = req.body;
     const saltRounds = 10; // Number of salt rounds for bcrypt hashing
 
     try {
@@ -623,13 +623,12 @@ class AccountController {
           additionalData.CustomerName = name;
           break;
         case "2": // Dentist
-          if (!dentistName || !clinicID || !description || !imagePath) {
+          if (!dentistName || !clinicID || !description) {
             return res.status(400).json({ message: "All fields for Dentist are required" });
           }
           additionalData.DentistName = dentistName;
           additionalData.ClinicID = clinicID;
           additionalData.Description = description;
-          additionalData.ImagePath = imagePath;
           break;
         case "3": // ClinicOwner
           if (!clinicID || !clinicOwnerName) {

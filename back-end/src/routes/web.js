@@ -53,12 +53,12 @@ let initAllWebRoutes = (app) => {
   ///////////////////////////user
   router.post("/handleCreateUser", AccountController.handleCreateUser);
   router.get("/getAllUser", AccountController.handleGetAllUser);
-  router.put("/editUser", AccountController.handleEditUser);
   router.delete("/deleteUser", AccountController.handleDeleteUser);
   router.get("/handleGetAllCustomer", AccountController.handleGetAllCustomer);
 
   ///////////////////////////customer
   router.put("/editCustomer", AccountController.handleUpdateCustomer);
+  router.put("/editUser", AccountController.handleEditUser);
 
   /////////////////////////////dentist
   router.get("/handleGetAllDentist", dentistController.handleGetAllDentist);

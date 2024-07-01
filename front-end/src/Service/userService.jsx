@@ -229,7 +229,7 @@ const handleEditCustomer = async (userData) => {
 //         throw error;
 //     }
 // };
-const registerDentist = async (username, password, email, phone, dentistName, clinicID, roleID, imageFile, description) => {
+const registerDentist = async (username, password, email, phone, dentistName, clinicID, roleID, description) => {
     try {
         const formData = new FormData();
         formData.append('username', username);
@@ -239,7 +239,6 @@ const registerDentist = async (username, password, email, phone, dentistName, cl
         formData.append('dentistName', dentistName);
         formData.append('clinicID', clinicID);
         formData.append('roleID', roleID); // Add roleID to FormData
-        formData.append('image', imageFile); // Add image to FormData
         formData.append('description', description); // Add description to FormData
 
         const response = await axios.post('http://localhost:3000/registerDentist', formData, {

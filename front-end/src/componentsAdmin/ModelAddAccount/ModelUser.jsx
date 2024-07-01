@@ -17,7 +17,6 @@ const ModelUser = (props) => {
     const [clinicID, setClinicID] = useState('');
     const [dentistName, setDentistName] = useState('');
     const [description, setDescription] = useState(''); // State for storing description
-    const [imagePath, setImagePath] = useState(''); // State for storing image path
     const [clinicOwnerName, setClinicOwnerName] = useState('');
     const [checkInput, setCheckInput] = useState({
         isValidUsername: true,
@@ -32,15 +31,6 @@ const ModelUser = (props) => {
 
     const toggle = () => {
         props.toggleFromParent();
-    };
-
-    const handleOnChangeImage = (event) => {
-        let data = event.target.files;
-        let file = data[0];
-        if (file) {
-            let objectUrl = URL.createObjectURL(file);
-            setImagePath(objectUrl); // Set imagePath state with the object URL
-        }
     };
 
     const isValidInputs = () => {
@@ -114,7 +104,6 @@ const ModelUser = (props) => {
                     clinicID,
                     dentistName,
                     description, // Pass description to backend
-                    imagePath, // Pass imagePath to backend
                     clinicOwnerName
                 });
                 if (response && response.message === "Account created successfully") {
@@ -128,7 +117,6 @@ const ModelUser = (props) => {
                     setClinicID('');
                     setDentistName('');
                     setDescription(''); // Reset description state
-                    setImagePath('');
                     setClinicOwnerName('');
                     setCheckInput({
                         isValidUsername: true,
@@ -214,12 +202,6 @@ const ModelUser = (props) => {
                                         <textarea className="form-control"
                                             onChange={(event) => setDescription(event.target.value)}
                                             value={description}></textarea>
-                                    </div>
-                                    <div className="col-6">
-                                        <label>Image</label>
-                                        <input className="form-control"
-                                            type="file"
-                                            onChange={handleOnChangeImage} />
                                     </div>
                                 </>
                             )}

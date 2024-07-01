@@ -440,6 +440,9 @@ class AccountService {
     }
   }
 
+
+
+
   ////////////////////////////admin ////////////////////////
   async createUser(username, hashedPassword, phone, email, roleID, additionalData = {}) {
     try {
@@ -489,8 +492,7 @@ class AccountService {
             additionalData.DentistName,
             newAccount.AccountID,
             additionalData.ClinicID,
-            additionalData.Description,
-            additionalData.ImagePath
+            additionalData.Description
           );
           break;
         case 3: // Clinic Owner
