@@ -28,6 +28,23 @@ class BookingController {
       res.status(500).send("Internal Server Error");
     }
   }
+  //Ham get all booking by customerId
+  async getAllBookingByCustomerId(req, res) {
+    try {
+      const { customerId } = req.query;
+      console.log(customerId);
+      const bookings = await BookingService.getAllBookingByCustomerId(
+        customerId
+      );
+      if (!bookings || bookings.length === 0) {
+        return res.status(404).json({ message: "Success, not found" });
+      }
+      res.status(200).json({ message: "Success", bookings });
+    } catch (error) {
+      console.error("Error fetching all booking by customerId:", error);
+      res.status(500).json({ message: "Internal Server Error" });
+    }
+  }
 
   //Hàm tạo booking
   async createBooking(req, res) {

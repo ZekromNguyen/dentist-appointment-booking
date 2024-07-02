@@ -126,6 +126,42 @@ class BookingService {
     }
   }
 
+  async getAllBookingByCustomerId(CustomerId) {
+    try {
+      const bookings = await Booking.findAll({
+        where: {
+          CustomerID: CustomerId
+        },
+        include: [
+          {
+            model: BookingDetail,
+            include: [
+              {
+                model: DentistSchedule,
+                include: [
+                  {
+                    model: Dentist,
+                    attributes: ["DentistName"],
+                  },
+                  {
+                    model: AvailableSlot,
+                    attributes: ["Time"],
+                  }
+                ]
+              }
+            ],
+          }
+        ],
+
+      });
+      const bookingIDs = bookings.map((booking) => booking.toJSON());
+      return bookingIDs;
+    } catch (error) {
+      console.error("Error in getAllBooking method: ", error);
+      throw error;
+    }
+  }
+
   // Hàm tạo thanh toán
   async createPayment(bookingId, paymentMethod, status) {
     try {
