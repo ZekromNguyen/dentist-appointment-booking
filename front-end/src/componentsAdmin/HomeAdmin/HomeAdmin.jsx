@@ -8,6 +8,8 @@ import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Resp
 
 export default function HomeAdmin() {
 
+
+
     const data = [
         {
             name: 'Page A',

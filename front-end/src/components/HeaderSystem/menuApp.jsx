@@ -53,14 +53,25 @@ export const adminMenu = [
 // doctorMenu không cần chứa mục quản lý lịch khám bệnh, vì đã được bao gồm trong adminMenu
 export const doctorMenu = [
     {
-        name: 'menu.ClinicOwner.User', // Đổi tên cho phù hợp với vai trò là doctor
+        name: 'menu.admin.User', // Đổi tên cho phù hợp với vai trò là doctor
         menus: [
             {
                 name: 'menu.doctor.manage-schedule',
                 link: '/doctor/system/manage-schedule'
             },
         ]
-    }
+    },
+    {
+        name: 'menu.doctor.treatment', // Đổi tên cho phù hợp với vai trò là doctor
+        menus: [
+            {
+                name: 'menu.doctor.ManageTreatment',
+                link: '/doctor/system/treatment'
+            },
+        ]
+    },
 ];
+
+
 
 

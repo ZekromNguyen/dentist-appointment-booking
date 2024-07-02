@@ -17,9 +17,10 @@ class TreatmentController {
     async createTreatment(req, res) {
         const { BookingDetailID, Note } = req.body;
         const Result = req.file ? `/uploads/images/${req.file.filename}` : null;
+        const TreatmentDate = new Date(); // Or any appropriate date
 
         try {
-            const newTreatment = await Treatment.create({ BookingDetailID, Note, Result });
+            const newTreatment = await Treatment.create({ BookingDetailID, Note, Result, TreatmentDate });
             res.status(201).json({ message: 'Treatment created successfully', newTreatment });
         } catch (error) {
             console.error('Error creating treatment:', error);
@@ -42,6 +43,7 @@ class TreatmentController {
             res.status(500).json({ message: 'Internal server error' });
         }
     }
+
     async getTreatmentById(req, res) {
         const { id } = req.params;
         try {
@@ -97,13 +99,14 @@ class TreatmentController {
             res.status(500).json({ message: 'Internal server error' });
         }
     }
+
     async getAllTreatments(req, res) {
         try {
-            const treatments = await Treatment.findAll(); // Example Sequelize findAll usage
-            res.render('treatment', { treatments }); // Pass treatments to the view
+            const treatments = await Treatment.findAll(); // Lấy tất cả các bản ghi từ bảng Treatment
+            res.status(200).json({ treatments }); // Trả về dữ liệu dưới dạng JSON
         } catch (error) {
             console.error('Error fetching treatments:', error);
-            res.status(500).send('Error fetching treatments');
+            res.status(500).json({ message: 'Internal server error' });
         }
     }
 }

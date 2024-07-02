@@ -15,6 +15,11 @@ Treatment.init({
         type: DataTypes.INTEGER,
         allowNull: false,
     },
+    TreatmentDate: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: DataTypes.NOW,
+    },
     Note: {
         type: DataTypes.STRING,
         allowNull: true,
