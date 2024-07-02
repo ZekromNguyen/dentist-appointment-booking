@@ -1,0 +1,95 @@
+.content{
+  padding-left: 0%;
+  padding-right: 0%;
+  max-width: 100%;
+
+
+}
+.container-fluid{
+  max-width: 100%;
+  padding-left: 0%;
+  padding-top: 0%;
+}
+
+
+.nav-pills{
+  background-color: #03182e; 
+  width: 100%;
+  height: 100%;
+}
+.sidebar {
+  padding-right: 0%;
+
+  .bg-light{
+    background-color: #03182e; 
+    padding-right: 0%;
+  }
+    background-color: #03182e; // Màu xanh dương
+    height: 100vh;
+    border-right: 1px solid #ddd;
+  
+    .nav-link {
+      color: white;
+      display: flex;
+      align-items: center;
+      background-color: #03182e;
+      border-radius: 0%;
+  
+      .icon {
+        width: 40px;
+        height: 40px;
+        margin-right: 10px;
+      }
+  
+      &.active {
+        background-color: #03182e; // Màu xanh dương đậm
+      }
+  
+      &:hover {
+        background-color: #0056b3;
+      }
+  
+      &.logout {
+        margin-top: auto;
+        background-color: #dc3545; // Màu đỏ cho logout
+  
+        &:hover {
+          background-color: #c82333;
+        }
+      }
+    }
+  }
+  
+  .content {
+    background-color: #f8f9fa; // Màu xám nhạt
+
+  
+    h1 {
+      color: #343a40; // Màu xám đậm
+    }
+  
+    p {
+      color: #6c757d; // Màu xám trung bình
+    }
+  }
+.custom-row {
+  margin-bottom: 0;
+}
+.header-section{
+  padding-left: 0%;
+  background-color: #03182e;
+  h1{
+    color: white;
+    text-align: center;
+    font-size: 1.5rem;
+    padding-bottom: 10px;
+    padding-top: 10px;
+  }
+}
+.body-section{
+  .booking-image{
+    max-width: 100%;
+  }
+}
+
+  
