@@ -186,7 +186,7 @@ class ModelAddDentist extends Component {
                             >
                                 <option value="">Select clinic</option>
                                 {clinics.map((clinic) => (
-                                    <option key={clinic.clinicID} value={clinic.clinicID}>
+                                    <option key={clinic.ClinicID} value={clinic.ClinicID}>
                                         {clinic.ClinicName} {/* Make sure the property name matches */}
                                     </option>
                                 ))}

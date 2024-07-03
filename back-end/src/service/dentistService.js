@@ -1,4 +1,5 @@
 import { Sequelize } from "sequelize";
+import Clinic from '../model/clinic'; // Điều chỉnh đường dẫn và tên file nếu cần thiết
 
 import {
   AvailableSlot,
@@ -116,46 +117,86 @@ class DentistService {
   }
 
   ///////////////////////////////////////////////////
+  // async getAllDentist(DentistID) {
+  //   try {
+  //     let account = "";
+  //     if (DentistID === "ALL") {
+  //       account = await Dentist.findAll({
+  //         raw: true,
+  //         attributes: [
+  //           "AccountID",
+  //           "DentistID",
+  //           "DentistName",
+  //           "ClinicID",
+  //           "Description",
+  //           "ImagePath",
+  //         ],
+  //       });
+  //     } else if (DentistID) {
+  //       account = await Dentist.findOne({
+  //         where: { DentistID: DentistID },
+  //         raw: true,
+  //         attributes: [
+  //           "AccountID",
+  //           "DentistID",
+  //           "DentistName",
+  //           "ClinicID",
+  //           "Description",
+  //           "ImagePath",
+  //         ],
+  //       });
+  //     }
+
+  //     if (!account) {
+  //       console.log(`Account with ID ${DentistID} not found`);
+  //     }
+  //     return account;
+  //   } catch (e) {
+  //     console.error("Error in getAllUsers:", e);
+  //     throw e;
+  //   }
+  // }
+
+
   async getAllDentist(DentistID) {
     try {
       let account = "";
+      let options = {
+        raw: true,
+        attributes: [
+          "AccountID",
+          "DentistID",
+          "DentistName",
+          "Description",
+          "ImagePath",
+        ],
+        include: [
+          {
+            model: Clinic,
+            attributes: ["ClinicID", "ClinicName", "Address", "OpenTime", "CloseTime"],
+            as: 'clinic', // Đặt lại tên mối quan hệ nếu cần thiết
+          },
+        ],
+      };
+
       if (DentistID === "ALL") {
-        account = await Dentist.findAll({
-          raw: true,
-          attributes: [
-            "AccountID",
-            "DentistID",
-            "DentistName",
-            "ClinicID",
-            "Description",
-            "ImagePath",
-          ],
-        });
+        account = await Dentist.findAll(options);
       } else if (DentistID) {
-        account = await Dentist.findOne({
-          where: { DentistID: DentistID },
-          raw: true,
-          attributes: [
-            "AccountID",
-            "DentistID",
-            "DentistName",
-            "ClinicID",
-            "Description",
-            "ImagePath",
-          ],
-        });
+        options.where = { DentistID: DentistID };
+        account = await Dentist.findOne(options);
       }
 
       if (!account) {
-        console.log(`Account with ID ${DentistID} not found`);
+        console.log(`Dentist with ID ${DentistID} not found`);
       }
+
       return account;
     } catch (e) {
-      console.error("Error in getAllUsers:", e);
+      console.error("Error in getAllDentist:", e);
       throw e;
     }
   }
-
+  ///////////////////////////////////////////
   async deleteDentist(DentistID) {
     try {
       const dentist = await Dentist.findOne({ where: { DentistID } });

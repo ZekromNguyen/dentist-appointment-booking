@@ -122,8 +122,13 @@ const TreatmentUpload = () => {
                                         <td>{treatment.BookingDetailID}</td>
                                         <td>{treatment.Note}</td>
                                         <td>{new Date(treatment.TreatmentDate).toLocaleDateString()}</td>
+
                                         <td>
-                                            <img src={treatment.Result} alt="Result" style={{ width: '100px', height: 'auto' }} />
+                                            <img
+                                                src={`http://localhost:3000/${treatment.Result}`} // Đảm bảo rằng đường dẫn URL là đúng
+                                                alt={`${treatment.TreatmentID}'s profile`}
+                                                style={{ width: '100px', height: '100px', objectFit: 'cover' }}
+                                            />
                                         </td>
                                     </tr>
                                 ))}

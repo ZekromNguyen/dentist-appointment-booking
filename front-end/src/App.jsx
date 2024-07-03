@@ -66,6 +66,7 @@ import Booking from './components/Booking/Booking';
 import Payment from './components/PaymentPage/Payment';
 import BookingHistory from './components/BookingHistory/BookingHistory';
 import AdminRoutes from './AdminRoutes/AdminRoutes';
+import DoctorLoad from './components/DoctorLoad/DoctorLoad';
 function App() {
 
   return (
@@ -87,6 +88,8 @@ function App() {
           <Route path="/doctor/*" element={<Doctor />}>
             <Route path="system/*" element={<System />} />
           </Route>
+          {/* <Route path="dentistDetail" element={<DoctorLoad />}></Route> */}
+          <Route path="/dentistDetail/:dentistId" element={<DoctorLoad />} />
 
           <Route path="admin/*" element={<AdminRoutes />} />
 

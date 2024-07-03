@@ -1,0 +1,82 @@
+// doctor.scss
+
+.DoctorLoad {
+    // Styles for the main container of DoctorLoad component
+}
+
+.header {
+    // Styles for the header component within DoctorLoad
+}
+
+.doctor {
+    margin-top: 20px;
+    border: 1px solid black;
+    display: flex;
+
+    &-img {
+        margin-top: 10px;
+        margin-left: 3%;
+        border: 1px solid black;
+        height: 200px;
+        width: 200px;
+        border-radius: 100px;
+        background-size: cover;
+        background-position: center;
+    }
+
+    &-detail {
+        margin-top: 1%;
+        margin-left: 2%;
+        border: 1px solid black;
+        width: 80%;
+
+        .clinic-address {
+            // Styles for clinic address
+        }
+
+        .clinic-time {
+            // Styles for clinic open/close time
+        }
+    }
+}
+
+.doctor-name {
+    font-size: 30px;
+    font-weight: 700;
+}
+
+.doctor-description {
+    margin-top: 10px;
+}
+
+.clinic-address {
+    margin-top: 10px;
+}
+
+.clinic-time-schedule {
+    margin-top: 20px;
+    margin-left: 5%;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.clinic-time {
+    margin-top: 20px;
+    margin-left: 5%;
+    color: black;
+    background-color: aquamarine;
+    font-size: 15px;
+    font-weight: 700;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 150px;
+    padding: 8px;
+    cursor: pointer;
+}
+
+.footer {
+    margin-top: 100px;
+}
+
+.clinic-clinicName {
+    margin-top: 10px;
+}
