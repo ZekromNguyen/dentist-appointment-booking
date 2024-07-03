@@ -187,6 +187,7 @@ class BookingService {
     }
   }
 
+
   // Hàm cập nhật trạng thái booking
   async updateBookingStatus(bookingId, status) {
     try {

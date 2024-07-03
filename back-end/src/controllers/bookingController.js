@@ -178,6 +178,8 @@ class BookingController {
     }
   }
 
+
+
   async showPaymentPage(req, res) {
     try {
       const { bookingId } = req.params;

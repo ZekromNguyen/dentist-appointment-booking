@@ -1,6 +1,6 @@
 .booking-details-modal {
   .modal-dialog {
-    max-width: 90%; // Giảm độ rộng của modal để phù hợp với nội dung
+    max-width: 100%; // Giảm độ rộng của modal để phù hợp với nội dung
   }
 
   .modal-content {
@@ -17,10 +17,12 @@
     td {
       text-align: center; // Căn giữa nội dung của các cột
       vertical-align: middle; // Canh giữa dọc cho nội dung
+      color: black;
     }
 
     th {
       background-color: #f2f2f2; // Màu nền cho header của bảng
+      color: black;
     }
 
     .cancel-booking-btn {

@@ -349,3 +349,31 @@ $highlight-color: blue;
   width: 100%; // 50% chiều rộng để chia đều
 }
 
+/* ScheduleManage.scss */
+
+/* Add this to highlight existing slots */
+.existing-slot {
+  background-color: red !important;
+  color: white !important;
+}
+
+
+
+.hour-slot {
+  cursor: pointer;
+  padding: 10px;
+  border: 1px solid #ddd;
+  margin: 5px;
+  display: inline-block;
+  text-align: center;
+}
+
+.hour-slot.selected {
+  background-color: #007bff;
+  color: white;
+}
+
+.hour-slot.booked {
+  background-color: #ff0000;
+  color: white;
+}
