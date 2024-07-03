@@ -4,17 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload Treatment Result Image</title>
+    <title>Manage Treatments</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #f0f2f5;
             margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+            padding: 20px;
         }
 
         .container {
@@ -23,37 +19,36 @@
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             width: 800px;
-            text-align: center;
-            margin-top: 50px;
+            margin: auto;
         }
 
         h1 {
             margin-bottom: 20px;
             color: #333;
+            text-align: center;
         }
 
         .form-group {
             margin-bottom: 15px;
+            text-align: left;
             display: flex;
             align-items: center;
         }
 
         .form-group label {
-            flex: 1;
-            text-align: left;
+            display: block;
             margin-right: 10px;
             font-weight: bold;
+            width: 150px;
         }
 
         .form-group input[type="text"],
-        .form-group input[type="file"] {
-            flex: 2;
-            width: calc(100% - 10px);
-            /* Adjusted width to fit within container */
+        .form-group input[type="file"],
+        .form-group input[type="date"] {
+            flex: 1;
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 4px;
-            box-sizing: border-box;
         }
 
         .form-group input[type="file"] {
@@ -68,6 +63,7 @@
             border-radius: 4px;
             cursor: pointer;
             font-size: 16px;
+            margin-top: 10px;
         }
 
         button:hover {
@@ -80,45 +76,77 @@
             color: #555;
         }
 
-        /* Styling for the treatment list */
         .treatment-list {
             list-style-type: none;
             padding: 0;
             text-align: left;
             margin-top: 20px;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            /* Responsive grid */
-            gap: 20px;
         }
 
         .treatment-list li {
             background-color: #f9f9f9;
             padding: 10px;
+            margin-bottom: 10px;
             border-radius: 4px;
             box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .treatment-list li p {
             margin: 0;
         }
 
-        .treatment-list li img {
-            max-width: 100%;
+        .delete-button,
+        .update-button {
+            background-color: #ff0000;
+            color: #fff;
+            padding: 5px 10px;
+            border: none;
             border-radius: 4px;
-            margin-top: 10px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .update-button {
+            background-color: #007bff;
+        }
+
+        .delete-button:hover {
+            background-color: #cc0000;
+        }
+
+        .update-button:hover {
+            background-color: #0056b3;
+        }
+
+        .treatment-list li img {
+            max-width: 100px;
+            /* Giới hạn chiều rộng tối đa của hình ảnh */
+            max-height: 100px;
+            /* Giới hạn chiều cao tối đa của hình ảnh */
+            object-fit: cover;
+            /* Đảm bảo hình ảnh không bị méo khi giới hạn kích thước */
+            border-radius: 4px;
         }
     </style>
 </head>
 
 <body>
     <div class="container">
-        <h1>Upload Treatment Result Image</h1>
-        <!-- Form for creating treatment -->
-        <form action="/treatments" method="POST" enctype="multipart/form-data">
+        <h1>Manage Treatments</h1>
+
+        <!-- Form for creating or editing treatment -->
+        <form id="treatment-form" method="POST" enctype="multipart/form-data">
+            <input type="hidden" id="TreatmentID" name="TreatmentID" value="">
             <div class="form-group">
                 <label for="BookingDetailID">Booking Detail ID:</label>
                 <input type="text" id="BookingDetailID" name="BookingDetailID" required>
+            </div>
+            <div class="form-group">
+                <label for="TreatmentDate">Treatment Date:</label>
+                <input type="date" id="TreatmentDate" name="TreatmentDate" required>
             </div>
             <div class="form-group">
                 <label for="Note">Note:</label>
@@ -126,9 +154,12 @@
             </div>
             <div class="form-group">
                 <label for="Result">Result Image:</label>
-                <input type="file" id="Result" name="Result" required>
+                <input type="file" id="Result" name="Result">
             </div>
-            <button type="submit">Upload</button>
+            <div>
+                <img id="currentImage" src="" alt="Current Image" style="max-width: 100px;">
+            </div>
+            <button type="button" onclick="saveOrUpdateTreatment()">Save</button>
         </form>
 
         <div class="message">
@@ -139,21 +170,130 @@
         <h2>List of Treatments</h2>
         <ul class="treatment-list">
             <% treatments.forEach(treatment=> { %>
-                <li>
-                    <p><strong>Treatment ID</strong>
-                        <%=treatment.TreatmentID%>
-                    </p>
-                    <p><strong>Booking Detail ID:</strong>
-                        <%= treatment.BookingDetailID %>
-                    </p>
-                    <p><strong>Note:</strong>
-                        <%= treatment.Note %>
-                    </p>
-                    <p><strong>Result Image:</strong> <img src="<%= treatment.Result %>" alt="Result Image"></p>
+                <li id="treatment-<%= treatment.TreatmentID %>">
+                    <div>
+                        <p><strong>Booking Detail ID:</strong>
+                            <%= treatment.BookingDetailID %>
+                        </p>
+                        <p><strong>Note:</strong>
+                            <%= treatment.Note %>
+                        </p>
+                        <p><strong>Treatment Date:</strong>
+                            <%= new Date(treatment.TreatmentDate).toLocaleDateString() %>
+                        </p>
+                        <p><strong>Result Image:</strong> <img src="<%= treatment.Result %>" alt="Result Image"></p>
+                    </div>
+                    <div>
+                        <!-- Edit and Delete buttons -->
+                        <button class="update-button"
+                            onclick="updateTreatment('<%= treatment.TreatmentID %>', '<%= treatment.BookingDetailID %>', '<%= treatment.Note %>', '<%= treatment.TreatmentDate %>', '<%= treatment.Result %>')">Update</button>
+                        <button class="delete-button"
+                            onclick="deleteTreatment('<%= treatment.TreatmentID %>')">Delete</button>
+                    </div>
                 </li>
                 <% }); %>
         </ul>
     </div>
+
+    <script>
+        // Function to handle save or update treatment
+        function saveOrUpdateTreatment() {
+            var treatmentId = document.getElementById('TreatmentID').value;
+            var formData = new FormData(document.getElementById('treatment-form'));
+
+            // Determine the URL based on whether it's an update or create action
+            var url = '/treatments';
+            var method = 'POST';
+
+            if (treatmentId) {
+                url = `/treatments/${treatmentId}`;
+                method = 'PATCH';
+            }
+
+            fetch(url, {
+                method: method,
+                body: formData
+            })
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        throw new Error('Failed to save or update treatment');
+                    }
+                })
+                .then(data => {
+                    console.log('Success:', data);
+                    location.reload(); // Reload the page to update the treatment list
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while saving or updating treatment');
+                });
+        }
+
+        // Function to populate fields for update
+        function updateTreatment(treatmentId, bookingDetailID, note, treatmentDate, resultImage) {
+            document.getElementById('TreatmentID').value = treatmentId;
+            document.getElementById('BookingDetailID').value = bookingDetailID;
+            document.getElementById('Note').value = note;
+            document.getElementById('TreatmentDate').value = new Date(treatmentDate).toISOString().split('T')[0];
+            document.getElementById('currentImage').src = resultImage; // Display current image
+        }
+
+        // Function to delete treatment
+        function deleteTreatment(treatmentId) {
+            if (confirm('Are you sure you want to delete this treatment?')) {
+                fetch(`/treatments/${treatmentId}`, {
+                    method: 'DELETE'
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            location.reload(); // Reload the page after successful deletion
+                        } else {
+                            throw new Error('Failed to delete treatment');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('An error occurred while deleting the treatment');
+                    });
+            }
+        }
+
+        // Function to fetch treatments and populate the list
+        function fetchTreatments() {
+            fetch('/treatment')
+                .then(response => response.json())
+                .then(treatments => {
+                    var treatmentList = document.getElementById('treatment-list');
+                    treatmentList.innerHTML = ''; // Clear existing list
+
+                    treatments.forEach(treatment => {
+                        var li = document.createElement('li');
+                        li.id = `treatment-${treatment.TreatmentID}`;
+                        li.innerHTML = `
+                        <div>
+                            <p><strong>Booking Detail ID:</strong> ${treatment.BookingDetailID}</p>
+                            <p><strong>Note:</strong> ${treatment.Note}</p>
+                            <p><strong>Treatment Date:</strong> ${new Date(treatment.TreatmentDate).toLocaleDateString()}</p>
+                            <p><strong>Result Image:</strong> <img src="${treatment.Result}" alt="Result Image"></p>
+                        </div>
+                        <div>
+                            <button class="update-button" onclick="updateTreatment('${treatment.TreatmentID}', '${treatment.BookingDetailID}', '${treatment.Note}', '${treatment.TreatmentDate}', '${treatment.Result}')">Update</button>
+                            <button class="delete-button" onclick="deleteTreatment('${treatment.TreatmentID}')">Delete</button>
+                        </div>
+                    `;
+                        treatmentList.appendChild(li);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+
+        // Fetch treatments when the page loads
+        fetchTreatments();
+    </script>
 </body>
 
 </html>

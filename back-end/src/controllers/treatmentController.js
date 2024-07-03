@@ -5,24 +5,47 @@ import path from 'path';
 // Multer configuration
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'uploads/images/');
+        cb(null, 'uploads/images'); // Destination directory for uploaded images
     },
     filename: (req, file, cb) => {
-        cb(null, Date.now() + path.extname(file.originalname));
-    }
+        const ext = path.extname(file.originalname); // Get file extension
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9); // Generate unique filename
+        cb(null, uniqueSuffix + ext); // Set filename format
+    },
 });
-const upload = multer({ storage });
+
+const fileFilter = (req, file, cb) => {
+    if (file.mimetype.startsWith('image/')) {
+        cb(null, true);
+    } else {
+        cb(new Error('Only image files are allowed'), false);
+    }
+};
+
+const upload = multer({ storage, fileFilter });
+
+const deleteFile = (filePath) => {
+    try {
+        fs.unlinkSync(filePath); // Synchronously delete the file
+        console.log(`Deleted file: ${filePath}`);
+    } catch (error) {
+        console.error(`Error deleting file: ${filePath}`, error);
+    }
+};
 
 class TreatmentController {
     async createTreatment(req, res) {
-        const { BookingDetailID, Note } = req.body;
+        const { BookingDetailID, Note, TreatmentDate } = req.body;
         const Result = req.file ? `/uploads/images/${req.file.filename}` : null;
-        const TreatmentDate = new Date(); // Or any appropriate date
 
         try {
-            const newTreatment = await Treatment.create({ BookingDetailID, Note, Result, TreatmentDate });
+            const newTreatment = await Treatment.create({ BookingDetailID, Note, TreatmentDate, Result });
             res.status(201).json({ message: 'Treatment created successfully', newTreatment });
         } catch (error) {
+            if (error.name === 'SequelizeForeignKeyConstraintError') {
+                console.error('Foreign key constraint error:', error);
+                return res.status(400).json({ message: 'Invalid BookingDetailID provided' });
+            }
             console.error('Error creating treatment:', error);
             res.status(500).json({ message: 'Internal server error' });
         }
@@ -44,42 +67,61 @@ class TreatmentController {
         }
     }
 
-    async getTreatmentById(req, res) {
-        const { id } = req.params;
+    async getTreatmentByID(req, res) {
         try {
-            const treatment = await Treatment.findByPk(id);
+            const treatmentID = req.params.id;
+            const treatment = await Treatment.findByPk(treatmentID);
+            const treatments = await Treatment.findAll();
             if (!treatment) {
-                return res.status(404).json({ message: 'Treatment not found' });
+                return res.status(404).send('Treatment not found');
             }
-            res.render('treatments/detail', { treatment });
+            res.render('treatment', { treatment: treatment, treatments: treatments });
         } catch (error) {
             console.error('Error fetching treatment:', error);
-            res.status(500).json({ message: 'Internal server error' });
+            res.status(500).send('Server Error');
         }
     }
 
     async updateTreatment(req, res) {
-        const { id } = req.params;
-        const { BookingDetailID, Note } = req.body;
-        const Result = req.file ? req.file.path : null;
+        const treatmentId = req.params.id; // Extract treatment ID from URL params
+        const { BookingDetailID, TreatmentDate, Note } = req.body; // Extract updated treatment data
+        let Result = null;
+
+        // Check if a new image file is uploaded
+        if (req.file) {
+            Result = `/uploads/images/${req.file.filename}`; // Set new image URL
+        }
 
         try {
-            const treatment = await Treatment.findByPk(id);
+            // Find the treatment record by ID
+            const treatment = await Treatment.findByPk(treatmentId);
+
             if (!treatment) {
                 return res.status(404).json({ message: 'Treatment not found' });
             }
 
+            // Update treatment fields
             treatment.BookingDetailID = BookingDetailID;
+            treatment.TreatmentDate = TreatmentDate;
             treatment.Note = Note;
+
+            // Update Result field only if a new image is uploaded
             if (Result) {
-                treatment.Result = Result;
+                const currentResultFilePath = treatment.Result; // Get current image file path
+                // Delete current image file
+                // Implement your file deletion logic here (e.g., using fs.unlinkSync)
+
+                treatment.Result = Result; // Set new image URL to treatment record
             }
 
+            // Save updated treatment record to database
             await treatment.save();
-            res.redirect(`/treatments/${id}`);
+
+            // Return success response
+            return res.status(200).json({ message: 'Treatment updated successfully', treatment });
         } catch (error) {
             console.error('Error updating treatment:', error);
-            res.status(500).json({ message: 'Internal server error' });
+            return res.status(500).json({ message: 'Internal server error' });
         }
     }
 
@@ -93,23 +135,23 @@ class TreatmentController {
             }
 
             await treatment.destroy();
-            res.redirect('/treatments');
+            return res.status(200).json({ message: 'Treatment deleted successfully' });
         } catch (error) {
             console.error('Error deleting treatment:', error);
-            res.status(500).json({ message: 'Internal server error' });
+            return res.status(500).json({ message: 'Internal server error' });
         }
     }
 
     async getAllTreatments(req, res) {
         try {
-            const treatments = await Treatment.findAll(); // Lấy tất cả các bản ghi từ bảng Treatment
-            res.status(200).json({ treatments }); // Trả về dữ liệu dưới dạng JSON
+            const treatments = await Treatment.findAll(); // Example Sequelize findAll usage
+            res.render('treatment', { treatment: {}, treatments: treatments }); // Pass treatments to the view
         } catch (error) {
             console.error('Error fetching treatments:', error);
-            res.status(500).json({ message: 'Internal server error' });
+            res.status(500).send('Error fetching treatments');
         }
     }
 }
 
 export default new TreatmentController();
-export { upload };
+export { upload, deleteFile };

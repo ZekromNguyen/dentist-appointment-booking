@@ -50,7 +50,7 @@ let initAllWebRoutes = (app) => {
   //get CustomerName và SlotTime customer DentistName của 1 bookingdetail nếu đã booking
   //ex: /getBookingDetail?BookingDetailID=1
 
-  router.get("/getAllBookingByCustomerId",BookingController.getAllBookingByCustomerId);
+  router.get("/getAllBookingByCustomerId", BookingController.getAllBookingByCustomerId);
   //get all booking cua 1 customer 
   //ex: /getAllBookingByCustomerId?customerId=1
   router.get("/getAllClinic", AccountController.getAllClinic);
@@ -86,6 +86,9 @@ let initAllWebRoutes = (app) => {
     upload.single("Result"),
     TreatmentController.createTreatment
   );
+  router.delete('/treatments/:id', TreatmentController.deleteTreatment);
+  router.patch('/treatments/:id', upload.single('Result'), TreatmentController.updateTreatment);
+
 
   return app.use("/", router);
 };
