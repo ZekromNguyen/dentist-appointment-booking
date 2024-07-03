@@ -66,6 +66,7 @@ import Booking from './components/Booking/Booking';
 import Payment from './components/PaymentPage/Payment';
 import BookingHistory from './components/BookingHistory/BookingHistory';
 import AdminRoutes from './AdminRoutes/AdminRoutes';
+import BookingPage from './components/BookingPage/BookingPage';
 function App() {
 
   return (
@@ -78,9 +79,11 @@ function App() {
           <Route path="/loginDentist" element={<LoginDentist />} />
           <Route path="/forgotPassword" element={<ForgotPassword />} />
           <Route path="/ResetPassword" element={<ResetPassword />} />
-          <Route path="/booking" element={<Booking />} />
+          <Route path="/booking" element={<BookingPage />} />
           <Route path="/payment" element={<Payment />} />
+          <Route path="/booking" element={<Booking />} />
           <Route path="/bookinghistory" element={<BookingHistory />} />
+          <Route path="/bookingpage" element={<BookingPage />} />
           <Route path="/ClinicOwner/*" element={<ClinicOwner />}>
             <Route path="system/*" element={<System />} />
           </Route>

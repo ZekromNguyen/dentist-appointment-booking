@@ -1,3 +1,5 @@
+
+
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './Booking.scss';
@@ -159,18 +161,18 @@ const Booking = () => {
     }
 
   };
-  //******************************* Chọn slot time***************************************/
+//******************************* Chọn slot time***************************************/
 
-  const handleTimeClick = (slotId, scheduleId, slotTime) => {
-    const alreadySelected = selectedTimes.find(slot => slot.SlotId === slotId);
-    if (alreadySelected) {
-      // Loại bỏ slot đã được chọn khỏi danh sách selectedTimes
-      setSelectedTimes(selectedTimes.filter(slot => slot.SlotId !== slotId));
-    } else {
-      // Thêm slot mới vào danh sách selectedTimes
-      setSelectedTimes([...selectedTimes, { SlotId: slotId, ScheduleId: scheduleId, SlotTime: slotTime }]);
-    }
-  };
+const handleTimeClick = (slotId, scheduleId, slotTime) => {
+  const alreadySelected = selectedTimes.find(slot => slot.SlotId === slotId);
+  if (alreadySelected) {
+    // Loại bỏ slot đã được chọn khỏi danh sách selectedTimes
+    setSelectedTimes(selectedTimes.filter(slot => slot.SlotId !== slotId));
+  } else {
+    // Thêm slot mới vào danh sách selectedTimes
+    setSelectedTimes([...selectedTimes, { SlotId: slotId, ScheduleId: scheduleId, SlotTime: slotTime }]);
+  }
+};
 
 
   //*********************** Chọn ngày *******************************/
@@ -182,7 +184,7 @@ const Booking = () => {
       alert('Vui lòng chọn một ngày sau ngày hiện tại.');
     }
   };
-  //***************************** Chọn Bác Sĩ **************************8*/
+//***************************** Chọn Bác Sĩ **************************8*/
   const handleDentistChange = (e) => {
     const dentistID = e.target.value;
     const dentistName = e.target.options[e.target.selectedIndex].text;
@@ -191,7 +193,7 @@ const Booking = () => {
   };
 
 
-  //----------------------- Booking -------------------------------------
+//----------------------- Booking -------------------------------------
   const handleBooking = async (e) => {
     e.preventDefault();
 
@@ -200,8 +202,8 @@ const Booking = () => {
         customerName: customerid.customerName,
         customerId: customerid.customerId,
         dentistId: selectedDentist.id,
-        status: 'Pending',
-        typeBook: 'Online',
+        status:'Pending',
+        typeBook:'Online',
         price: parseFloat(priceBooking),
         dentist: selectedDentist.name,
         date: selectedDate,
@@ -232,7 +234,7 @@ const Booking = () => {
     }
   };
 
-  //---------------------------------------- Booking Detail ---------------------------------------------
+//---------------------------------------- Booking Detail ---------------------------------------------
 
   const handleCloseBookingDetails = () => {
     setShowBookingDetails(false);
@@ -258,13 +260,9 @@ const Booking = () => {
   }, [selectedTimes]);
 
 
-
+  
   return (
     <div className="container booking-schedule-container">
-      <div className="header">
-        <h1>Booking Schedule</h1>
-        <Link to="/" className="go-back-btn">Go Back</Link>
-      </div>
       <div className="booking-form">
         <form onSubmit={handleBooking}>
           <label>Select Date:</label>
@@ -300,8 +298,6 @@ const Booking = () => {
 
                 className={`hour-slot ${selectedTimes.find(time => time.SlotId === availableslot.SlotID) ? 'selected' : ''}`}
                 onClick={() => handleTimeClick(availableslot.SlotID, availableslot.ScheduleID, availableslot.AvailableSlot.Time)}
-
-
               >
                 {availableslot.AvailableSlot.Time}
               </div>
