@@ -1,19 +1,18 @@
 
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Form, Table, Button, Modal } from 'react-bootstrap';
-import './BookingHistory.scss'; // Import SCSS file
 import axios from 'axios';
+import './BookingHistory.scss'; // Import SCSS file
 
 const BookingHistory = () => {
   const [bookingData, setBookingData] = useState([]);
-  const [bookingDetailsMap, setBookingDetailsMap] = useState({});
-  const [selectedBooking, setSelectedBooking] = useState(null);
-  const [showDetails, setShowDetails] = useState(false);
-  const [bookingDetails, setBookingDetails] = useState([]);
   const [currentDateTime, setCurrentDateTime] = useState({
     date: new Date().toLocaleDateString('en-US'),
     time: new Date().toLocaleTimeString('en-US')
   });
+  const [selectedBookingDetails, setSelectedBookingDetails] = useState(null); // State for selected booking details
+  const [showModal, setShowModal] = useState(false); // State to manage modal visibility
+
   const account = localStorage.getItem('account');
   const customerId = account ? JSON.parse(account).customerId : null;
   const customerName = account ? JSON.parse(account).user : null;
@@ -21,23 +20,25 @@ const BookingHistory = () => {
   useEffect(() => {
     const fetchBookingData = async () => {
       try {
-        // Call API to get booking data
-        const response = await axios.get('http://localhost:3000/bookings');
-        // Filter booking data by customerId
-        const filteredData = response.data.filter((booking) => booking.CustomerID === customerId);
-        setBookingData(filteredData); // Save filtered data to state
-
-        // Fetch details for each booking and create a map
-        const detailsMap = {};
-        await Promise.all(filteredData.map(async (booking) => {
-          const detailsResponse = await axios.get(`http://localhost:3000/bookingdetails/${booking.BookingID}`);
-          detailsMap[booking.BookingID] = detailsResponse.data;
-        }));
-        setBookingDetailsMap(detailsMap);
+        if (customerId) {
+          const response = await axios.get('http://localhost:3000/getAllBookingByCustomerId', {
+            params: { customerId }
+          });
+          if (response.data.message === 'Success') {
+            // Sort booking data by DateBook in descending order
+            const sortedBookings = response.data.bookings.sort((a, b) => 
+              new Date(b.BookingDetails[0]?.DateBook) - new Date(a.BookingDetails[0]?.DateBook)
+            );
+            setBookingData(sortedBookings); // Save sorted booking data to state
+          } else {
+            setBookingData([]); // Clear booking data if not found
+          }
+        }
       } catch (error) {
         console.error('Error fetching booking history:', error);
       }
     };
+
     fetchBookingData();
   }, [customerId]);
 
@@ -53,25 +54,27 @@ const BookingHistory = () => {
     return () => clearInterval(interval); // Cleanup on component unmount
   }, []);
 
-  const handleViewDetails = (bookingId) => {
-    setBookingDetails(bookingDetailsMap[bookingId] || []);
-    setSelectedBooking(bookingId); // Set the selected booking ID
-    setShowDetails(true); // Show the modal with booking details
-  };
-
-  const handleCloseDetails = () => setShowDetails(false);
-
   const formatPrice = (price) => {
     const parsedPrice = parseFloat(price);
     return `${parsedPrice.toLocaleString('vi-VN')} VNĐ`;
   };
 
-  // Function to format ISO date string into separate date and time with labels and line breaks
-  const formatDateAndTime = (isoString) => {
-    const date = new Date(isoString);
-    const formattedDate = date.toLocaleDateString('en-US'); // Format date as MM/DD/YYYY
-    const formattedTime = date.toLocaleTimeString('en-US'); // Format time as HH:MM:SS
-    return { formattedDate, formattedTime };
+  const formatDateAndTime = (dateString) => {
+    const date = new Date(dateString);
+    return {
+      formattedDate: date.toLocaleDateString('en-US', { timeZone: 'UTC' }),
+      formattedTime: date.toLocaleTimeString('en-US', { timeZone: 'UTC' })
+    };
+  };
+
+  const handleShowModal = (booking) => {
+    setSelectedBookingDetails(booking.BookingDetails || []);
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setSelectedBookingDetails(null);
   };
 
   return (
@@ -98,7 +101,7 @@ const BookingHistory = () => {
         </Col>
       </Row>
 
-      {/* Bottom Row */}
+      {/* Booking History Table */}
       <Row>
         <Col>
           <div className="table-scroll">
@@ -109,15 +112,14 @@ const BookingHistory = () => {
                   <th style={{ textAlign: 'center' }}>DateBook</th>
                   <th style={{ textAlign: 'center' }}>Status</th>
                   <th style={{ textAlign: 'center' }}>Price</th>
-                  <th style={{ textAlign: 'center' }}>Details</th>
+                  <th style={{ textAlign: 'center' }}>Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {bookingData.map((booking, index) => {
-                  const details = bookingDetailsMap[booking.BookingID] || [];
-                  const { formattedDate, formattedTime } = details.length > 0 ? formatDateAndTime(details[0].DateBook) : { formattedDate: '', formattedTime: '' };
+                {bookingData.map((booking) => {
+                  const { formattedDate, formattedTime } = formatDateAndTime(booking.BookingDetails[0]?.DateBook || '');
                   return (
-                    <tr key={index}>
+                    <tr key={booking.BookingID}>
                       <td style={{ textAlign: 'center' }}>{customerName}</td>
                       <td style={{ textAlign: 'center' }}>
                         {formattedDate} <br /> {formattedTime}
@@ -125,7 +127,10 @@ const BookingHistory = () => {
                       <td style={{ textAlign: 'center' }}>{booking.Status}</td>
                       <td style={{ textAlign: 'center' }}>{formatPrice(booking.TotalPrice)}</td>
                       <td style={{ textAlign: 'center' }}>
-                        <Button variant="info" onClick={() => handleViewDetails(booking.BookingID)}>
+                        <Button 
+                          variant="info" 
+                          onClick={() => handleShowModal(booking)}
+                        >
                           View Details
                         </Button>
                       </td>
@@ -139,40 +144,38 @@ const BookingHistory = () => {
       </Row>
 
       {/* Booking Details Modal */}
-      <Modal show={showDetails} onHide={handleCloseDetails} size="lg">
+      <Modal show={showModal} onHide={handleCloseModal} size="lg">
         <Modal.Header closeButton>
-          <Modal.Title>Booking Details for {customerName}</Modal.Title>
+          <Modal.Title>Booking Details</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          {bookingDetails.length > 0 ? (
-            <Table striped bordered hover>
-              <thead>
-                <tr>
-                  <th>DateBook</th>
-                  <th>TypeBook</th>
-                  <th>Status</th>
-                  <th>PriceBooking</th>
-                  <th>MedicalDay</th>
+          <Table bordered striped>
+            <thead>
+              <tr>
+                <th>Dentist Name</th>
+                <th>Available Slot Time</th>
+                <th>Medical Day</th>
+                <th>Day of Week</th>
+                <th>Type</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {selectedBookingDetails && selectedBookingDetails.map((detail, index) => (
+                <tr key={index}>
+                  <td>{detail.DentistSchedule?.Dentist?.DentistName}</td>
+                  <td>{detail.DentistSchedule?.AvailableSlot?.Time}</td>
+                  <td>{new Date(detail.MedicalDay).toLocaleDateString('en-US', { timeZone: 'UTC' })}</td>
+                  <td>{detail.DentistSchedule?.DayOfWeek}</td>
+                  <td>{detail.TypeBook}</td>
+                  <td>{detail.Status}</td>
                 </tr>
-              </thead>
-              <tbody>
-                {bookingDetails.map((detail, index) => (
-                  <tr key={index}>
-                    <td>{detail.DateBook}</td>
-                    <td>{detail.TypeBook}</td>
-                    <td>{detail.Status}</td>
-                    <td>{formatPrice(detail.PriceBooking)}</td>
-                    <td>{detail.MedicalDay}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </Table>
-          ) : (
-            <p>No details available for this booking.</p>
-          )}
+              ))}
+            </tbody>
+          </Table>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseDetails}>
+          <Button variant="secondary" onClick={handleCloseModal}>
             Close
           </Button>
         </Modal.Footer>
@@ -182,3 +185,4 @@ const BookingHistory = () => {
 };
 
 export default BookingHistory;
+
