@@ -141,17 +141,15 @@ class TreatmentController {
             return res.status(500).json({ message: 'Internal server error' });
         }
     }
-
     async getAllTreatments(req, res) {
         try {
             const treatments = await Treatment.findAll(); // Example Sequelize findAll usage
-            res.render('treatment', { treatment: {}, treatments: treatments }); // Pass treatments to the view
+            res.json({ treatments: treatments }); // Return treatments as JSON
         } catch (error) {
             console.error('Error fetching treatments:', error);
             res.status(500).send('Error fetching treatments');
         }
     }
 }
-
 export default new TreatmentController();
 export { upload, deleteFile };

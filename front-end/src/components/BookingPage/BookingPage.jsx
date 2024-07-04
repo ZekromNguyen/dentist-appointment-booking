@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import './BookingPage.scss';
 import homeIcon from '/Homee.png';
 import bookingIcon from '/BookNoww.png';
@@ -14,44 +15,30 @@ import { checkSession } from '../../Service/userService';
 import BookingHistory from '../BookingHistory/BookingHistory';
 
 function BookingPage() {
-  const location = useLocation();
   const navigate = useNavigate();
-  const { state } = location;
-
   const [showBooking, setShowBooking] = useState(false); // State to control Booking component display
   const [customerId, setCustomerId] = useState('');
   const [customerName, setCustomerName] = useState(''); // State to hold customer name
   const [showBookingHistory, setShowBookingHistory] = useState(false); // State to control BookingHistory component display
-  const [bookingData, setBookingData] = useState(null); // State to hold booking data
 
   useEffect(() => {
-    // Check session and set customer details
+    // Check session when component mounts
     const fetchSession = async () => {
-      try {
-        const customer = await checkSession();
-        if (customer) {
-          setCustomerId(customer.customerId);
-          const storedData = JSON.parse(localStorage.getItem('account'));
-          if (storedData && storedData.user) {
-            setCustomerName(storedData.user);
-          }
-        } else {
-          navigate('/login');
-        }
-      } catch (error) {
-        console.error('Error fetching session:', error);
+      const customerId = await checkSession();
+      if (customerId === null) {
+        setCustomerId(null);
         navigate('/login');
+      }
+      if (customerId) {
+        setCustomerId(customerId);
+        const storedData = JSON.parse(localStorage.getItem('account'));
+        if (storedData && storedData.user) {
+          setCustomerName(storedData.user);
+        }
       }
     };
     fetchSession();
   }, []);
-
-  useEffect(() => {
-    // Set booking data received from previous page
-    if (state && state.bookingData) {
-      setBookingData(state.bookingData);
-    }
-  }, [state]);
 
   const handleGoBack = () => {
     navigate('/'); // Navigate to the homepage
@@ -109,7 +96,7 @@ function BookingPage() {
             <h1>Welcome ,{customerName}</h1>
           </div>
           <div className="body-section">
-            {showBooking && bookingData && <Booking bookingData={bookingData} />}
+            {showBooking && <Booking />}
             {showBookingHistory && <BookingHistory />}
 
             {!showBooking && !showBookingHistory && (
@@ -123,3 +110,5 @@ function BookingPage() {
 }
 
 export default BookingPage;
+
+

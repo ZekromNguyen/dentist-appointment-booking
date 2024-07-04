@@ -12,20 +12,20 @@ const BookingDetails = ({ show, handleClose, bookingDetails, onCancelBooking }) 
   const navigate = useNavigate(); // Initialize navigate hook
   const totalPrice = bookingDetails.reduce((total, booking) => total + booking.price, 0);
   const bankCode = 'ncb';
-  localStorage.setItem('totalPrice',totalPrice);
+  localStorage.setItem('totalPrice', totalPrice);
   if (!bookingDetails || bookingDetails.length === 0) return null;
 
-  
+
 
   const handlePayment = async () => {
     try {
       const response = await axios.post('http://localhost:3000/order/create_payment_url', {
-        amount:totalPrice,
+        amount: totalPrice,
         bankCode,
       }, { withCredentials: true });
-      
+
       console.log(response);
-      
+
       // Hiển thị thông báo thành công
       toast.success('Booking appointment successful!', {
         position: "top-right",
@@ -36,15 +36,15 @@ const BookingDetails = ({ show, handleClose, bookingDetails, onCancelBooking }) 
         draggable: true,
         progress: undefined,
       });
-  
+
       // // Redirect to payment page using navigate
       // setTimeout(() => {
       //   navigate('/payment', { state: { bookingDetails } });
       // }, 2000); // Đợi 2 giây trước khi chuyển trang
-      
+
       // Redirect to the payment URL
       window.location.href = response.data; // Giả sử backend gửi lại một URL để chuyển hướng đến
-  
+
     } catch (error) {
       console.error('Error during payment:', error);
       // Xử lý lỗi ở đây (ví dụ: hiển thị thông báo lỗi)
@@ -59,7 +59,7 @@ const BookingDetails = ({ show, handleClose, bookingDetails, onCancelBooking }) 
       });
     }
   };
-  
+
 
   // const handlePayment = () => {
   //   // Hiển thị thông báo thành công

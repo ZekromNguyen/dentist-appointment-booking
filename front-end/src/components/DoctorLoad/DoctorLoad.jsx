@@ -6,7 +6,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import Footer from '../Footer/Footer';
 import { checkSession } from '../../Service/userService';
 import BookingDetails from '../Booking/BookingDetails';
-import axios from 'axios';
 
 export default function DoctorLoad() {
     const location = useLocation();
@@ -23,9 +22,7 @@ export default function DoctorLoad() {
     const [schedules, setSchedules] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
-    const [selectedPrice, setSelectedPrice] = useState(50000);
-    const [selectedDentist, setSelectedDentist] = useState({ id: '', name: '' });
-    const [availableSlots, setAvailableSlots] = useState([]);
+    const [selectedPrice, setSelectedPrice] = useState(50000); // Giá mặc định
 
     useEffect(() => {
         const fetchSession = async () => {
@@ -67,34 +64,9 @@ export default function DoctorLoad() {
         fetchSchedules();
     }, [dentist, treatmentDate]);
 
-    const fetchAvailableSlots = async () => {
-        if (selectedDentist.id && treatmentDate) {
-            try {
-                const formattedDate = treatmentDate;
-                const response = await axios.get(`http://localhost:3000/slotsByDate`, {
-                    params: {
-                        dentistID: selectedDentist.id,
-                        date: formattedDate
-                    }
-                });
-                if (response.status === 200) {
-                    setAvailableSlots(response.data);
-                } else {
-                    throw new Error('Failed to fetch slots');
-                }
-            } catch (error) {
-                console.error('Error fetching slots:', error);
-            }
-        }
-    };
-
-    useEffect(() => {
-        fetchAvailableSlots();
-    }, [selectedDentist, treatmentDate]);
-
     const handleSelectDate = (date) => {
         setTreatmentDate(date);
-        setSelectedSchedule(null); // Reset selected schedule when date changes
+        setSelectedSchedule(null);
     };
 
     const handleSelectSchedule = (schedule) => {
@@ -102,29 +74,31 @@ export default function DoctorLoad() {
     };
 
     const handleConfirmBooking = async () => {
-        console.log('selectedSchedule:', selectedSchedule);
-        console.log('selectedSchedule.AvailableSlot:', selectedSchedule?.AvailableSlot);
         if (!loggedIn) {
             alert('Vui lòng đăng nhập để đặt lịch khám.');
             return;
         }
 
-        // // Kiểm tra xem đã chọn lịch khám có sẵn chưa
-        // if (!selectedSchedule || !selectedSchedule.AvailableSlot || !selectedSchedule.AvailableSlot.SlotID) {
-        //     alert('Vui lòng chọn một lịch khám có sẵn.');
-        //     return;
-        // }
+        if (!selectedSchedule || !selectedSchedule.AvailableSlot) {
+            alert('Vui lòng chọn một lịch khám có sẵn.');
+            return;
+        }
+
+        if (!selectedSchedule || !selectedSchedule.AvailableSlot || !selectedSchedule.AvailableSlot.SlotID) {
+            alert('Lịch khám được chọn không hợp lệ.');
+            return;
+        }
 
         const slotId = selectedSchedule.AvailableSlot.SlotID;
         const bookingData = {
             bookings: [{
                 customerId,
                 price: selectedPrice,
-                status: 'Confirmed',
-                typeBook: 'SomeType',
+                status: 'Pending',
+                typeBook: 'SomeType', // Loại đặt lịch thực tế
                 date: treatmentDate,
                 scheduleId: selectedSchedule.ScheduleID,
-                slotId: slotId // Lấy slotID từ selectedSchedule
+                slotId: slotId
             }]
         };
 
@@ -161,25 +135,25 @@ export default function DoctorLoad() {
         setShowBookingDetails(false);
     };
 
+    if (!dentist) {
+        return null; // Hoặc hiển thị chỉ số tải
+    }
+
     return (
         <div className='DoctorLoad'>
             <Header />
-            {dentist ? (
-                <div className='doctor'>
-                    <div className='doctor-img' style={{ backgroundImage: `url(http://localhost:3000/${dentist?.ImagePath})` }}></div>
-                    <div className='doctor-detail'>
-                        <div className='doctor-name'>{dentist.DentistName}</div>
-                        <div className='doctor-description'>{dentist.Description}</div>
-                        <div className='clinic-address'>{dentist.clinic.Address}</div>
-                        <div className='clinic-clinicName'>{dentist.clinic.ClinicName}</div>
-                    </div>
+            <div className='doctor'>
+                <div className='doctor-img' style={{ backgroundImage: `url(http://localhost:3000/${dentist?.ImagePath})` }}></div>
+                <div className='doctor-detail'>
+                    <div className='doctor-name'>{dentist.DentistName}</div>
+                    <div className='doctor-description'>{dentist.Description}</div>
+                    <div className='clinic-address'>{dentist.clinic.Address}</div>
+                    <div className='clinic-clinicName'>{dentist.clinic.ClinicName}</div>
                 </div>
-            ) : (
-                <p>Không có thông tin về nha sĩ.</p>
-            )}
-            <div className='clinic-time-title'>Giờ mở cửa</div>
+            </div>
+            <div className='clinic-time-title'>Giờ hoạt động</div>
             <div className='clinic-time'>
-                {dentist ? `${dentist.clinic.OpenTime} - ${dentist.clinic.CloseTime}` : 'Loading...'}
+                {dentist.clinic.OpenTime} - {dentist.clinic.CloseTime}
             </div>
             <div className='clinic-time-schedule'>Chọn ngày khám</div>
             <div className='schedule_date'>

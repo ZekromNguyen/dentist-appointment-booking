@@ -8,6 +8,7 @@ const TreatmentUpload = () => {
     const [treatmentDate, setTreatmentDate] = useState('');
     const [resultImage, setResultImage] = useState(null);
     const [treatments, setTreatments] = useState([]);
+    const [editingTreatmentId, setEditingTreatmentId] = useState(null);
 
     useEffect(() => {
         const fetchTreatments = async () => {
@@ -33,8 +34,14 @@ const TreatmentUpload = () => {
         formData.append('Result', resultImage);
 
         try {
-            await axios.post('http://localhost:3000/treatments', formData); // Sửa endpoint POST thành '/treatment'
-            alert('Treatment uploaded successfully');
+            if (editingTreatmentId) {
+                await axios.patch(`http://localhost:3000/treatments/${editingTreatmentId}`, formData); // Chỉnh lại endpoint PATCH thành '/treatments/:id'
+                alert('Treatment updated successfully');
+            } else {
+                await axios.post('http://localhost:3000/treatment', formData);
+                alert('Treatment uploaded successfully');
+            }
+
             // Fetch the updated list of treatments
             const response = await axios.get('http://localhost:3000/treatment');
             setTreatments(Array.isArray(response.data.treatments) ? response.data.treatments : []);
@@ -43,15 +50,38 @@ const TreatmentUpload = () => {
             setNote('');
             setTreatmentDate('');
             setResultImage(null);
+            setEditingTreatmentId(null);
         } catch (error) {
             console.error('Error uploading treatment:', error);
         }
     };
 
+    const handleDelete = async (treatmentId) => {
+        try {
+            await axios.delete(`http://localhost:3000/treatments/${treatmentId}`);
+            alert('Treatment deleted successfully');
+
+            // Fetch the updated list of treatments
+            const response = await axios.get('http://localhost:3000/treatment');
+            setTreatments(Array.isArray(response.data.treatments) ? response.data.treatments : []);
+        } catch (error) {
+            console.error('Error deleting treatment:', error);
+        }
+    };
+
+    const handleEdit = (treatment) => {
+        setEditingTreatmentId(treatment.TreatmentID);
+        setBookingDetailId(treatment.BookingDetailID);
+        setNote(treatment.Note);
+        setTreatmentDate(new Date(treatment.TreatmentDate).toISOString().split('T')[0]);
+        // Scroll to top of the page
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
     return (
         <div className='body-treatment'>
             <div className="treatment-upload-container">
-                <h1>Upload Treatment Result Image</h1>
+                <h1>{editingTreatmentId ? 'Update Treatment Result Image' : 'Upload Treatment Result Image'}</h1>
                 <form onSubmit={handleSubmit}>
                     <div className="treatment-form-group">
                         <label htmlFor="bookingDetailId">Booking Detail ID:</label>
@@ -92,10 +122,10 @@ const TreatmentUpload = () => {
                             id="resultImage"
                             name="resultImage"
                             onChange={(e) => setResultImage(e.target.files[0])}
-                            required
+                            required={!editingTreatmentId}
                         />
                     </div>
-                    <button type="submit">Upload</button>
+                    <button type="submit">{editingTreatmentId ? 'Update' : 'Upload'}</button>
                 </form>
 
                 <div className="treatment-message">
@@ -113,6 +143,7 @@ const TreatmentUpload = () => {
                                     <th>Note</th>
                                     <th>Treatment Date</th>
                                     <th>Result Image</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -129,6 +160,10 @@ const TreatmentUpload = () => {
                                                 alt={`${treatment.TreatmentID}'s profile`}
                                                 style={{ width: '100px', height: '100px', objectFit: 'cover' }}
                                             />
+                                        </td>
+                                        <td>
+                                            <button onClick={() => handleDelete(treatment.TreatmentID)}>Delete</button>
+                                            <button onClick={() => handleEdit(treatment)}>Update</button>
                                         </td>
                                     </tr>
                                 ))}
