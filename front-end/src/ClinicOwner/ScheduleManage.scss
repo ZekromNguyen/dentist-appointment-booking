@@ -204,13 +204,17 @@ $highlight-color: blue;
 
 
   .schedule-table {
-    max-height: 0;
+    height: 0;
     overflow: hidden;
-    transition: max-height 0.5s ease;
+    transition: height 0.5s ease;
+    // max-height: 0;
+    // overflow: hidden;
+    // transition: max-height 0.5s ease;
 
 
     &.visible {
-      max-height: 1000px; // Hoặc một giá trị lớn hơn chiều cao thực tế của bảng
+      height: auto;
+      // max-height: 1000px; // Hoặc một giá trị lớn hơn chiều cao thực tế của bảng
     }
   }
 
@@ -274,13 +278,17 @@ $highlight-color: blue;
 
 
   .schedule-table {
-    max-height: 0;
+    height: 0;
     overflow: hidden;
-    transition: max-height 0.5s ease;
+    transition: height 0.5s ease;
+    // max-height: 0;
+    // overflow: hidden;
+    // transition: max-height 0.5s ease;
 
 
     &.visible {
-      max-height: 1000px; // Hoặc một giá trị lớn hơn chiều cao thực tế của bảng
+      height: auto;
+      // max-height: 1000px; // Hoặc một giá trị lớn hơn chiều cao thực tế của bảng
     }
   }
 

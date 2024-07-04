@@ -45,6 +45,7 @@ function BookingPage() {
   };
 
   const handleLogout = () => {
+    localStorage.removeItem('account');
     navigate('/login'); // Navigate to the login page
   };
 

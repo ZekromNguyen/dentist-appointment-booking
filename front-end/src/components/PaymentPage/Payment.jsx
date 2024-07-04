@@ -74,6 +74,7 @@ const Payment = () => {
       draggable: true,
       progress: undefined,
     });
+    localStorage.removeItem('bookings');
     setTimeout(() => {
       navigate('/booking'); // Navigate to booking page after 2 seconds
     }, 2000);
