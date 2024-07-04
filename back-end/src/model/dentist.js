@@ -1,7 +1,7 @@
 import { Model, DataTypes } from 'sequelize';
 import sequelize from '../config/database';
-import Clinic from './Clinic'; // Import model Clinic
-
+import Clinic from './clinic'; // Import model Clinic
+import DentistSchedule from './dentistSchedule'
 class Dentist extends Model { }
 Dentist.init(
   {
@@ -53,6 +53,11 @@ Dentist.init(
 Dentist.belongsTo(Clinic, {
   foreignKey: 'ClinicID',
   as: 'clinic',
+});
+
+Dentist.belongsTo(DentistSchedule, {
+  foreignKey: 'DentistID',
+  as: 'schedules',
 });
 
 export default Dentist;

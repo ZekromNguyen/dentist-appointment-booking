@@ -62,9 +62,12 @@ class BookingService {
     priceBooking,
     medicalDay,
     bookingId,
-    scheduleId
+    scheduleId,
+    slotID // Ensure slotID is included as a parameter
   ) {
     try {
+      console.log("SlotID received:", slotID); // Log slotID to check its value
+
       const newBookingDetail = await BookingDetail.create({
         DateBook: dateBook,
         TypeBook: typeBook,
@@ -73,20 +76,24 @@ class BookingService {
         MedicalDay: medicalDay,
         BookingID: bookingId,
         ScheduleID: scheduleId,
+        SlotID: slotID // Include slotID in the creation object
       });
-      const updateDentistSchedule =
-        await DentistService.updateStatusDentistSchedule(
-          newBookingDetail.ScheduleID
-        );
+
+      // Optionally, update any related services or data after creating booking detail
+      const updateDentistSchedule = await DentistService.updateStatusDentistSchedule(
+        newBookingDetail.ScheduleID
+      );
       if (updateDentistSchedule) {
         console.log("Update status successfully");
       }
+
       return newBookingDetail;
     } catch (error) {
       console.error("Error creating booking detail in service:", error);
       throw error;
     }
   }
+
 
   //hàm get all booking
   async getAllBooking() {
@@ -186,6 +193,32 @@ class BookingService {
       throw error;
     }
   }
+
+  async getAllBookingInfo() {
+    try {
+      const bookings = await Booking.findAll({
+      });
+      return bookings;
+    } catch (error) {
+      console.error("Error fetching booking information:", error);
+      throw error;
+    }
+  }
+
+  async getAllBookingDetails(bookingId) {
+    try {
+      const bookingDetails = await BookingDetail.findAll({
+        where: {
+          BookingID: bookingId,
+        },
+      });
+      return bookingDetails;
+    } catch (error) {
+      console.error("Error fetching booking details:", error);
+      throw error;
+    }
+  }
+
 
   // Hàm cập nhật trạng thái booking
   async updateBookingStatus(bookingId, status) {

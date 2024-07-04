@@ -1,7 +1,7 @@
 import { Model, DataTypes } from "sequelize";
 import sequelize from "../config/database";
 
-class DentistSchedule extends Model {}
+class DentistSchedule extends Model { }
 DentistSchedule.init(
   {
     ScheduleID: {
@@ -55,5 +55,10 @@ DentistSchedule.init(
     timestamps: false,
   }
 );
+
+DentistSchedule.associate = function (models) {
+  DentistSchedule.belongsTo(models.Dentist, { foreignKey: 'DentistID', as: 'Dentist' });
+  DentistSchedule.hasMany(models.AvailableSlot, { foreignKey: 'ScheduleID', as: 'AvailableSlot' });
+};
 
 export default DentistSchedule;

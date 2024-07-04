@@ -119,54 +119,63 @@ class DentistService {
   ///////////////////////////////////////////////////
   // async getAllDentist(DentistID) {
   //   try {
-  //     let account = "";
+  //     let options = {
+  //       attributes: [
+  //         "AccountID",
+  //         "DentistID",
+  //         "DentistName",
+  //         "Description",
+  //         "ImagePath",
+  //       ],
+  //       include: [
+  //         {
+  //           model: Clinic,
+  //           attributes: ["ClinicID", "ClinicName", "Address", "OpenTime", "CloseTime"],
+  //           as: 'clinic',
+  //         },
+  //         {
+  //           model: DentistSchedule,
+  //           attributes: ["ScheduleID", "Date", "DayOfWeek", "Status", "SlotID"],
+  //           as: 'DentistSchedules',
+  //           include: [
+  //             {
+  //               model: AvailableSlot,
+  //               attributes: ["SlotID", "Time"],
+  //               as: 'AvailableSlot'
+  //             }
+  //           ]
+  //         }
+  //       ],
+  //     };
+
+  //     let account;
   //     if (DentistID === "ALL") {
-  //       account = await Dentist.findAll({
-  //         raw: true,
-  //         attributes: [
-  //           "AccountID",
-  //           "DentistID",
-  //           "DentistName",
-  //           "ClinicID",
-  //           "Description",
-  //           "ImagePath",
-  //         ],
-  //       });
+  //       account = await Dentist.findAll(options);
   //     } else if (DentistID) {
-  //       account = await Dentist.findOne({
-  //         where: { DentistID: DentistID },
-  //         raw: true,
-  //         attributes: [
-  //           "AccountID",
-  //           "DentistID",
-  //           "DentistName",
-  //           "ClinicID",
-  //           "Description",
-  //           "ImagePath",
-  //         ],
-  //       });
+  //       options.where = { DentistID: DentistID };
+  //       account = await Dentist.findOne(options);
   //     }
 
   //     if (!account) {
-  //       console.log(`Account with ID ${DentistID} not found`);
+  //       console.log(`Dentist with ID ${DentistID} not found`);
   //     }
+
   //     return account;
   //   } catch (e) {
-  //     console.error("Error in getAllUsers:", e);
+  //     console.error("Error in getAllDentist:", e);
   //     throw e;
   //   }
   // }
 
 
-  async getAllDentist(DentistID) {
+  async getAllDentist(DentistID, date) {
     try {
-      let account = "";
       let options = {
-        raw: true,
         attributes: [
           "AccountID",
           "DentistID",
           "DentistName",
+          "ClinicID",
           "Description",
           "ImagePath",
         ],
@@ -174,11 +183,28 @@ class DentistService {
           {
             model: Clinic,
             attributes: ["ClinicID", "ClinicName", "Address", "OpenTime", "CloseTime"],
-            as: 'clinic', // Đặt lại tên mối quan hệ nếu cần thiết
+            as: 'clinic',
           },
+          {
+            model: DentistSchedule,
+            attributes: ["ScheduleID", "Date", "DayOfWeek", "Status", "SlotID"],
+            as: 'DentistSchedules',
+            include: [
+              {
+                model: AvailableSlot,
+                attributes: ["SlotID", "Time"],
+                as: 'AvailableSlot'
+              }
+            ]
+          }
         ],
       };
 
+      if (date) {
+        options.include[1].where = { Date: date };
+      }
+
+      let account;
       if (DentistID === "ALL") {
         account = await Dentist.findAll(options);
       } else if (DentistID) {
@@ -196,6 +222,7 @@ class DentistService {
       throw e;
     }
   }
+
   ///////////////////////////////////////////
   async deleteDentist(DentistID) {
     try {

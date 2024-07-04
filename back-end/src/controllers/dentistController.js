@@ -104,8 +104,28 @@ class DentistController {
   }
 
   //////////////////////////////////////
+  // async handleGetAllDentist(req, res) {
+  //   let DentistID = req.query.DentistID;
+  //   if (!DentistID) {
+  //     return res.status(200).json({
+  //       errCode: 1,
+  //       errMessage: "Missing required parameter",
+  //       account: [],
+  //     });
+  //   }
+  //   let account = await DentistService.getAllDentist(DentistID);
+  //   return res.status(200).json({
+  //     errCode: 0,
+  //     errMessage: "OK",
+  //     account,
+  //   });
+  // }
+
+
   async handleGetAllDentist(req, res) {
     let DentistID = req.query.DentistID;
+    let date = req.query.date;
+
     if (!DentistID) {
       return res.status(200).json({
         errCode: 1,
@@ -113,12 +133,22 @@ class DentistController {
         account: [],
       });
     }
-    let account = await DentistService.getAllDentist(DentistID);
-    return res.status(200).json({
-      errCode: 0,
-      errMessage: "OK",
-      account,
-    });
+
+    try {
+      let account = await DentistService.getAllDentist(DentistID, date);
+      return res.status(200).json({
+        errCode: 0,
+        errMessage: "OK",
+        account,
+      });
+    } catch (e) {
+      console.error("Error in handleGetAllDentist:", e);
+      return res.status(500).json({
+        errCode: 2,
+        errMessage: "Server Error",
+        account: [],
+      });
+    }
   }
 
   async handleDeleteDentist(req, res) {

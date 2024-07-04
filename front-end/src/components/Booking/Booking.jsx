@@ -1,3 +1,5 @@
+
+
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './Booking.scss';
@@ -261,10 +263,6 @@ const Booking = () => {
 
   return (
     <div className="container booking-schedule-container">
-      <div className="header">
-        <h1>Booking Schedule</h1>
-        <Link to="/" className="go-back-btn">Go Back</Link>
-      </div>
       <div className="booking-form">
         <form onSubmit={handleBooking}>
           <label>Select Date:</label>
@@ -300,8 +298,6 @@ const Booking = () => {
 
                 className={`hour-slot ${selectedTimes.find(time => time.SlotId === availableslot.SlotID) ? 'selected' : ''}`}
                 onClick={() => handleTimeClick(availableslot.SlotID, availableslot.ScheduleID, availableslot.AvailableSlot.Time)}
-
-
               >
                 {availableslot.AvailableSlot.Time}
               </div>
