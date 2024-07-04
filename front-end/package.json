@@ -49,6 +49,7 @@
     "redux-thunk": "^3.1.0",
     "sass": "^1.77.4",
     "slick-carousel": "^1.8.1",
+    "swiper": "^11.1.4",
     "typescript": "^5.4.5"
   },
   "devDependencies": {

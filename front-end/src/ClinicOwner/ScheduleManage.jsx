@@ -16,23 +16,22 @@ export default function ScheduleManage(props) {
   const [remainingSlots, setRemainingSlots] = useState([]);
   const [error, setError] = useState('');
   const [isScheduleVisible, setIsScheduleVisible] = useState(true);
-  const [isBookedScheduleVisible, setIsBookedScheduleVisible] = useState(true); // State for booked schedule visibility
-  const [selectedOption, setSelectedOption] = useState('dentist-schedule'); // State for selected option
+  const [isBookedScheduleVisible, setIsBookedScheduleVisible] = useState(true);
+  const [selectedOption, setSelectedOption] = useState('dentist-schedule');
+  const [isDentistLoggedIn, setIsDentistLoggedIn] = useState(false);
+  const [loggedInDentistID, setLoggedInDentistID] = useState(null);
   const currentDate = new Date().toISOString().split('T')[0];
 
-  const toggleScheduleVisibility = () => {
-    setIsScheduleVisible(!isScheduleVisible);
-  };
+  // Fetch logged-in dentist information
+  useEffect(() => {
+    const dentistData = JSON.parse(localStorage.getItem('account'));
+    if (dentistData && dentistData.dentistId) {
+      setLoggedInDentistID(dentistData.dentistId);
+      setIsDentistLoggedIn(true);
+    }
+  }, []);
 
-  const toggleBookedScheduleVisibility = () => {
-    setIsBookedScheduleVisible(!isBookedScheduleVisible);
-  };
-
-  const handleOptionChange = (event) => {
-    setSelectedOption(event.target.value);
-  };
-
-  // Get API All Dentist
+  // Get API All Dentists
   useEffect(() => {
     const fetchDentists = async () => {
       try {
@@ -46,7 +45,7 @@ export default function ScheduleManage(props) {
     fetchDentists();
   }, []);
 
-  // Get API All Slot
+  // Get API All Slots
   useEffect(() => {
     const fetchSlots = async () => {
       try {
@@ -60,7 +59,7 @@ export default function ScheduleManage(props) {
     fetchSlots();
   }, []);
 
-  //**************************Get Slot By Dentist and Date*******************************/
+  // Get Available Slots By Dentist and Date
   useEffect(() => {
     const fetchAvailableSlots = async () => {
       if (selectedDentist && selectedDate) {
@@ -71,7 +70,6 @@ export default function ScheduleManage(props) {
               date: selectedDate,
             },
           });
-          console.log('check availableSlots', response.data);
           if (response.status !== 200) {
             throw new Error('Failed to fetch slots');
           }
@@ -84,7 +82,7 @@ export default function ScheduleManage(props) {
     fetchAvailableSlots();
   }, [selectedDentist, selectedDate]);
 
-  // Get API All DentistSchedule
+  // Get API All Dentist Schedules
   useEffect(() => {
     const fetchSchedules = async () => {
       try {
@@ -102,30 +100,61 @@ export default function ScheduleManage(props) {
     fetchSchedules();
   }, []);
 
-  // Filter remaining slots based on availableSlots
   useEffect(() => {
     if (slots.length > 0) {
       if (availableSlots.length > 0) {
         // Extract slotIDs from availableSlots
         const availableSlotIDs = availableSlots.map(slot => slot.SlotID);
-
-        // Find remaining slots by filtering out availableSlotIDs from slots
-        const remainingSlots = slots.filter(slot => !availableSlotIDs.includes(slot.SlotID));
-
+        // Filter out slots that are already booked for the selected date
+        const bookedSlotIDs = schedules
+          .filter(schedule =>
+            schedule.DentistID === loggedInDentistID &&
+            schedule.Date === selectedDate
+          )
+          .map(schedule => schedule.SlotID);
+        // Find remaining slots by filtering out availableSlotIDs and bookedSlotIDs from slots
+        const remainingSlots = slots.filter(slot =>
+          !availableSlotIDs.includes(slot.SlotID) &&
+          !bookedSlotIDs.includes(slot.SlotID)
+        );
         setRemainingSlots(remainingSlots);
       } else {
-        // If no available slots found, show all slots
-        setRemainingSlots(slots);
+        // If no available slots found, show all slots except booked ones
+        const bookedSlotIDs = schedules
+          .filter(schedule =>
+            schedule.DentistID === loggedInDentistID &&
+            schedule.Date === selectedDate
+          )
+          .map(schedule => schedule.SlotID);
+        const remainingSlots = slots.filter(slot =>
+          !bookedSlotIDs.includes(slot.SlotID)
+        );
+        setRemainingSlots(remainingSlots);
       }
     }
-  }, [slots, availableSlots]);
+  }, [slots, availableSlots, schedules, selectedDate, loggedInDentistID]);
+
+
+
+  const toggleScheduleVisibility = () => {
+    setIsScheduleVisible(!isScheduleVisible);
+  };
+
+  const toggleBookedScheduleVisibility = () => {
+    setIsBookedScheduleVisible(!isBookedScheduleVisible);
+  };
+
+
+  const handleOptionChange = (event) => {
+    setSelectedOption(event.target.value);
+  };
 
   const handleDateChange = (e) => {
     const selected = e.target.value;
     if (selected >= currentDate) {
       setSelectedDate(selected);
     } else {
-      alert('Vui lòng chọn một ngày sau ngày hiện tại.');
+      alert('Please select a date after today.');
     }
   };
 
@@ -138,14 +167,16 @@ export default function ScheduleManage(props) {
   };
 
   const handleSave = async () => {
-    if (!selectedDentist || !selectedDate || selectedSlots.length === 0) {
+    const dentistIDToUse = isDentistLoggedIn ? loggedInDentistID : selectedDentist;
+
+    if (!dentistIDToUse || !selectedDate || selectedSlots.length === 0) {
       setError('Please fill in all fields');
       return;
     }
 
     // Check if the dentist already has a schedule on the selected date and time slot
     const existingSchedule = schedules.find(schedule =>
-      schedule.DentistID === selectedDentist &&
+      schedule.DentistID === dentistIDToUse &&
       schedule.Date === selectedDate &&
       selectedSlots.includes(schedule.SlotID)
     );
@@ -160,7 +191,7 @@ export default function ScheduleManage(props) {
         const response = await axios.post('http://localhost:3000/schedule', {
           date: selectedDate,
           slotId: slotId,
-          dentistId: selectedDentist
+          dentistId: dentistIDToUse
         });
         return response.data.newSchedule;
       }));
@@ -177,38 +208,46 @@ export default function ScheduleManage(props) {
     }
   };
 
+
+
   return (
     <div>
       <div className="container manage-schedule-container">
-        <div className="m-s-title">
-          Quản lý lịch làm việc
-        </div>
+        <div className="m-s-title">Manage Schedule</div>
 
         <div className="row">
           <div className="col-md-4">
             <div className="form-group">
-              <label htmlFor="dentistSelect">Chọn bác sĩ</label>
-              <select
-                id="dentistSelect"
-                className="form-control"
-                value={selectedDentist}
-                onChange={(e) => {
-                  setSelectedDentist(e.target.value);
-                }}
-              >
-                <option value="">Chọn bác sĩ</option>
-                {dentists.map((dentist) => (
-                  <option key={dentist.DentistID} value={dentist.DentistID}>
-                    {dentist.DentistName}
-                  </option>
-                ))}
-              </select>
+              <label htmlFor="dentistSelect">Select Dentist</label>
+              {isDentistLoggedIn ? (
+                <input
+                  id="dentistSelect"
+                  type="text"
+                  className="form-control"
+                  value={dentists.find(dentist => dentist.DentistID === loggedInDentistID)?.DentistName || ''}
+                  readOnly
+                />
+              ) : (
+                <select
+                  id="dentistSelect"
+                  className="form-control"
+                  value={selectedDentist}
+                  onChange={(e) => setSelectedDentist(e.target.value)}
+                >
+                  <option value="">Select Dentist</option>
+                  {dentists.map((dentist) => (
+                    <option key={dentist.DentistID} value={dentist.DentistID}>
+                      {dentist.DentistName}
+                    </option>
+                  ))}
+                </select>
+              )}
             </div>
           </div>
 
           <div className="col-md-4">
             <div className="form-group">
-              <label htmlFor="dateSelect">Chọn ngày</label>
+              <label htmlFor="dateSelect">Select Date</label>
               <input
                 id="dateSelect"
                 type="date"
@@ -252,7 +291,6 @@ export default function ScheduleManage(props) {
 
         {error && <div className="alert alert-danger">{error}</div>}
 
-        {/* Move the option selector here */}
         <div className="row">
           <div className="col-md-6">
             <div className="option-selector">
@@ -281,6 +319,7 @@ export default function ScheduleManage(props) {
                         <th scope="col">Dentist Name</th>
                         <th scope="col">Date</th>
                         <th scope="col">Slot Time</th>
+                        <th scope="col">Customer Name</th>
                         <th scope="col">Status</th>
                       </tr>
                     </thead>
@@ -292,6 +331,7 @@ export default function ScheduleManage(props) {
                             <td>{dentists.find(dentist => dentist.DentistID === schedule.DentistID)?.DentistName}</td>
                             <td>{schedule.Date}</td>
                             <td>{slots.find(availableslot => availableslot.SlotID === schedule.SlotID)?.Time}</td>
+                            <td>{schedule.BookingDetail?.Booking?.Customer?.CustomerName || 'N/A'}</td>
                             <td>{schedule.Status}</td>
                           </tr>
                         )
@@ -317,6 +357,7 @@ export default function ScheduleManage(props) {
                         <th scope="col">Dentist Name</th>
                         <th scope="col">Date</th>
                         <th scope="col">Slot Time</th>
+                        <th scope="col">Customer Name</th>
                         <th scope="col">Status</th>
                       </tr>
                     </thead>
@@ -328,6 +369,7 @@ export default function ScheduleManage(props) {
                             <td>{dentists.find(dentist => dentist.DentistID === schedule.DentistID)?.DentistName}</td>
                             <td>{schedule.Date}</td>
                             <td>{slots.find(availableslot => availableslot.SlotID === schedule.SlotID)?.Time}</td>
+                            <td>{schedule.BookingDetail?.Booking?.Customer?.CustomerName || 'N/A'}</td>
                             <td>{schedule.Status}</td>
                           </tr>
                         )

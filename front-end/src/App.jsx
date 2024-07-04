@@ -67,6 +67,9 @@ import Payment from './components/PaymentPage/Payment';
 import BookingHistory from './components/BookingHistory/BookingHistory';
 import AdminRoutes from './AdminRoutes/AdminRoutes';
 import BookingPage from './components/BookingPage/BookingPage';
+import VNPayReturnPage from './components/PaymentPage/paymentReturn';
+import SuccessPage from './components/PaymentPage/SuccessPage';
+import FailurePage from './components/PaymentPage/FailurePage';
 import DoctorLoad from './components/DoctorLoad/DoctorLoad';
 
 function App() {
@@ -83,6 +86,9 @@ function App() {
           <Route path="/ResetPassword" element={<ResetPassword />} />
           <Route path="/booking" element={<BookingPage />} />
           <Route path="/payment" element={<Payment />} />
+          <Route path="/order/vnpay_return" element={<VNPayReturnPage />} />
+          <Route path="/success" element={<SuccessPage />} />
+          <Route path="/failure" element={<FailurePage />} />
           <Route path="/booking" element={<Booking />} />
           <Route path="/bookinghistory" element={<BookingHistory />} />
           <Route path="/bookingpage" element={<BookingPage />} />

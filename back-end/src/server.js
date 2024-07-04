@@ -3,9 +3,10 @@ import express from "express";
 import configViewEngine from "./config/viewEngine";
 import initWebAllRoutes from "./routes/web";
 import session from "express-session";
-import cors from 'cors';
-import multer from 'multer';
-import path from 'path';
+import cors from "cors";
+import multer from "multer";
+import path from "path";
+import vnpay from "./routes/vnpay";
 let app = express();
 
 // Enable CORS for all routes
@@ -17,18 +18,18 @@ app.use(
 );
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'uploads/images/');
+    cb(null, "uploads/images/");
   },
   filename: (req, file, cb) => {
     cb(null, Date.now() + path.extname(file.originalname));
-  }
+  },
 });
 
 const upload = multer({ storage });
 
-app.post('/upload', upload.single('image'), (req, res) => {
+app.post("/upload", upload.single("image"), (req, res) => {
   if (!req.file) {
-    return res.status(400).json({ message: 'No file uploaded' });
+    return res.status(400).json({ message: "No file uploaded" });
   }
 
   const imageUrl = `/uploads/images/${req.file.filename}`;
@@ -47,8 +48,9 @@ app.use(
     }, // Set to true if using HTTPS
   })
 );
-app.use('/uploads', express.static('uploads'));
+app.use("/uploads", express.static("uploads"));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use("/order", vnpay);
 //config view engine
 configViewEngine(app);
 

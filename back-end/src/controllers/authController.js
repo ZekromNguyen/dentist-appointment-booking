@@ -420,7 +420,7 @@ class AccountController {
     const hashedPassword = bcrypt.hashSync(password, 10);
 
     try {
-      const updatedAccount = await AccountService.saveNewPasswordAndActivate(
+      const updatedAccount = await AccountService.saveNewPassword(
         token,
         hashedPassword
       );

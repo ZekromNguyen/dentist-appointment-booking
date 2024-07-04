@@ -13,7 +13,7 @@ function Doctor() {
         <HeaderSystemDoctor />
       </div>
       <div>
-        {isManageSchedule && <ManageDentist />}
+        {  isManageSchedule  }
       </div>
       <div className='content'>
         <Outlet />

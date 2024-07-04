@@ -56,7 +56,8 @@ class BookingController {
 
       const results = [];
       for (const booking of bookings) {
-        const { customerId, price, status, typeBook, date, scheduleId, slotID } = booking;
+        const { customerId, price, status, typeBook, date, scheduleId } =
+          booking;
         const currentDateTime = new Date(); // Lấy thời gian hiện tại
         const currentDateTimeGMT7 = new Date(
           currentDateTime.getTime() + 7 * 60 * 60 * 1000
@@ -79,8 +80,7 @@ class BookingController {
           price,
           date,
           newBooking.BookingID,
-          scheduleId,
-          slotID
+          scheduleId
         );
         if (!newBookingDetail) {
           return res

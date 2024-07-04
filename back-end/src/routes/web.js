@@ -77,8 +77,7 @@ let initAllWebRoutes = (app) => {
   router.get("/scheduleSlot", DentistController.getAvailableSlotN);
   router.get("/scheduleDentist", DentistController.getDentistSchedules);
   router.get("/getCustomerId", AccountController.getCustomerId);
-  router.get("/bookings", BookingController.showAllBooking);
-  router.get("/bookingdetails/:bookingId", BookingController.showAllBookingDetails);
+
 
   router.get("/payment/:bookingId", BookingController.showPaymentPage);
   router.post("/payment", BookingController.processPayment);
@@ -89,6 +88,9 @@ let initAllWebRoutes = (app) => {
     upload.single("Result"),
     TreatmentController.createTreatment
   );
+  router.delete('/treatments/:id', TreatmentController.deleteTreatment);
+  router.patch('/treatments/:id', upload.single('Result'), TreatmentController.updateTreatment);
+
 
   return app.use("/", router);
 };

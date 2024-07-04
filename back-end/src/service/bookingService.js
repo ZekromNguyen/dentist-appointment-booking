@@ -62,12 +62,9 @@ class BookingService {
     priceBooking,
     medicalDay,
     bookingId,
-    scheduleId,
-    slotID // Ensure slotID is included as a parameter
+    scheduleId
   ) {
     try {
-      console.log("SlotID received:", slotID); // Log slotID to check its value
-
       const newBookingDetail = await BookingDetail.create({
         DateBook: dateBook,
         TypeBook: typeBook,
@@ -76,24 +73,20 @@ class BookingService {
         MedicalDay: medicalDay,
         BookingID: bookingId,
         ScheduleID: scheduleId,
-        SlotID: slotID // Include slotID in the creation object
       });
-
-      // Optionally, update any related services or data after creating booking detail
-      const updateDentistSchedule = await DentistService.updateStatusDentistSchedule(
-        newBookingDetail.ScheduleID
-      );
+      const updateDentistSchedule =
+        await DentistService.updateStatusDentistSchedule(
+          newBookingDetail.ScheduleID
+        );
       if (updateDentistSchedule) {
         console.log("Update status successfully");
       }
-
       return newBookingDetail;
     } catch (error) {
       console.error("Error creating booking detail in service:", error);
       throw error;
     }
   }
-
 
   //hàm get all booking
   async getAllBooking() {
