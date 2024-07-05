@@ -20,6 +20,7 @@ import App from './App.jsx';
 import './index.css';
 import reduxStore, { persistor } from './ServiceSystem/redux.jsx';
 import IntlProviderWrapper from './hoc/IntlProviderWrapper.jsx';
+import '@fortawesome/fontawesome-free/css/all.css'; // Đảm bảo đã import đúng cách
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
