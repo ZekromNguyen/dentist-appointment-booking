@@ -38,7 +38,7 @@ const TreatmentUpload = () => {
                 await axios.patch(`http://localhost:3000/treatments/${editingTreatmentId}`, formData); // Chỉnh lại endpoint PATCH thành '/treatments/:id'
                 alert('Treatment updated successfully');
             } else {
-                await axios.post('http://localhost:3000/treatment', formData);
+                await axios.post('http://localhost:3000/treatments', formData);
                 alert('Treatment uploaded successfully');
             }
 
