@@ -50,10 +50,28 @@ class DentistService {
   async getDentistSchedules() {
     try {
       const schedules = await DentistSchedule.findAll({
-        include: {
-          model: AvailableSlot,
-          attributes: ["Time"],
-        },
+        include: [
+          {
+            model: Dentist,
+            attributes: ["DentistName"],
+          },
+          {
+            model: AvailableSlot,
+            attributes: ["Time"],
+          },
+          {
+            model: BookingDetail,
+            attributes: ["BookingDetailID", "BookingID"],
+            include: {
+              model: Booking,
+              attributes: ["CustomerID"],
+              include: {
+                model: Customer,
+                attributes: ["CustomerName"],
+              },
+            },
+          },
+        ],
       });
       const plainSchedules = schedules.map((schedule) => schedule.toJSON());
       return plainSchedules;

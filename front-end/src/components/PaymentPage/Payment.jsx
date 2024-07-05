@@ -7,6 +7,7 @@ import { Button, Form } from 'react-bootstrap'; // Import Bootstrap components
 import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS
 import { ToastContainer, toast } from 'react-toastify'; // Import Toast components
 import 'react-toastify/dist/ReactToastify.css'; // Import Toastify CSS
+import BASE_URL from '../../ServiceSystem/axios';
 
 const Payment = () => {
   const location = useLocation();
@@ -30,7 +31,7 @@ const Payment = () => {
         scheduleId: detail.ScheduleId
       }));
 
-      const response = await axios.post('http://localhost:3000/booking', {
+      const response = await axios.post(`${BASE_URL}/booking`, {
         bookings: saveData
       });
 

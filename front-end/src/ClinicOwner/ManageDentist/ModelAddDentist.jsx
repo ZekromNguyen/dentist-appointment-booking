@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import axios from 'axios';
-
+import BASE_URL from '../../ServiceSystem/axios';
 class ModelAddDentist extends Component {
     constructor(props) {
         super(props);
@@ -26,7 +26,7 @@ class ModelAddDentist extends Component {
 
     fetchClinics = async () => {
         try {
-            const response = await axios.get('http://localhost:3000/getAllClinic');
+            const response = await axios.get(`${BASE_URL}/getAllClinic`);
             if (response.data && response.data.clinics) {
                 this.setState({
                     clinics: response.data.clinics,
@@ -77,7 +77,7 @@ class ModelAddDentist extends Component {
             formData.append('description', description); // Append description to FormData
 
             // Send POST request to backend
-            const response = await axios.post('http://localhost:3000/registerDentist', formData, {
+            const response = await axios.post(`${BASE_URL}/registerDentist`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data' // Set content type for uploading files
                 }

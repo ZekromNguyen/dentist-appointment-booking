@@ -5,6 +5,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { checkSession } from "../../Service/userService";
 import { useNavigate } from 'react-router-dom';
 import { Modal, Button, Form } from 'react-bootstrap';
+import BASE_URL from '../../ServiceSystem/axios';
 
 const ManageDentist = () => {
     const [scheduleData, setScheduleData] = useState([]);
@@ -32,7 +33,7 @@ const ManageDentist = () => {
         const fetchScheduleData = async () => {
             if (dentistID) {
                 try {
-                    const response = await axios.get(`http://localhost:3000/getDentistSchedule`, {
+                    const response = await axios.get(`${BASE_URL}/getDentistSchedule`, {
                         params: {
                             dentistId: dentistID.dentistId
                         }
@@ -62,7 +63,7 @@ const ManageDentist = () => {
     const handleSave = async () => {
         // Logic to save the new status
         try {
-            await axios.put(`http://localhost:3000/updateScheduleStatus`, {
+            await axios.put(`${BASE_URL}/updateScheduleStatus`, {
                 ScheduleID: selectedSchedule.ScheduleID,
                 Status: status
             });

@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Form, Table, Button, Modal } from 'react-bootstrap';
 import axios from 'axios';
 import './BookingHistory.scss'; // Import SCSS file
+import BASE_URL from '../../ServiceSystem/axios';
 
 const BookingHistory = () => {
   const [bookingData, setBookingData] = useState([]);
@@ -21,7 +22,7 @@ const BookingHistory = () => {
     const fetchBookingData = async () => {
       try {
         if (customerId) {
-          const response = await axios.get('http://localhost:3000/getAllBookingByCustomerId', {
+          const response = await axios.get(`${BASE_URL}/getAllBookingByCustomerId`, {
             params: { customerId }
           });
           if (response.data.message === 'Success') {
