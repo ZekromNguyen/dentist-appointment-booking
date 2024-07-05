@@ -14,7 +14,6 @@ const TreatmentUpload = () => {
         const fetchTreatments = async () => {
             try {
                 const response = await axios.get('http://localhost:3000/treatment');
-                console.log('Response Data:', response.data); // Debug: log response data
                 setTreatments(Array.isArray(response.data.treatments) ? response.data.treatments : []);
             } catch (error) {
                 console.error('Error fetching treatments:', error);
@@ -35,7 +34,7 @@ const TreatmentUpload = () => {
 
         try {
             if (editingTreatmentId) {
-                await axios.patch(`http://localhost:3000/treatments/${editingTreatmentId}`, formData); // Chỉnh lại endpoint PATCH thành '/treatments/:id'
+                await axios.patch(`http://localhost:3000/treatments/${editingTreatmentId}`, formData);
                 alert('Treatment updated successfully');
             } else {
                 await axios.post('http://localhost:3000/treatments', formData);
@@ -153,10 +152,9 @@ const TreatmentUpload = () => {
                                         <td>{treatment.BookingDetailID}</td>
                                         <td>{treatment.Note}</td>
                                         <td>{new Date(treatment.TreatmentDate).toLocaleDateString()}</td>
-
                                         <td>
                                             <img
-                                                src={`http://localhost:3000/${treatment.Result}`} // Đảm bảo rằng đường dẫn URL là đúng
+                                                src={`http://localhost:3000${treatment.Result}`} // Đảm bảo đường dẫn này khớp với cấu hình server của bạn
                                                 alt={`${treatment.TreatmentID}'s profile`}
                                                 style={{ width: '100px', height: '100px', objectFit: 'cover' }}
                                             />
