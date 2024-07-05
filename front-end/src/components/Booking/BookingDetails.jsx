@@ -7,6 +7,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './BookingDetails.scss'; // Import CSS
 import axios from 'axios';
+import BASE_URL from '../../ServiceSystem/axios';
 
 const BookingDetails = ({ show, handleClose, bookingDetails, onCancelBooking }) => {
   const navigate = useNavigate(); // Initialize navigate hook
@@ -19,7 +20,7 @@ const BookingDetails = ({ show, handleClose, bookingDetails, onCancelBooking }) 
 
   const handlePayment = async () => {
     try {
-      const response = await axios.post('http://localhost:3000/order/create_payment_url', {
+      const response = await axios.post(`${BASE_URL}/order/create_payment_url`, {
         amount: totalPrice,
         bankCode,
       }, { withCredentials: true });
@@ -36,11 +37,6 @@ const BookingDetails = ({ show, handleClose, bookingDetails, onCancelBooking }) 
         draggable: true,
         progress: undefined,
       });
-
-      // // Redirect to payment page using navigate
-      // setTimeout(() => {
-      //   navigate('/payment', { state: { bookingDetails } });
-      // }, 2000); // Đợi 2 giây trước khi chuyển trang
 
       // Redirect to the payment URL
       window.location.href = response.data; // Giả sử backend gửi lại một URL để chuyển hướng đến

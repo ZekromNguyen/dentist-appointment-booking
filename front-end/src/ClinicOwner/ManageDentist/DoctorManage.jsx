@@ -5,6 +5,7 @@ import ModelAddDentist from './ModelAddDentist';
 import ModelEditDentist from './ModelEditDentist';
 import './DoctorManage.scss'; // Ensure correct SCSS path
 import 'bootstrap/dist/css/bootstrap.min.css';
+import BASE_URL from '../../ServiceSystem/axios';
 
 class DoctorManage extends Component {
   constructor(props) {
@@ -131,7 +132,7 @@ class DoctorManage extends Component {
                   <td>{item.DentistName}</td>
                   <td>
                     <img
-                      src={`http://localhost:3000/${item.ImagePath}`} // Đảm bảo rằng đường dẫn URL là đúng
+                      src={`${BASE_URL}/${item.ImagePath}`} // Đảm bảo rằng đường dẫn URL là đúng
                       alt={`${item.DentistName}'s profile`}
                       style={{ width: '100px', height: '100px', objectFit: 'cover' }}
                     />

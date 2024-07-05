@@ -6,7 +6,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import BookingDetails from './BookingDetails'; // Import component BookingDetails
 import { Link, useNavigate } from 'react-router-dom';
 import { checkSession } from '../../Service/userService';
-
+import BASE_URL from '../../ServiceSystem/axios';
 
 const Booking = () => {
   const [dentists, setDentists] = useState([]);
@@ -46,7 +46,7 @@ const Booking = () => {
   useEffect(() => {
     const fetchDentists = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/getAllDentists');
+        const response = await axios.get(`${BASE_URL}/getAllDentists`);
         setDentists(Array.isArray(response.data.dentists) ? response.data.dentists : []);
       } catch (error) {
         console.error('Error fetching dentists:', error);
@@ -63,7 +63,7 @@ const Booking = () => {
       if (selectedDentist.id && selectedDate) {
         try {
           const formattedDate = selectedDate;
-          const response = await axios.get(`http://localhost:3000/slotsByDate`, {
+          const response = await axios.get(`${BASE_URL}/slotsByDate`, {
             params: {
               dentistID: selectedDentist.id,
               date: formattedDate
@@ -89,7 +89,7 @@ const Booking = () => {
       try {
         const account = JSON.parse(localStorage.getItem('account'));
         if (account && account.id) {
-          const response = await axios.get('http://localhost:3000/getCustomerId', {
+          const response = await axios.get(`${BASE_URL}/getCustomerId`, {
             params: { AccountID: account.id }
           });
           setCustomerId(response.data);
@@ -109,7 +109,7 @@ const Booking = () => {
   useEffect(() => {
     const fetchSchedules = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/scheduleDentist');
+        const response = await axios.get(`${BASE_URL}/scheduleDentist`);
         setSchedules(Array.isArray(response.data) ? response.data : []);
       } catch (error) {
         console.error('Error fetching schedules:', error);

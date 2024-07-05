@@ -1,6 +1,7 @@
 import './treatment.scss';
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import BASE_URL from '../../ServiceSystem/axios';
 
 const TreatmentUpload = () => {
     const [bookingDetailId, setBookingDetailId] = useState('');
@@ -13,7 +14,7 @@ const TreatmentUpload = () => {
     useEffect(() => {
         const fetchTreatments = async () => {
             try {
-                const response = await axios.get('http://localhost:3000/treatment');
+                const response = await axios.get(`${BASE_URL}/treatment`);
                 console.log('Response Data:', response.data); // Debug: log response data
                 setTreatments(Array.isArray(response.data.treatments) ? response.data.treatments : []);
             } catch (error) {
@@ -35,15 +36,15 @@ const TreatmentUpload = () => {
 
         try {
             if (editingTreatmentId) {
-                await axios.patch(`http://localhost:3000/treatments/${editingTreatmentId}`, formData); // Chỉnh lại endpoint PATCH thành '/treatments/:id'
+                await axios.patch(`${BASE_URL}/treatments/${editingTreatmentId}`, formData); // Chỉnh lại endpoint PATCH thành '/treatments/:id'
                 alert('Treatment updated successfully');
             } else {
-                await axios.post('http://localhost:3000/treatment', formData);
+                await axios.post(`${BASE_URL}/treatment`, formData);
                 alert('Treatment uploaded successfully');
             }
 
             // Fetch the updated list of treatments
-            const response = await axios.get('http://localhost:3000/treatment');
+            const response = await axios.get(`${BASE_URL}/treatment`);
             setTreatments(Array.isArray(response.data.treatments) ? response.data.treatments : []);
             // Clear the form
             setBookingDetailId('');
@@ -58,11 +59,11 @@ const TreatmentUpload = () => {
 
     const handleDelete = async (treatmentId) => {
         try {
-            await axios.delete(`http://localhost:3000/treatments/${treatmentId}`);
+            await axios.delete(`${BASE_URL}/treatments/${treatmentId}`);
             alert('Treatment deleted successfully');
 
             // Fetch the updated list of treatments
-            const response = await axios.get('http://localhost:3000/treatment');
+            const response = await axios.get(`${BASE_URL}/treatment`);
             setTreatments(Array.isArray(response.data.treatments) ? response.data.treatments : []);
         } catch (error) {
             console.error('Error deleting treatment:', error);
@@ -156,7 +157,7 @@ const TreatmentUpload = () => {
 
                                         <td>
                                             <img
-                                                src={`http://localhost:3000/${treatment.Result}`} // Đảm bảo rằng đường dẫn URL là đúng
+                                                src={`${BASE_URL}/${treatment.Result}`} // Đảm bảo rằng đường dẫn URL là đúng
                                                 alt={`${treatment.TreatmentID}'s profile`}
                                                 style={{ width: '100px', height: '100px', objectFit: 'cover' }}
                                             />

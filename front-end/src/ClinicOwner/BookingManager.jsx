@@ -4,7 +4,7 @@ import axios from 'axios';
 import { Modal, Button, Form } from 'react-bootstrap';
 import './BookingManager.scss';
 import 'bootstrap/dist/css/bootstrap.min.css';
-
+import BASE_URL from '../ServiceSystem/axios';
 class BookingManager extends Component {
     constructor(props) {
         super(props);
@@ -22,7 +22,7 @@ class BookingManager extends Component {
 
     handleGetAllBookings = async () => {
         try {
-            const response = await axios.get('http://localhost:3000/getAllBooking');
+            const response = await axios.get(`${BASE_URL}/getAllBooking`);
             if (response.data && response.data.bookings) {
                 this.setState({
                     bookings: response.data.bookings,
@@ -52,7 +52,7 @@ class BookingManager extends Component {
     handleChangeStatus = async () => {
         const { selectedBookingId, selectedStatus } = this.state;
         try {
-            const response = await axios.put(`http://localhost:3000/updateBookingStatus`, {
+            const response = await axios.put(`${BASE_URL}/updateBookingStatus`, {
                 bookingId: selectedBookingId,
                 status: selectedStatus
             });

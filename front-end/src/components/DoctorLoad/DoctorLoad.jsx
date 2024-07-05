@@ -6,6 +6,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import Footer from '../Footer/Footer';
 import { checkSession } from '../../Service/userService';
 import BookingDetails from '../Booking/BookingDetails';
+import BASE_URL from '../../ServiceSystem/axios';
 
 export default function DoctorLoad() {
     const location = useLocation();
@@ -84,12 +85,11 @@ export default function DoctorLoad() {
             return;
         }
 
-        if (!selectedSchedule || !selectedSchedule.AvailableSlot || !selectedSchedule.AvailableSlot.SlotID) {
+        if (!selectedSchedule ||!selectedSchedule.ScheduleID) {
             alert('Lịch khám được chọn không hợp lệ.');
             return;
         }
 
-        const slotId = selectedSchedule.AvailableSlot.SlotID;
         const bookingData = {
             bookings: [{
                 customerId,
@@ -98,7 +98,6 @@ export default function DoctorLoad() {
                 typeBook: 'SomeType', // Loại đặt lịch thực tế
                 date: treatmentDate,
                 scheduleId: selectedSchedule.ScheduleID,
-                slotId: slotId
             }]
         };
 
@@ -138,12 +137,12 @@ export default function DoctorLoad() {
     if (!dentist) {
         return null; // Hoặc hiển thị chỉ số tải
     }
-
+    //<Header />
     return (
         <div className='DoctorLoad'>
-            <Header />
+
             <div className='doctor'>
-                <div className='doctor-img' style={{ backgroundImage: `url(http://localhost:3000/${dentist?.ImagePath})` }}></div>
+                <div className='doctor-img' style={{ backgroundImage: `url(${BASE_URL}/${dentist?.ImagePath})` }}></div>
                 <div className='doctor-detail'>
                     <div className='doctor-name'>{dentist.DentistName}</div>
                     <div className='doctor-description'>{dentist.Description}</div>

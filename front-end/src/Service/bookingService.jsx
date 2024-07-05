@@ -1,6 +1,5 @@
 import axios from 'axios';
-
-const BASE_URL = 'http://localhost:3000';
+import BASE_URL from '../ServiceSystem/axios';
 
 class BookingService {
     static async getSlotsByDateByDentistService(dentistID, date) {

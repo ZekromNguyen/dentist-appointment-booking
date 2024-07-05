@@ -1,10 +1,10 @@
 import axios from "axios";
-
+import BASE_URL from "../ServiceSystem/axios";
 // Đăng ký tài khoản
 
 const register = async (username, password, email, phone, name) => {
     try {
-        const response = await axios.post("http://localhost:3000/register", {
+        const response = await axios.post(`${BASE_URL}/register`, {
             username,
             password,
             email,
@@ -21,7 +21,7 @@ const register = async (username, password, email, phone, name) => {
 // Đăng nhập
 const login = async (email, password) => {
     try {
-        const response = await axios.post("http://localhost:3000/login", {
+        const response = await axios.post(`${BASE_URL}/login`, {
             email: email,
             password: password,
         }, { withCredentials: true });
@@ -34,7 +34,7 @@ const login = async (email, password) => {
 
 // Quên mật khẩu
 const forgotPassword = async (email) => {
-    const response = await axios.post("http://localhost:3000/forgotPassword", {
+    const response = await axios.post(`${BASE_URL}/forgotPassword`, {
         email,
     });
     return response.data; // Return the data from the response
@@ -43,7 +43,7 @@ const forgotPassword = async (email) => {
 // Đặt lại mật khẩu
 const resetPassword = async (token, password, confirmPassword) => {
     try {
-        const response = await axios.post("http://localhost:3000/resetPassword", {
+        const response = await axios.post(`${BASE_URL}/resetPassword`, {
             token,
             password,
             confirmPassword,
@@ -64,7 +64,7 @@ const verifyEmail = async (token) => {
             throw new Error("Invalid token");
         }
         const response = await axios.get(
-            `http://localhost:3000/verify?token=${token}`
+            `${BASE_URL}/verify?token=${token}`
         );
         return response.data.id; // Trả về id từ dữ liệu phản hồi
     } catch (error) {
@@ -104,7 +104,7 @@ const resetEmail = async (token) => {
 // Hàm để kiểm tra session
 const checkSession = async () => {
     try {
-        const response = await axios.get('http://localhost:3000/get-session', { withCredentials: true });
+        const response = await axios.get(`${BASE_URL}/get-session`, { withCredentials: true });
         return response.data;
     } catch (error) {
         console.error('Error fetching session:', error);
@@ -115,7 +115,7 @@ const checkSession = async () => {
 // Hàm để xử lý logout
 const logout = async () => {
     try {
-        await axios.post('http://localhost:3000/logout', {}, { withCredentials: true });
+        await axios.post(`${BASE_URL}/logout`, {}, { withCredentials: true });
     } catch (error) {
         console.error('Error during logout:', error);
         throw error;
@@ -140,7 +140,7 @@ const getIdFromToken = async (token) => {
 const getAllUSer = async (AccountID) => {
     try {
         const response = await axios.get(
-            `http://localhost:3000/getAllUser?id=${AccountID}`,
+            `${BASE_URL}/getAllUser?id=${AccountID}`,
             {
                 params: { AccountID: AccountID },
             }
@@ -153,7 +153,7 @@ const getAllUSer = async (AccountID) => {
 
 const deleteUser = async (id) => {
     try {
-        const response = await axios.delete('http://localhost:3000/deleteUser', {
+        const response = await axios.delete(`${BASE_URL}/deleteUser`, {
             data: { AccountID: id }
         });
 
@@ -168,7 +168,7 @@ const deleteUser = async (id) => {
 
 const handelAddUser = async ({ username, password, email, phone, roleID, name, clinicID, dentistName, description, imagePath, clinicOwnerName }) => {
     try {
-        const response = await axios.post("http://localhost:3000/handleCreateUser", {
+        const response = await axios.post(`${BASE_URL}/handleCreateUser`, {
             username,
             password,
             email,
@@ -191,7 +191,7 @@ const handelAddUser = async ({ username, password, email, phone, roleID, name, c
 
 const handleEditUser = async (userData) => {
     try {
-        const response = await axios.put("http://localhost:3000/editUser", userData);
+        const response = await axios.put(`${BASE_URL}/editUser`, userData);
         return response.data; // Assuming backend returns a JSON response
     } catch (error) {
         throw error; // Propagate the error for handling in the calling code
@@ -200,7 +200,7 @@ const handleEditUser = async (userData) => {
 
 const handleEditCustomer = async (userData) => {
     try {
-        const response = await axios.put("http://localhost:3000/editCustomer", userData);
+        const response = await axios.put(`${BASE_URL}/editCustomer`, userData);
         return response.data; // Assuming backend returns a JSON response
     } catch (error) {
         throw error; // Propagate the error for handling in the calling code
@@ -208,27 +208,6 @@ const handleEditCustomer = async (userData) => {
 };
 
 
-
-
-
-// // Đăng ký tài khoản
-// const registerDentist = async (username, password, email, phone, dentistName, clinicID, roleID) => {
-//     try {
-//         const response = await axios.post("http://localhost:3000/registerDentist", {
-//             username,
-//             password,
-//             email,
-//             phone,
-//             dentistName,
-//             clinicID,
-//             roleID // Include roleID in the request body
-//         });
-//         return response;
-//     } catch (error) {
-//         console.error("Error during registration:", error);
-//         throw error;
-//     }
-// };
 const registerDentist = async (username, password, email, phone, dentistName, clinicID, roleID, description) => {
     try {
         const formData = new FormData();
@@ -241,7 +220,7 @@ const registerDentist = async (username, password, email, phone, dentistName, cl
         formData.append('roleID', roleID); // Add roleID to FormData
         formData.append('description', description); // Add description to FormData
 
-        const response = await axios.post('http://localhost:3000/registerDentist', formData, {
+        const response = await axios.post(`${BASE_URL}/registerDentist`, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data', // Set content type to multipart/form-data for file uploads
             },
@@ -258,7 +237,7 @@ const registerDentist = async (username, password, email, phone, dentistName, cl
 const getAllDentist = async (DentistID) => {
     try {
         const response = await axios.get(
-            `http://localhost:3000/handleGetAllDentist?id=${DentistID}`,
+            `${BASE_URL}/handleGetAllDentist?id=${DentistID}`,
             {
                 params: { DentistID: DentistID },
             }
@@ -273,7 +252,7 @@ const getAllDentist = async (DentistID) => {
 const getAllCustomer = async (CustomerID) => {
     try {
         const response = await axios.get(
-            `http://localhost:3000/handleGetAllCustomer?id=${CustomerID}`,
+            `${BASE_URL}/handleGetAllCustomer?id=${CustomerID}`,
             {
                 params: { CustomerID: CustomerID },
             }
@@ -286,7 +265,7 @@ const getAllCustomer = async (CustomerID) => {
 // Xóa bác sĩ nha khoa
 const deleteDentist = async (DentistID) => {
     try {
-        const response = await axios.delete('http://localhost:3000/handleDeleteDentist', {
+        const response = await axios.delete(`${BASE_URL}/handleDeleteDentist`, {
             data: { DentistID: DentistID }
         });
 
@@ -301,7 +280,7 @@ const deleteDentist = async (DentistID) => {
 // Chỉnh sửa bác sĩ nha khoa
 const handleEditDentist = async (dentistData) => {
     try {
-        const response = await axios.put("http://localhost:3000/handleEditDentist", dentistData);
+        const response = await axios.put(`${BASE_URL}/handleEditDentist`, dentistData);
         return response.data; // Assuming backend returns a JSON response
     } catch (error) {
         throw error; // Propagate the error for handling in the calling code

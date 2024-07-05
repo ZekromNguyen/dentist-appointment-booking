@@ -123,6 +123,7 @@ import "slick-carousel/slick/slick.css";
 import { NextArrow, PrevArrow } from "./Arrow-Doctor";
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import BASE_URL from '../../ServiceSystem/axios';
 
 export default function Body_Doctors() {
     const [dentists, setDentists] = useState([]);
@@ -134,7 +135,7 @@ export default function Body_Doctors() {
 
     const fetchDentists = async () => {
         try {
-            const response = await axios.get('http://localhost:3000/handleGetAllDentist?DentistID=ALL');
+            const response = await axios.get(`${BASE_URL}/handleGetAllDentist?DentistID=ALL`);
             if (response.data && Array.isArray(response.data.account)) {
                 setDentists(response.data.account);
             } else {
@@ -172,7 +173,7 @@ export default function Body_Doctors() {
                 {dentists.map((dentist, index) => (
                     <div key={index} className="img" onClick={() => handleDoctorClick(dentist.DentistID)}>
                         <img
-                            src={`http://localhost:3000/${dentist.ImagePath}`}
+                            src={`${BASE_URL}/${dentist.ImagePath}`}
                             alt={dentist.DentistName}
                             className={`img_slider img_slider-${index}`}
                         />

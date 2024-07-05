@@ -1,8 +1,8 @@
-
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './ScheduleManage.scss';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import BASE_URL from '../ServiceSystem/axios';
 
 export default function ScheduleManage(props) {
   const [dentists, setDentists] = useState([]);
@@ -35,7 +35,7 @@ export default function ScheduleManage(props) {
   useEffect(() => {
     const fetchDentists = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/getAllDentists');
+        const response = await axios.get(`${BASE_URL}/getAllDentists`);
         setDentists(Array.isArray(response.data.dentists) ? response.data.dentists : []);
       } catch (error) {
         console.error('Error fetching dentists:', error);
@@ -49,7 +49,7 @@ export default function ScheduleManage(props) {
   useEffect(() => {
     const fetchSlots = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/scheduleSlot');
+        const response = await axios.get(`${BASE_URL}/scheduleSlot`);
         setSlots(Array.isArray(response.data) ? response.data : []);
       } catch (error) {
         console.error('Error fetching slots:', error);
@@ -64,7 +64,7 @@ export default function ScheduleManage(props) {
     const fetchAvailableSlots = async () => {
       if (selectedDentist && selectedDate) {
         try {
-          const response = await axios.get('http://localhost:3000/slotsByDate', {
+          const response = await axios.get(`${BASE_URL}/slotsByDate`, {
             params: {
               dentistID: selectedDentist,
               date: selectedDate,
@@ -86,7 +86,7 @@ export default function ScheduleManage(props) {
   useEffect(() => {
     const fetchSchedules = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/scheduleDentist');
+        const response = await axios.get(`${BASE_URL}/scheduleDentist`);
         const allSchedules = Array.isArray(response.data) ? response.data : [];
         setSchedules(allSchedules);
         // Filter and set booked schedules
@@ -134,8 +134,6 @@ export default function ScheduleManage(props) {
     }
   }, [slots, availableSlots, schedules, selectedDate, loggedInDentistID]);
 
-
-
   const toggleScheduleVisibility = () => {
     setIsScheduleVisible(!isScheduleVisible);
   };
@@ -143,7 +141,6 @@ export default function ScheduleManage(props) {
   const toggleBookedScheduleVisibility = () => {
     setIsBookedScheduleVisible(!isBookedScheduleVisible);
   };
-
 
   const handleOptionChange = (event) => {
     setSelectedOption(event.target.value);
@@ -188,7 +185,7 @@ export default function ScheduleManage(props) {
 
     try {
       const newSchedules = await Promise.all(selectedSlots.map(async (slotId) => {
-        const response = await axios.post('http://localhost:3000/schedule', {
+        const response = await axios.post(`${BASE_URL}/schedule`, {
           date: selectedDate,
           slotId: slotId,
           dentistId: dentistIDToUse
@@ -208,7 +205,13 @@ export default function ScheduleManage(props) {
     }
   };
 
+  const filteredSchedules = isDentistLoggedIn
+    ? schedules.filter(schedule => schedule.DentistID === loggedInDentistID)
+    : schedules;
 
+  const filteredBookedSchedules = isDentistLoggedIn
+    ? bookedSchedules.filter(schedule => schedule.DentistID === loggedInDentistID)
+    : bookedSchedules;
 
   return (
     <div>
@@ -324,7 +327,7 @@ export default function ScheduleManage(props) {
                       </tr>
                     </thead>
                     <tbody>
-                      {schedules.map((schedule) => (
+                      {filteredSchedules.map((schedule) => (
                         schedule.Status === 'Available' && (
                           <tr key={schedule.ScheduleID}>
                             <td>{schedule.ScheduleID}</td>
@@ -362,7 +365,7 @@ export default function ScheduleManage(props) {
                       </tr>
                     </thead>
                     <tbody>
-                      {bookedSchedules.map((schedule) => (
+                      {filteredBookedSchedules.map((schedule) => (
                         schedule.Status === 'Booked' && (
                           <tr key={schedule.ScheduleID}>
                             <td>{schedule.ScheduleID}</td>
