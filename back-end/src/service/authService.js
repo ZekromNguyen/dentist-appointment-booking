@@ -5,10 +5,11 @@ import {
   Dentist,
   Customer,
   ClinicOwner,
+  Clinic,
   DentistSchedule,
   Account,
 } from "../model/model";
-import Clinic from "../model/clinic";
+
 
 class AccountService {
   constructor(sequelize) {
@@ -644,14 +645,21 @@ class AccountService {
       throw new Error("Error fetching customer information");
     }
   }
-  async getAllClinic() {
+  async getAllClinic(ownerId) {
     try {
-      const clinics = await Clinic.findAll();
-      const clinicIDS = clinics.map((clinic) => clinic.toJSON());
-      return clinicIDS;
+      const clinics = await Clinic.findAll({
+        where: {
+          ClinicOwnerID: ownerId
+        }
+      });
+  
+      // Convert the clinics to JSON format
+      const clinicData = clinics.map((clinic) => clinic.toJSON());
+  
+      return clinicData;
     } catch (error) {
-      console.error("Error fetching all clinic :", error);
-      throw new Error("Error fetching all clinic");
+      console.error("Error fetching all clinics:", error);
+      throw new Error("Error fetching all clinics");
     }
   }
 }

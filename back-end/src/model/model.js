@@ -8,6 +8,11 @@ import Customer from "./customer";
 import ClinicOwner from "./clinicOwner";
 import Booking from "./booking";
 import BookingDetail from "./bookingDetail";
+import Clinic from "./clinic";
+
+Clinic.belongsTo(ClinicOwner, {foreignKey:"ClinicOwnerID"});
+ClinicOwner.hasMany(Clinic, {foreignKey:"ClinicOwnerID"});
+
 
 Account.belongsTo(Role, { foreignKey: "RoleID" });
 Role.hasMany(Account, { foreignKey: "RoleID" });
@@ -45,6 +50,7 @@ export {
   AvailableSlot,
   Customer,
   ClinicOwner,
+  Clinic,
   Booking,
   BookingDetail,
 };

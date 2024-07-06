@@ -7,6 +7,7 @@ import cors from "cors";
 import multer from "multer";
 import path from "path";
 import vnpay from "./routes/vnpay";
+require('./service/scheduler');
 let app = express();
 
 // Enable CORS for all routes

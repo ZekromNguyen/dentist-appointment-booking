@@ -42,7 +42,7 @@ import DoctorManage from '../ClinicOwner/ManageDentist/DoctorManage';
 import ScheduleManage from '../ClinicOwner/ScheduleManage'
 import BookingManager from '../ClinicOwner/BookingManager';
 import Treatment from '../pages/Doctor/Treatment';
-
+import ClinicManager from '../ClinicOwner/ManageClinic/ClinicManager';
 
 class System extends Component {
     render() {
@@ -55,6 +55,7 @@ class System extends Component {
                         <Route path="doctor-manage" element={<DoctorManage />} />
                         <Route path="manage-schedule" element={<ScheduleManage />} />
                         <Route path="manage-booking" element={<BookingManager />} />
+                        <Route path="manage-clinic" element={<ClinicManager />} />
                         <Route path="treatment" element={<Treatment />} />
                         <Route path="*" element={<Navigate to={systemMenuPath} />} />
                     </Routes>

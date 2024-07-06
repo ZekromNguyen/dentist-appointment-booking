@@ -6,6 +6,7 @@ import {
   Booking,
   BookingDetail,
   Customer,
+  Account,
 } from "../model/model";
 import DentistService from "./dentistService";
 import Payment from "../model/payment"; // Import lớp Payment
@@ -228,6 +229,53 @@ class BookingService {
       throw error;
     }
   }
+
+  async getAllBookingToSendEmail(date) {
+    try {
+      const bookings = await BookingDetail.findAll({
+        where: {
+          MedicalDay: date,
+          Status: "Confirmed",
+        },
+        include: [
+          {
+            model:Booking,
+            attributes:["CustomerID"],
+            include:[
+              {
+                model:Customer,
+                attributes:["AccountID"],
+                include:[
+                  {
+                    model:Account,
+                    attributes:["Email"],
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            model:DentistSchedule,
+            include:[
+              {
+                model:AvailableSlot,
+                attributes:["Time"],
+              },
+              {
+                model:Dentist,
+                attributes:["DentistName"],
+              }
+            ]
+          }
+        ]
+      });
+      const plainBooking = bookings.map((booking) => booking.toJSON());
+      return plainBooking;
+    } catch (error) {
+      console.error("Error in getAllBookingToSendEmail method: ", error);
+    }
+  }
+
   //Hàm lấy tên dentist Name theo bookingDetail
   async getDentistNameByBookingDetail(BookingDetailID) {
     try {

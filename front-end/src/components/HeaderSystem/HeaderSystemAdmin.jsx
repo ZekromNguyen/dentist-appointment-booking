@@ -28,6 +28,7 @@ class HeaderSystemAdmin extends Component {
                             <IoLogOutSharp />
                         </a>
                     </i>
+                    Logout
                 </div>
             </div>
         );

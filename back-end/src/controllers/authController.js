@@ -3,6 +3,12 @@ import transporter from "../config/email";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
 import upload from "../config/multer";
+import {
+  sendVerificationEmail,
+  sendResetPasswordEmail,
+  sendReactivateEmail,
+} from "../config/email";
+
 class AccountController {
   async login(req, res) {
     const { email, password } = req.body;
@@ -24,27 +30,20 @@ class AccountController {
         await AccountService.createResetToken(account.Email, verificationToken);
         const verificationLink = `http://localhost:5173/ResetPassword?token=${verificationToken}`;
 
-        // Send email to reset password
-        const mailOptions = {
-          from: process.env.EMAIL_APP_GMAIL,
-          to: account.Email,
-          subject: "Reactivate Your Account",
-          text: `Your account is inactive. Please reset your password to reactivate your account by clicking the following link: ${verificationLink}`,
-          html: `<p>Your account is inactive. Please reset your password to reactivate your account by clicking the following link: <a href="${verificationLink}">Reset Password</a></p>`,
-        };
+        // Send reset password email
+        const emailResult = await sendReactivateEmail(
+          account.Email,
+          verificationLink
+        );
+        if (!emailResult.success) {
+          throw new Error("Failed to send reset password email");
+        }
 
-        transporter.sendMail(mailOptions, (error, info) => {
-          if (error) {
-            return res.status(500).send(error.toString());
-          }
-          res
-            .status(200)
-            .send(
-              `Your account is inactive. A reset password email has been sent to: ${account.Email}`
-            );
-        });
-
-        return;
+        return res
+          .status(200)
+          .send(
+            `Your account is inactive. A reset password email has been sent to: ${account.Email}`
+          );
       }
       const roleID = account.RoleID;
       switch (roleID) {
@@ -155,22 +154,19 @@ class AccountController {
       );
       if (newAccount.verificationToken && newCustomer) {
         const verificationLink = `http://localhost:3000/verify?token=${verificationToken}`;
-        const mailOptions = {
-          from: process.env.EMAIL_APP_GMAIL,
-          to: email,
-          subject: "Email Verification",
-          text: `Please verify your email by clicking the following link: ${verificationLink}`,
-          html: `<p>Please verify your email by clicking the following link: <a href="${verificationLink}">Verify Email</a></p>`,
-        };
-        console.log("Request body:", req.body);
-        transporter.sendMail(mailOptions, (error, info) => {
-          if (error) {
-            res.status(500).send(error.toString());
-          }
+        try {
+          await sendVerificationEmail(email, verificationLink);
+          res.status(200).json({
+            message: "A verification email has been sent to: " + email,
+          });
+        } catch (error) {
           res
-            .status(200)
-            .json({ message: "A verification email has been sent to:", email });
-        });
+            .status(500)
+            .send("Error sending verification email: " + error.toString());
+        }
+      } else {
+        res.status(500).json({ message: "Failed to create customer" });
+
       }
       console.log("Account create:", newAccount);
       console.log("Customer create:", newCustomer);
@@ -365,37 +361,32 @@ class AccountController {
     res.render("forgotPassword");
   }
   async forgotPassword(req, res) {
-    const { email } = req.body;
-    console.log(email);
-    const newAccount = await AccountService.getAccountByUserNameOrEmail(email);
-    if (!newAccount) {
-      return res
-        .status(400)
-        .json({ message: `Not found account with email ${email}` });
-    }
-    const verificationToken = crypto.randomBytes(32).toString("hex");
-    const verificationLink = `http://localhost:5173/ResetPassword?token=${verificationToken}`;
-    const account = await AccountService.createResetToken(
-      email,
-      verificationToken
-    );
-    if (!account) {
-      console.log("Not found account in controller");
-    }
-    const mailOptions = {
-      from: process.env.EMAIL_APP_GMAIL,
-      to: email,
-      subject: "Email ResetPassword",
-      text: `Please resetPassword your account by clicking the following link: ${verificationLink}`,
-      html: `<p>Please resetPassword your account by clicking the following link: <a href="${verificationLink}">Verify ResetPassword</a></p>`,
-    };
-    console.log("Request body:", req.body);
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        res.status(500).send(error.toString());
+    try{
+      const { email } = req.body;
+      console.log(email);
+      const newAccount = await AccountService.getAccountByUserNameOrEmail(email);
+      if (!newAccount) {
+        return res
+          .status(400)
+          .json({ message: `Not found account with email ${email}` });
       }
-      res.status(200).send(`A resetPassword email has been sent to: ${email}`);
-    });
+      const verificationToken = crypto.randomBytes(32).toString("hex");
+      
+      const account = await AccountService.createResetToken(
+        email,
+        verificationToken
+      );
+      if (!account) {
+        console.log("Not found account in controller");
+      }
+      const verificationLink = `http://localhost:5173/ResetPassword?token=${verificationToken}`;
+      await sendResetPasswordEmail(email, verificationLink);
+      res.status(200).send(`A reset password email has been sent to: ${email}`);
+    }catch (error) {
+      res
+        .status(500)
+        .send("Error sending reset password email: " + error.toString());
+    }    
   }
 
   async showresetPassword(req, res) {
@@ -484,7 +475,8 @@ class AccountController {
   // get all clinic
   async getAllClinic(req, res) {
     try {
-      const clinics = await AccountService.getAllClinic();
+      const {ownerId} = req.query;
+      const clinics = await AccountService.getAllClinic(ownerId);
       if (!clinics || clinics.length === 0) {
         res.status(404).json({ message: "Success, Not found clinc" });
       }

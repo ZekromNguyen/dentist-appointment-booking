@@ -26,7 +26,13 @@ class ModelAddDentist extends Component {
 
     fetchClinics = async () => {
         try {
-            const response = await axios.get(`${BASE_URL}/getAllClinic`);
+            const ownerData = JSON.parse(localStorage.getItem('account'));
+            const clinicOwnerId  = ownerData.clinicOwnerId;
+            const response = await axios.get(`${BASE_URL}/getAllClinic`, {
+                params: {
+                    ownerId: clinicOwnerId
+                }
+            });
             if (response.data && response.data.clinics) {
                 this.setState({
                     clinics: response.data.clinics,

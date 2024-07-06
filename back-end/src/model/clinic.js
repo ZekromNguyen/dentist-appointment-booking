@@ -39,6 +39,13 @@ Clinic.init(
         key: "LocationID",
       },
     },
+    ClinicOwnerID: {
+      type:DataTypes.INTEGER,
+      references: {
+        model: "ClinicOwner",
+        key: "ClinicOwnerID",
+      }
+    }
   },
   {
     sequelize,
