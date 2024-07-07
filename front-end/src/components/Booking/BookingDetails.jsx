@@ -20,12 +20,39 @@ const BookingDetails = ({ show, handleClose, bookingDetails, onCancelBooking }) 
 
   const handlePayment = async () => {
     try {
+      const bookings = JSON.parse(localStorage.getItem('bookings'));
+      if (bookings && bookings.length > 0) {
+        const saveData = bookings.map(detail => ({
+          customerId: detail.customerId,
+          status: detail.status,
+          typeBook: detail.typeBook,
+          price: parseFloat(detail.price),
+          date: detail.date,
+          scheduleId: detail.ScheduleId
+        }));
+        const totalPrice = localStorage.getItem('totalPrice');
+        const booking = {
+          customerId : saveData[0].customerId,
+          status: saveData[0].status,
+          totalPrice: totalPrice,
+        }
+        // Thực hiện gọi API để lưu booking
+        const response1 = await axios.post(`${BASE_URL}/booking`, {
+          bookings: saveData, booking: booking
+        });
+        if(response1.status === 200){
+          const BookingID = response1.data.booking.BookingID;
+          localStorage.setItem('bookingID', BookingID);
+          localStorage.removeItem('bookings');
+        }
+      }
+      const BookingID = localStorage.getItem('bookingID');
       const response = await axios.post(`${BASE_URL}/order/create_payment_url`, {
         amount: totalPrice,
         bankCode,
+        BookingID,
       }, { withCredentials: true });
 
-      console.log(response);
 
       // Hiển thị thông báo thành công
       toast.success('Booking appointment successful!', {
@@ -40,7 +67,6 @@ const BookingDetails = ({ show, handleClose, bookingDetails, onCancelBooking }) 
 
       // Redirect to the payment URL
       window.location.href = response.data; // Giả sử backend gửi lại một URL để chuyển hướng đến
-
     } catch (error) {
       console.error('Error during payment:', error);
       // Xử lý lỗi ở đây (ví dụ: hiển thị thông báo lỗi)

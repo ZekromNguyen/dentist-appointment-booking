@@ -31,6 +31,7 @@ router.post("/create_payment_url", (req, res) => {
   console.log(req.body);
   const amount = req.body.amount;
   const bankCode = req.body.bankCode;
+  const BookingID = req.body.BookingID;
   let locale = req.body.language;
 
   // Thiết lập ngôn ngữ mặc định là 'vn' nếu không được cung cấp
@@ -49,10 +50,10 @@ router.post("/create_payment_url", (req, res) => {
     vnp_Locale: locale,
     vnp_CurrCode: currCode,
     vnp_TxnRef: moment(currentDate).format("DDHHmmss"), // Mã đơn hàng unique
-    vnp_OrderInfo: `Thanh toan cho ma GD: ${moment(currentDate).format(
-      "DDHHmmss"
-    )}`, // Thông tin đơn hàng
-    // vnp_OrderInfo:`Thanh toan cho booking so: ${id}`,
+    // vnp_OrderInfo: `Thanh toan cho ma GD: ${moment(currentDate).format(
+    //   "DDHHmmss"
+    // )}`, // Thông tin đơn hàng
+    vnp_OrderInfo:`Thanh toan cho booking so: ${BookingID}`,
     vnp_OrderType: "other",
     vnp_Amount: amount * 100, // Số tiền thanh toán, chuyển đổi sang đơn vị VNĐ
     vnp_ReturnUrl: returnUrl,

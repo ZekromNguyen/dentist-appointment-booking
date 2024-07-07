@@ -223,7 +223,7 @@ const Booking = () => {
       // Update availableSlots to hide selected slots
       setAvailableSlots(prevSlots => prevSlots.filter(slot => !selectedTimes.find(selected => selected.ScheduleId === slot.ScheduleID)));
       setSelectedDentist('');
-      setSelectedDate(''); g
+      setSelectedDate(''); 
       setSelectedTimes([]); // Reset selected times
 
     } catch (error) {

@@ -9,11 +9,10 @@ const VNPayReturnPage = () => {
     const params = new URLSearchParams(location.search);
     const isSuccess = params.get('vnp_ResponseCode') === '00';
 
+
     if (isSuccess) {
-      alert('Payment successful!'); // Thông báo thanh toán thành công
       window.location.href = "/success";
     } else {
-      alert('Payment failed!'); // Thông báo thanh toán thất bại
       window.location.href = "/failure";
     }
   }, [location.search]);

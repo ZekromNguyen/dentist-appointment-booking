@@ -55,6 +55,7 @@ let initAllWebRoutes = (app) => {
   //ex: /getAllBookingByCustomerId?customerId=1
   router.get("/getAllClinic", AccountController.getAllClinic);
   router.get("/getAllBooking", BookingController.getAllBooking);
+  router.put("/booking/updateStatus", BookingController.updateBookingStatus);
 
   ///////////////////////////user
   router.post("/handleCreateUser", AccountController.handleCreateUser);

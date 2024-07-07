@@ -50,29 +50,29 @@ class BookingController {
   async createBooking(req, res) {
     try {
       const bookings = req.body.bookings;
-      if (!Array.isArray(bookings)) {
+      const booking = req.body.booking;
+      if (!Array.isArray(bookings) || !booking) {
         return res.status(400).json({ message: "Invalid data format" });
       }
-
+      const {customerId, status, totalPrice} = booking;
+      const newBooking = await BookingService.createBooking(
+        customerId,
+        status,
+        totalPrice
+      );
+      console.log(booking);
+      if (!newBooking) {
+        return res.status(400).json({ message: "Failed to create Booking" });
+      }
       const results = [];
       for (const booking of bookings) {
-        const { customerId, price, status, typeBook, date, scheduleId } =
+        const { price, status, typeBook, date, scheduleId } =
           booking;
         const currentDateTime = new Date(); // Lấy thời gian hiện tại
         const currentDateTimeGMT7 = new Date(
           currentDateTime.getTime() + 7 * 60 * 60 * 1000
         );
-        console.log(booking);
-
-        const newBooking = await BookingService.createBooking(
-          customerId,
-          status,
-          price
-        );
-        if (!newBooking) {
-          return res.status(400).json({ message: "Failed to create Booking" });
-        }
-
+        
         const newBookingDetail = await BookingService.createBookingDetail(
           currentDateTimeGMT7,
           typeBook,
@@ -89,7 +89,6 @@ class BookingController {
         }
 
         results.push({
-          booking: newBooking,
           bookingDetail: newBookingDetail,
         });
       }
@@ -97,6 +96,7 @@ class BookingController {
       res.status(200).json({
         message: "All bookings created successfully",
         results: results,
+        booking: newBooking,
       });
     } catch (error) {
       console.error("Error creating bookings in controller:", error);
@@ -208,6 +208,22 @@ class BookingController {
     } catch (error) {
       console.error("Error fetching booking details:", error);
       res.status(500).json({ error: "Internal Server Error" });
+    }
+  }
+
+  async updateBookingStatus(req,res){
+    try {
+      const updateStatus = req.body;
+      console.log(updateStatus);
+      const {BookingID, Status} = updateStatus;
+      const updateBooking = await BookingService.updateBookingStatus(BookingID,Status);
+      if(!updateBooking){
+        res.status(400).json({message:"Failed"})
+      }
+      res.status(200).json({message:"Success",updateBooking});
+    } catch (error) {
+      console.error("Error update Booking status:", error);
+      res.status(500).json({ error: "Error update Booking status" });
     }
   }
 

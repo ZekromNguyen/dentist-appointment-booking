@@ -75,13 +75,13 @@ class BookingService {
         BookingID: bookingId,
         ScheduleID: scheduleId,
       });
-      const updateDentistSchedule =
-        await DentistService.updateStatusDentistSchedule(
-          newBookingDetail.ScheduleID
-        );
-      if (updateDentistSchedule) {
-        console.log("Update status successfully");
-      }
+      // const updateDentistSchedule =
+      //   await DentistService.updateStatusDentistSchedule(
+      //     newBookingDetail.ScheduleID
+      //   );
+      // if (updateDentistSchedule) {
+      //   console.log("Update status successfully");
+      // }
       return newBookingDetail;
     } catch (error) {
       console.error("Error creating booking detail in service:", error);
@@ -221,6 +221,29 @@ class BookingService {
       if (booking) {
         booking.Status = status;
         await booking.save();
+        await BookingDetail.update(
+          {Status: status},
+          {
+          where:{
+            BookingID : bookingId
+          }
+        });
+        const updatedBookingDetails = await BookingDetail.findAll({
+          where: { BookingID: bookingId }
+        });
+
+        // Update DentistSchedule based on updated BookingDetail records
+      for (let bookingDetail of updatedBookingDetails) {
+        const  DentistScheduleID  = bookingDetail.DentistScheduleID;
+
+        if (DentistScheduleID) {
+          // Update DentistSchedule
+          await DentistSchedule.update(
+            { Status: "Booked" },
+            { where: { DentistScheduleID: DentistScheduleID } }
+          );
+        }
+      }
         return booking;
       }
       return null;
