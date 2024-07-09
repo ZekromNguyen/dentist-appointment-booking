@@ -45,68 +45,55 @@ class AccountController {
             `Your account is inactive. A reset password email has been sent to: ${account.Email}`
           );
       }
-      const roleID = account.RoleID;
-      switch (roleID) {
+      let userData = {};
+      switch (account.RoleID) {
         case 1:
-          const customer = await AccountService.getCustomerByAccountId(
-            account.AccountID
-          );
-          req.session.user = {
+          const customer = await AccountService.getCustomerByAccountId(account.AccountID);
+          userData = {
             user: customer.CustomerName,
             id: account.AccountID,
             customerId: customer.CustomerID,
-            RoleID: roleID,
+            RoleID: account.RoleID,
             IsActive: account.IsActive,
           };
-          res
-            .status(200)
-            .json({ message: "Login successfully", user: req.session.user });
           break;
         case 2:
-          const dentist = await AccountService.getDentistByAccountId(
-            account.AccountID
-          );
-          req.session.user = {
+          const dentist = await AccountService.getDentistByAccountId(account.AccountID);
+          userData = {
             user: dentist.DentistName,
             id: account.AccountID,
             dentistId: dentist.DentistID,
-            RoleID: roleID,
+            RoleID: account.RoleID,
             IsActive: account.IsActive,
           };
-          res
-            .status(200)
-            .json({ message: "Login successfully", user: req.session.user });
           break;
         case 3:
-          const clinicOwner = await AccountService.getClinicOwnerByAccountId(
-            account.AccountID
-          );
-          req.session.user = {
-            user: clinicOwner.ClinicOWnerName,
+          const clinicOwner = await AccountService.getClinicOwnerByAccountId(account.AccountID);
+          userData = {
+            user: clinicOwner.ClinicOwnerName,
             id: account.AccountID,
             clinicOwnerId: clinicOwner.ClinicOwnerID,
-            RoleID: roleID,
+            RoleID: account.RoleID,
             IsActive: account.IsActive,
           };
-          res
-            .status(200)
-            .json({ message: "Login successfully", user: req.session.user });
           break;
         case 4:
-          req.session.user = {
+          userData = {
             user: account.UserName,
             id: account.AccountID,
-            RoleID: roleID,
+            RoleID: account.RoleID,
             IsActive: account.IsActive,
           };
-          res
-            .status(200)
-            .json({ message: "Login successfully", user: req.session.user });
           break;
         default:
-          res.status(500).json({ message: "Failed to set session" });
-          break;
+          return res.status(500).json({ message: "Unknown role ID" });
       }
+
+      // Store user data in session
+      req.session.user = userData;
+      req.session.authorized = true;
+      // Respond with success message and session user data
+      res.status(200).json({ message: "Login successfully", user: userData });
     } catch (err) {
       console.error("Error executing query:", err.stack);
       res.status(500).send("Database query error");
@@ -121,8 +108,16 @@ class AccountController {
       res.status(200).json({ message: "Logout successfully" });
     });
   }
+   getSessionMiddleware = (req, res, next) => {
+    if (req.session && req.session.authorized) {
+      next(); // Cho phép điều hướng đến hàm xử lý chính
+    } else {
+      res.status(401).json({ message: "Unauthorized" });
+    }
+  };
   async getSession(req, res) {
-    if (req.session.user) {
+    if(req.session.authorized){
+    // if (req.session.user) {
       res.status(200).json(req.session.user);
     } else {
       res.status(401).json({ message: "No session found" });

@@ -234,13 +234,13 @@ class BookingService {
 
         // Update DentistSchedule based on updated BookingDetail records
       for (let bookingDetail of updatedBookingDetails) {
-        const  DentistScheduleID  = bookingDetail.DentistScheduleID;
+        const  ScheduleID  = bookingDetail.ScheduleID;
 
-        if (DentistScheduleID) {
+        if (ScheduleID) {
           // Update DentistSchedule
           await DentistSchedule.update(
             { Status: "Booked" },
-            { where: { DentistScheduleID: DentistScheduleID } }
+            { where: { ScheduleID: ScheduleID } }
           );
         }
       }

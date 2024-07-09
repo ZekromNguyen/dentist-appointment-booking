@@ -11,7 +11,7 @@ import bookingpageIcon from '/img-logo-home.jpg';
 import goback from '/GoBack.png';
 import Booking from '../Booking/Booking'; // Import the BookingComponent
 import Payment from '../PaymentPage/Payment';
-import { checkSession } from '../../Service/userService';
+import { checkSession,logout } from '../../Service/userService';
 import BookingHistory from '../BookingHistory/BookingHistory';
 
 function BookingPage() {
@@ -46,6 +46,7 @@ function BookingPage() {
 
   const handleLogout = () => {
     localStorage.removeItem('account');
+    logout();
     navigate('/login'); // Navigate to the login page
   };
 

@@ -72,6 +72,7 @@ class DentistService {
             },
           },
         ],
+        order:[["Date","DESC"],["SlotID","ASC"]]
       });
       const plainSchedules = schedules.map((schedule) => schedule.toJSON());
       return plainSchedules;
