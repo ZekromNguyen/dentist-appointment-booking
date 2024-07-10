@@ -32,7 +32,7 @@ const BookingDetails = ({ show, handleClose, bookingDetails, onCancelBooking }) 
         }));
         const totalPrice = localStorage.getItem('totalPrice');
         const booking = {
-          customerId : saveData[0].customerId,
+          customerId: saveData[0].customerId,
           status: saveData[0].status,
           totalPrice: totalPrice,
         }
@@ -40,7 +40,7 @@ const BookingDetails = ({ show, handleClose, bookingDetails, onCancelBooking }) 
         const response1 = await axios.post(`${BASE_URL}/booking`, {
           bookings: saveData, booking: booking
         });
-        if(response1.status === 200){
+        if (response1.status === 200) {
           const BookingID = response1.data.booking.BookingID;
           localStorage.setItem('bookingID', BookingID);
           localStorage.removeItem('bookings');

@@ -1,7 +1,8 @@
 import { Model, DataTypes } from "sequelize";
 import sequelize from "../config/database";
+import Booking from "./booking";
 
-class BookingDetail extends Model {}
+class BookingDetail extends Model { }
 BookingDetail.init(
   {
     BookingDetailID: {
@@ -54,6 +55,8 @@ BookingDetail.init(
     tableName: "bookingdetail",
     timestamps: false,
   }
+
 );
+BookingDetail.belongsTo(Booking, { foreignKey: 'BookingDetailID' });
 
 export default BookingDetail;

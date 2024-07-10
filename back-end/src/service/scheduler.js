@@ -1,6 +1,6 @@
 import cron from "node-cron";
 import moment from "moment";
-import {sendReminderEmail} from "../config/email";
+import { sendReminderEmail } from "../config/email";
 import bookingService from "./bookingService";
 
 cron.schedule("0 0 * * *", async () => {

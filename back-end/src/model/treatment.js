@@ -2,7 +2,7 @@
 
 import { Model, DataTypes } from 'sequelize';
 import sequelize from '../config/database';
-
+import BookingDetail from './bookingDetail';
 class Treatment extends Model { }
 Treatment.init({
     TreatmentID: {
@@ -34,5 +34,6 @@ Treatment.init({
     tableName: 'Treatment',
     timestamps: false,
 });
+Treatment.belongsTo(BookingDetail, { foreignKey: 'BookingDetailID' });
 
 export default Treatment;

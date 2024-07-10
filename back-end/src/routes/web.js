@@ -7,6 +7,7 @@ import dentistController from "../controllers/dentistController";
 import TreatmentController, {
   upload,
 } from "../controllers/treatmentController";
+import treatmentController from "../controllers/treatmentController";
 // init all web routes
 
 let router = express.Router();
@@ -32,7 +33,7 @@ let initAllWebRoutes = (app) => {
   router.get("/schedule", DentistController.getAvailableSlot);
   router.post("/schedule", DentistController.createScheduleForDentist);
   router.post("/logout", AccountController.logout);
-  router.get("/get-session",AccountController.getSessionMiddleware, AccountController.getSession);
+  router.get("/get-session", AccountController.getSessionMiddleware, AccountController.getSession);
   router.get("/booking", BookingController.getDentistSchedules);
   router.post("/booking", BookingController.createBooking);
   router.get("/slotsByDate", BookingController.getSlotsByDateByDentistService);
@@ -63,6 +64,7 @@ let initAllWebRoutes = (app) => {
   router.delete("/deleteUser", AccountController.handleDeleteUser);
   router.get("/handleGetAllCustomer", AccountController.handleGetAllCustomer);
 
+
   ///////////////////////////customer
   router.put("/editCustomer", AccountController.handleUpdateCustomer);
   router.put("/editUser", AccountController.handleEditUser);
@@ -91,6 +93,7 @@ let initAllWebRoutes = (app) => {
   );
   router.delete('/treatments/:id', TreatmentController.deleteTreatment);
   router.patch('/treatments/:id', upload.single('Result'), TreatmentController.updateTreatment);
+  router.get('/treatments/customer/:customerId', TreatmentController.getAllCustomerTreatments);
 
 
   return app.use("/", router);
