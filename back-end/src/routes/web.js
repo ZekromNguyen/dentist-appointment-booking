@@ -93,7 +93,7 @@ let initAllWebRoutes = (app) => {
   );
   router.delete('/treatments/:id', TreatmentController.deleteTreatment);
   router.patch('/treatments/:id', upload.single('Result'), TreatmentController.updateTreatment);
-  router.get('/treatments/customer/:customerId', TreatmentController.getAllCustomerTreatments);
+  //router.get('/treatments/customer/:customerId', TreatmentController.getAllCustomerTreatments);
 
 
   return app.use("/", router);

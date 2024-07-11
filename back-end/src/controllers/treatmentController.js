@@ -1,12 +1,8 @@
 import express from 'express';
 import Treatment from '../model/treatment';
-import booking from '../model/booking';
-import BookingDetail from '../model/bookingDetail';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
-import Booking from '../model/booking';
-import Customer from '../model/customer';
 
 const router = express.Router();
 
@@ -203,28 +199,14 @@ class TreatmentController {
 
     async getAllTreatments(req, res) {
         try {
-            const { customerId, bookingId } = req.query;
-
-            // Truy vấn liên bảng để lấy các kết quả điều trị dựa trên customerID và bookingID
-            const treatments = await Treatment.findAll({
-                include: {
-                    model: BookingDetail,
-                    include: {
-                        model: booking,
-                        where: {
-                            CustomerID: customerId,
-                            BookingID: bookingId
-                        }
-                    }
-                }
-            });
-
-            res.json({ treatments });
+            const treatments = await Treatment.findAll();
+            res.json({ treatments: treatments });
         } catch (error) {
             console.error('Error fetching treatments:', error);
-            res.status(500).json({ error: 'Internal Server Error' });
+            res.status(500).send('Error fetching treatments');
         }
     }
+
     // New method to get treatments by BookingDetailID
     async getTreatmentsByBookingDetailID(req, res) {
         const { bookingDetailID } = req.params;
@@ -242,66 +224,6 @@ class TreatmentController {
             res.status(500).json({ message: 'Internal server error' });
         }
     }
-
-    getAllCustomerTreatments = async (req, res) => {
-        try {
-            // Ensure req.user is defined and has CustomerId
-            if (!req.user || !req.user.CustomerId) {
-                return res.status(400).json({ error: 'User information not found or invalid' });
-            }
-
-            // Now you can safely use req.user.CustomerId
-            const customerId = req.user.CustomerId;
-
-            // Fetch treatments for the customer
-            const treatments = await Treatment.findAll({
-                where: { CustomerID: customerId }, // Ensure correct casing of CustomerID
-                include: [
-                    { model: Booking, include: [{ model: Dentist }] },
-                ],
-            });
-
-            // Return the treatments
-            res.status(200).json(treatments);
-        } catch (error) {
-            console.error('Error fetching treatments:', error);
-            res.status(500).json({ error: 'Failed to fetch treatments' });
-        }
-    };
-
-
-
-
-
-
-    async getCustomerTreatments(customerId) {
-        try {
-            const bookings = await Booking.findAll({
-                where: { CustomerID: customerId },
-                include: [
-                    {
-                        model: BookingDetail,
-                        include: {
-                            model: Treatment
-                        }
-                    }
-                ]
-            });
-
-            let treatments = [];
-            bookings.forEach(booking => {
-                booking.BookingDetails.forEach(bookingDetail => {
-                    treatments = treatments.concat(bookingDetail.Treatments);
-                });
-            });
-
-            return treatments;
-        } catch (error) {
-            console.error('Error fetching customer treatments:', error);
-            throw error;
-        }
-    }
-
 }
 
 export default new TreatmentController();
