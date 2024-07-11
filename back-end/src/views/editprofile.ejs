@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Edit Profile</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            display: inline-block;
+            padding: 10px 15px;
+            color: #fff;
+            background-color: #007BFF;
+            text-decoration: none;
+            border-radius: 5px;
+            border: none;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .section {
+            margin-bottom: 20px;
+        }
+
+        .section h2 {
+            border-bottom: 2px solid #007BFF;
+            padding-bottom: 5px;
+            margin-bottom: 10px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 15px;
+            color: #fff;
+            background-color: #007BFF;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+
+        .back-link:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Edit Profile</h1>
+        <form action="/profile/<%= account.AccountID %>?_method=PUT" method="POST">
+            <label for="phone">Phone:</label>
+            <input type="text" id="phone" name="phone" value="<%= account.Phone %>" required>
+            <br>
+
+            <div id="customerFields" style="display: none;">
+                <label for="customerName">Customer Name:</label>
+                <input type="text" id="customerName" name="customerName"
+                    value="<%= account.Customer ? account.Customer.CustomerName : '' %>">
+            </div>
+
+            <div id="dentistFields" style="display: none;">
+                <label for="dentistName">Dentist Name:</label>
+                <input type="text" id="dentistName" name="dentistName"
+                    value="<%= account.Dentist ? account.Dentist.DentistName : '' %>">
+            </div>
+
+            <div id="clinicOwnerFields" style="display: none;">
+                <label for="clinicOwnerName">Clinic Owner Name:</label>
+                <input type="text" id="clinicOwnerName" name="clinicOwnerName"
+                    value="<%= account.ClinicOwner ? account.ClinicOwner.ClinicOwnerName : '' %>">
+            </div>
+            <br>
+            <button type="submit">Update Profile</button>
+        </form>
+        <a class="back-link" href="/">Back to home</a>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var role = "<%= account.RoleID %>";
+            var customerFields = document.getElementById('customerFields');
+            var dentistFields = document.getElementById('dentistFields');
+            var clinicOwnerFields = document.getElementById('clinicOwnerFields');
+
+            if (role == '1') { // Assuming '3' is the role ID for customers
+                customerFields.style.display = 'block';
+                dentistFields.style.display = 'none';
+                clinicOwnerFields.style.display = 'none';
+            } else if (role == '2') { // Assuming '2' is the role ID for dentists
+                customerFields.style.display = 'none';
+                dentistFields.style.display = 'block';
+                clinicOwnerFields.style.display = 'none';
+            } else if (role == '3') { // Assuming '4' is the role ID for clinic owners
+                customerFields.style.display = 'none';
+                dentistFields.style.display = 'none';
+                clinicOwnerFields.style.display = 'block';
+            } else {
+                customerFields.style.display = 'none';
+                dentistFields.style.display = 'none';
+                clinicOwnerFields.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+
+</html>

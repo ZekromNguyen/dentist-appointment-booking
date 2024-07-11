@@ -7,7 +7,7 @@ import dentistController from "../controllers/dentistController";
 import TreatmentController, {
   upload,
 } from "../controllers/treatmentController";
-import treatmentController from "../controllers/treatmentController";
+import profileController from "../controllers/profileController";
 // init all web routes
 
 let router = express.Router();
@@ -95,7 +95,9 @@ let initAllWebRoutes = (app) => {
   router.patch('/treatments/:id', upload.single('Result'), TreatmentController.updateTreatment);
   //router.get('/treatments/customer/:customerId', TreatmentController.getAllCustomerTreatments);
 
-
+  router.get('/profile/:accountId', profileController.viewProfile);
+  router.get('/editprofile/:accountId', profileController.editProfileForm); // Form chỉnh sửa profile
+  router.post("/profile/:accountId", profileController.updateProfile);
   return app.use("/", router);
 };
 

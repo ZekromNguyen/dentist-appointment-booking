@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Profile</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      width: 80%;
+      margin: 0 auto;
+      background-color: #fff;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      margin-top: 20px;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    p {
+      line-height: 1.6;
+    }
+
+    .section {
+      margin-bottom: 20px;
+    }
+
+    .section h2 {
+      border-bottom: 2px solid #007BFF;
+      padding-bottom: 5px;
+      margin-bottom: 10px;
+    }
+
+    .link-button {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 10px 15px;
+      color: #fff;
+      background-color: #007BFF;
+      text-decoration: none;
+      border-radius: 5px;
+      margin-right: 10px;
+    }
+
+    .link-button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Profile of <%= account.UserName %>
+    </h1>
+
+    <div class="section">
+      <h2>Account Details</h2>
+      <p><strong>Email:</strong>
+        <%= account.Email %>
+      </p>
+      <p><strong>Phone:</strong>
+        <%= account.Phone %>
+      </p>
+      <p><strong>Role:</strong>
+        <%= role ? role.RoleName : 'No role assigned' %>
+      </p>
+    </div>
+
+    <% if (customer) { %>
+      <div class="section">
+        <p><strong>Name:</strong>
+          <%= customer.CustomerName %>
+        </p>
+      </div>
+      <% } %>
+
+        <% if (dentist) { %>
+          <div class="section">
+            <p><strong>Name:</strong>
+              <%= dentist.DentistName %>
+            </p>
+          </div>
+          <% } %>
+
+            <% if (clinicOwner) { %>
+              <div class="section">
+                <p><strong>Name:</strong>
+                  <%= clinicOwner.ClinicOwnerName %>
+                </p>
+              </div>
+              <% } %>
+
+                <div>
+                  <a class="link-button" href="/editprofile/<%= account.AccountID %>">Edit Profile</a>
+                  <a class="link-button" href="/">Back to home</a>
+                </div>
+  </div>
+</body>
+
+</html>
