@@ -1,5 +1,7 @@
 import express from 'express';
 import Treatment from '../model/treatment';
+import Booking from '../model/booking';
+import BookingDetail from '../model/bookingDetail';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
@@ -224,6 +226,39 @@ class TreatmentController {
             res.status(500).json({ message: 'Internal server error' });
         }
     }
+
+    // Method to get treatments with associated booking details
+    async getTreatments(req, res) {
+        const { customerId, bookingId } = req.query;
+
+        try {
+            const treatments = await Treatment.findAll({
+                include: [
+                    {
+                        model: BookingDetail,
+                        as: 'BookingDetail',
+                        include: [
+                            {
+                                model: Booking,
+                                as: 'Booking',
+                                where: {
+                                    CustomerID: customerId,
+                                    BookingID: bookingId
+                                }
+                            }
+                        ]
+                    }
+                ]
+            });
+
+            res.status(200).json({ treatments });
+        } catch (error) {
+            console.error('Error fetching treatments:', error);
+            res.status(500).json({ message: 'Internal server error' });
+        }
+    }
+
+
 }
 
 export default new TreatmentController();

@@ -46,6 +46,7 @@ const TreatmentUpload = () => {
                     booking.BookingDetails.some(detail => detail.DentistSchedule.DentistID === dentistId)
                 );
                 setBookings(filteredBookings);
+                console.log("check filter", filteredBookings)
             }
         } catch (error) {
             console.error('Error fetching bookings:', error);

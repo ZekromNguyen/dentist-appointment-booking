@@ -24,6 +24,8 @@ class DoctorManage extends Component {
 
   handleGetAllDentists = async () => {
     try {
+      localStorage.getItem('clinicID'),
+        console.log("check local", localStorage)
       const response = await getAllDentist('ALL');
       if (response && response.errCode === 0) {
         this.setState({

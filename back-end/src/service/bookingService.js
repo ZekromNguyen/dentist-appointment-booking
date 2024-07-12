@@ -96,7 +96,7 @@ class BookingService {
         include: [
           {
             model: Customer,
-            attributes: ["CustomerName"],
+            attributes: ["CustomerName", "CustomerID"],
           },
           {
             model: BookingDetail,
@@ -222,28 +222,28 @@ class BookingService {
         booking.Status = status;
         await booking.save();
         await BookingDetail.update(
-          {Status: status},
+          { Status: status },
           {
-          where:{
-            BookingID : bookingId
-          }
-        });
+            where: {
+              BookingID: bookingId
+            }
+          });
         const updatedBookingDetails = await BookingDetail.findAll({
           where: { BookingID: bookingId }
         });
 
         // Update DentistSchedule based on updated BookingDetail records
-      for (let bookingDetail of updatedBookingDetails) {
-        const  ScheduleID  = bookingDetail.ScheduleID;
+        for (let bookingDetail of updatedBookingDetails) {
+          const ScheduleID = bookingDetail.ScheduleID;
 
-        if (ScheduleID) {
-          // Update DentistSchedule
-          await DentistSchedule.update(
-            { Status: "Booked" },
-            { where: { ScheduleID: ScheduleID } }
-          );
+          if (ScheduleID) {
+            // Update DentistSchedule
+            await DentistSchedule.update(
+              { Status: "Booked" },
+              { where: { ScheduleID: ScheduleID } }
+            );
+          }
         }
-      }
         return booking;
       }
       return null;
@@ -262,31 +262,31 @@ class BookingService {
         },
         include: [
           {
-            model:Booking,
-            attributes:["CustomerID"],
-            include:[
+            model: Booking,
+            attributes: ["CustomerID"],
+            include: [
               {
-                model:Customer,
-                attributes:["AccountID"],
-                include:[
+                model: Customer,
+                attributes: ["AccountID"],
+                include: [
                   {
-                    model:Account,
-                    attributes:["Email"],
+                    model: Account,
+                    attributes: ["Email"],
                   }
                 ]
               }
             ]
           },
           {
-            model:DentistSchedule,
-            include:[
+            model: DentistSchedule,
+            include: [
               {
-                model:AvailableSlot,
-                attributes:["Time"],
+                model: AvailableSlot,
+                attributes: ["Time"],
               },
               {
-                model:Dentist,
-                attributes:["DentistName"],
+                model: Dentist,
+                attributes: ["DentistName"],
               }
             ]
           }
