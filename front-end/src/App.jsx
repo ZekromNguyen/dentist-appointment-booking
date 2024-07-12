@@ -71,7 +71,8 @@ import VNPayReturnPage from './components/PaymentPage/paymentReturn';
 import SuccessPage from './components/PaymentPage/SuccessPage';
 import FailurePage from './components/PaymentPage/FailurePage';
 import DoctorLoad from './components/DoctorLoad/DoctorLoad';
-
+import Profile from './components/Profile/Profile';
+import EditProfile from './components/Profile/EditProfile';
 function App() {
 
   return (
@@ -95,6 +96,12 @@ function App() {
           <Route path="/ClinicOwner/*" element={<ClinicOwner />}>
             <Route path="system/*" element={<System />} />
           </Route>
+
+          {/* profile */}
+          <Route path="/profile/:accountId" element={<Profile />} />
+          <Route path="/editprofile/:accountId" element={<EditProfile />} />
+
+
           <Route path="/doctor/*" element={<Doctor />}>
             <Route path="system/*" element={<System />} />
           </Route>

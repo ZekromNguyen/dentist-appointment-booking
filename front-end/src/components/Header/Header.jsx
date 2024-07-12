@@ -1,14 +1,12 @@
 import { useEffect, useState } from 'react';
 import './header.scss';
 import { IoMenuOutline } from "react-icons/io5";
-import { FaUser,FaCogs,FaSignOutAlt } from "react-icons/fa";
+import { FaUser, FaCogs, FaSignOutAlt } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { FaUserClock } from "react-icons/fa";
 import { TfiHeadphoneAlt } from "react-icons/tfi";
 import { MdGTranslate } from "react-icons/md";
 import { logout } from '../../Service/userService';
-// import { FormattedMessage } from 'react-intl';
-
 
 export default function Header() {
     const [account, setAccount] = useState(null);
@@ -17,8 +15,11 @@ export default function Header() {
     const getAccount = async () => {
         try {
             var accountData = localStorage.getItem('account');
-            const account1 = JSON.parse(accountData);
-            setAccount(account1);
+            if (accountData) {
+                const parsedAccount = JSON.parse(accountData);
+                setAccount(parsedAccount);
+                console.log('Account loaded from localStorage:', parsedAccount);
+            }
         } catch (error) {
             console.error('Error during getAccount:', error);
         }
@@ -38,6 +39,7 @@ export default function Header() {
             console.error('Error during logout:', error);
         }
     };
+
     return (
         <div className="home-header-container">
             <div className="header-content">
@@ -65,38 +67,38 @@ export default function Header() {
                     </div>
                 </div>
                 <div className="content-login-register">
-            {account ? (
-                <div className="logged-in">
-                    <FaUser className="icon-user" />
-                    <span>Xin chào, {account.user}</span>
-                    <div className="dropdown-menu">
-                        <Link to="/profile">
-                            <FaUser />
-                            Profile
-                        </Link>
-                        <Link to="/settings">
-                            <FaCogs />
-                            Settings
-                        </Link>
-                        <button onClick={handleLogout}>
-                            <FaSignOutAlt />
-                            Logout
-                        </button>
-                    </div>
+                    {account ? (
+                        <div className="logged-in">
+                            <FaUser className="icon-user" />
+                            <span>Xin chào, {account.user}</span>
+                            <div className="dropdown-menu">
+                                <Link to={`/profile/${account.id}`}>
+                                    <FaUser />
+                                    Profile
+                                </Link>
+                                <Link to="/settings">
+                                    <FaCogs />
+                                    Settings
+                                </Link>
+                                <button onClick={handleLogout}>
+                                    <FaSignOutAlt />
+                                    Logout
+                                </button>
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="content-auth">
+                            <div className="auth-left">
+                                <FaUser className="icon-user" />
+                                <Link to="/Login" className="Login">Login</Link>
+                            </div>
+                            <div className='auth-right'>
+                                <div className="seperate">|</div>
+                                <Link to="/Register" className="register">Sign up</Link>
+                            </div>
+                        </div>
+                    )}
                 </div>
-            ) : (
-                <div className="content-auth">
-                    <div className="auth-left">
-                        <FaUser className="icon-user" />
-                        <Link to="/Login" className="Login">Login</Link>
-                    </div>
-                    <div className='auth-right'>
-                        <div className="seperate">|</div>
-                        <Link to="/Register" className="register">Sign up</Link>
-                    </div>
-                </div>
-            )}
-        </div>
                 <div className="content-support">
                     <div className='support-child'>
                         <FaUserClock className="clock-history" />
@@ -108,7 +110,7 @@ export default function Header() {
                     </div>
                     <div className="translate">
                         <MdGTranslate className="icon-translate" />
-                        <div>Ngôn ngữ</div>
+                        {/* <div>Ngôn ngữ</div> */}
                     </div>
                     <div className="languge-vi">VN</div>
                     <div className="languge-en">EN</div>
@@ -117,4 +119,3 @@ export default function Header() {
         </div>
     );
 }
-
