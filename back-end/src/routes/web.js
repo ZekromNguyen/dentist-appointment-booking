@@ -34,7 +34,7 @@ let initAllWebRoutes = (app) => {
   router.get("/schedule", DentistController.getAvailableSlot);
   router.post("/schedule", DentistController.createScheduleForDentist);
   router.post("/logout", AccountController.logout);
-  router.get("/get-session",AccountController.getSessionMiddleware, AccountController.getSession);
+  router.get("/get-session", AccountController.getSessionMiddleware, AccountController.getSession);
   router.get("/booking", BookingController.getDentistSchedules);
   router.post("/booking", BookingController.createBooking);
   router.get("/slotsByDate", BookingController.getSlotsByDateByDentistService);
@@ -66,6 +66,7 @@ let initAllWebRoutes = (app) => {
   router.get("/getAllUser", AccountController.handleGetAllUser);
   router.delete("/deleteUser", AccountController.handleDeleteUser);
   router.get("/handleGetAllCustomer", AccountController.handleGetAllCustomer);
+
 
   ///////////////////////////customer
   router.put("/editCustomer", AccountController.handleUpdateCustomer);
@@ -100,7 +101,6 @@ let initAllWebRoutes = (app) => {
   router.get('/profile/:accountId', profileController.viewProfile);
   router.get('/editprofile/:accountId', profileController.editProfileForm); // Form chỉnh sửa profile
   router.post("/profile/:accountId", profileController.updateProfile);
-
   return app.use("/", router);
 };
 

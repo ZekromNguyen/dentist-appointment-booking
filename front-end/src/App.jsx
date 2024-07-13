@@ -103,6 +103,12 @@ function App() {
           <Route path="/ClinicOwner/*" element={<ClinicOwner />}>
             <Route path="system/*" element={<System />} />
           </Route>
+
+          {/* profile */}
+          <Route path="/profile/:accountId" element={<Profile />} />
+          <Route path="/editprofile/:accountId" element={<EditProfile />} />
+
+
           <Route path="/doctor/*" element={<Doctor />}>
             <Route path="system/*" element={<System />} />
           </Route>

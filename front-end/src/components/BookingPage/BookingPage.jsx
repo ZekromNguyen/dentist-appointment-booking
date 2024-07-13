@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './BookingPage.scss';
@@ -7,12 +6,12 @@ import bookingIcon from '/BookNoww.png';
 import paymentIcon from '/History.png';
 import historyIcon from '/History.png';
 import logoutIcon from '/logout.png';
+import resultIcon from '/resultIcon.jpg'; // Đường dẫn tới icon kết quả
 import bookingpageIcon from '/img-logo-home.jpg';
-import resultIcon from '/resultIcon.jpg';
 import goback from '/GoBack.png';
-import Booking from '../Booking/Booking'; // Import the BookingComponent
+import Booking from '../Booking/Booking'; // Import the Booking component
 import Payment from '../PaymentPage/Payment';
-import { checkSession,logout } from '../../Service/userService';
+import { checkSession, logout } from '../../Service/userService';
 import BookingHistory from '../BookingHistory/BookingHistory';
 import BookingResult from '../BookingResult/BookingResult'; // Import the BookingResult component
 
@@ -127,5 +126,3 @@ function BookingPage() {
 }
 
 export default BookingPage;
-
-

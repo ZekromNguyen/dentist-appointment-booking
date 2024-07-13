@@ -231,7 +231,7 @@ class BookingService {
         include: [
           {
             model: Customer,
-            attributes: ["CustomerName"],
+            attributes: ["CustomerName", "CustomerID"],
           },
           {
             model: BookingDetail,
