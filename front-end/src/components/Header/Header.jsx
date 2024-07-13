@@ -98,6 +98,7 @@ export default function Header() {
                     </div>
                 </div>
             )}
+            </div>
                 <div className="content-support">
                     <div className='support-child'>
                         <FaUserClock className="clock-history" />
