@@ -149,7 +149,7 @@ class AccountService {
       });
       const newClinicOwner = await ClinicOwner.create({
         ClinicID: clinicId,
-        ClinicOWnerName: clinicOwnerName,
+        ClinicOwnerName: clinicOwnerName,
         AccountID: accountId,
       });
       if (!newClinicOwner) {
@@ -652,10 +652,10 @@ class AccountService {
           ClinicOwnerID: ownerId
         }
       });
-  
+
       // Convert the clinics to JSON format
       const clinicData = clinics.map((clinic) => clinic.toJSON());
-  
+
       return clinicData;
     } catch (error) {
       console.error("Error fetching all clinics:", error);

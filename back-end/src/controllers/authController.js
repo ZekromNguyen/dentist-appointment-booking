@@ -108,7 +108,7 @@ class AccountController {
       res.status(200).json({ message: "Logout successfully" });
     });
   }
-   getSessionMiddleware = (req, res, next) => {
+  getSessionMiddleware = (req, res, next) => {
     if (req.session && req.session.authorized) {
       next(); // Cho phép điều hướng đến hàm xử lý chính
     } else {
@@ -116,8 +116,8 @@ class AccountController {
     }
   };
   async getSession(req, res) {
-    if(req.session.authorized){
-    // if (req.session.user) {
+    if (req.session.authorized) {
+      // if (req.session.user) {
       res.status(200).json(req.session.user);
     } else {
       res.status(401).json({ message: "No session found" });
@@ -356,7 +356,7 @@ class AccountController {
     res.render("forgotPassword");
   }
   async forgotPassword(req, res) {
-    try{
+    try {
       const { email } = req.body;
       console.log(email);
       const newAccount = await AccountService.getAccountByUserNameOrEmail(email);
@@ -366,7 +366,7 @@ class AccountController {
           .json({ message: `Not found account with email ${email}` });
       }
       const verificationToken = crypto.randomBytes(32).toString("hex");
-      
+
       const account = await AccountService.createResetToken(
         email,
         verificationToken
@@ -377,11 +377,11 @@ class AccountController {
       const verificationLink = `http://localhost:5173/ResetPassword?token=${verificationToken}`;
       await sendResetPasswordEmail(email, verificationLink);
       res.status(200).send(`A reset password email has been sent to: ${email}`);
-    }catch (error) {
+    } catch (error) {
       res
         .status(500)
         .send("Error sending reset password email: " + error.toString());
-    }    
+    }
   }
 
   async showresetPassword(req, res) {
@@ -470,7 +470,7 @@ class AccountController {
   // get all clinic
   async getAllClinic(req, res) {
     try {
-      const {ownerId} = req.query;
+      const { ownerId } = req.query;
       const clinics = await AccountService.getAllClinic(ownerId);
       if (!clinics || clinics.length === 0) {
         res.status(404).json({ message: "Success, Not found clinc" });
