@@ -45,20 +45,20 @@ const Profile = () => {
                     <p><strong>Role:</strong> {profile.Role}</p>
                 )}
             </div>
-
-            {profile.CustomerName && (
+            <p><strong>Customer Name:</strong> {profile.CustomerName || 'No Name provided'}</p>
+            {/* {profile.CustomerName && (
                 <div className="section">
-                    <p><strong>Customer Name:</strong> {profile.CustomerName}</p>
+                    <p><strong>Customer Name:</strong> {profile.CustomerName || 'No Name provided'}</p>
                 </div>
-            )}
+            )} */}
             {profile.DentistName && (
                 <div className="section">
-                    <p><strong>Dentist Name:</strong> {profile.DentistName}</p>
+                    <p><strong>Dentist Name:</strong> {profile.DentistName || 'No Name provided'}</p>
                 </div>
             )}
             {profile.ClinicOwnerName && (
                 <div className="section">
-                    <p><strong>Clinic Owner Name:</strong> {profile.ClinicOwnerName}</p>
+                    <p><strong>Clinic Owner Name:</strong> {profile.ClinicOwnerName || 'No Name provided'}</p>
                 </div>
             )}
             <div>

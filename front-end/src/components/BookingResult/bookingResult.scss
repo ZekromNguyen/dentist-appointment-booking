@@ -12,10 +12,8 @@ $font-family: 'Arial, sans-serif';
 }
 
 @mixin container {
-    // background-color: #fff;
     padding: 20px;
     border-radius: 8px;
-    // box-shadow: $box-shadow;
     width: 800px;
     text-align: center;
     margin-top: 10px;
@@ -23,12 +21,11 @@ $font-family: 'Arial, sans-serif';
 
 .body-treatment {
     display: flex;
-    justify-content: center
+    justify-content: center;
 }
 
 .treatment-upload-container {
     @include container;
-
 }
 
 h1,
@@ -117,32 +114,14 @@ button {
     }
 }
 
-.button-change {
-    size: 10px !important;
-}
+$treatment-table-width: 100%; // Định nghĩa chiều rộng của bảng
+$treatment-table-font-size: 16px; // Định nghĩa kích thước font chữ cho bảng
 
-button {
-    width: auto !important;
-    height: auto !important;
-}
+.treatment-table {
+    width: $treatment-table-width !important;
 
-#font-body {
-    font-size: 6px !important;
-}
-
-.treatment-booking {
-    width: 100% !important;
-}
-
-.treatment-table,
-thead th {
-    width: 100% !important;
-    font-size: 10px !important;
-}
-
-.treatment-title {
-    margin-top: 20px;
-    display: flex;
-    font-size: 40px;
-    justify-content: center;
+    thead th {
+        width: $treatment-table-width !important;
+        font-size: $treatment-table-font-size !important;
+    }
 }

@@ -23,12 +23,11 @@ $font-family: 'Arial, sans-serif';
 
 .body-treatment {
     display: flex;
-    justify-content: center
+    justify-content: center;
 }
 
 .treatment-upload-container {
     @include container;
-
 }
 
 h1,
@@ -90,29 +89,80 @@ button {
     padding: 0;
     text-align: left;
     margin-top: 20px;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    display: flex;
+    flex-wrap: wrap; // Đảm bảo các phần tử nằm trên cùng dòng khi không đủ chỗ
     gap: 20px;
-}
+    overflow: hidden; // Ngăn không cho nội dung vượt ra ngoài khung
+    justify-content: center; // Căn giữa các phần tử
 
-.treatment-list li {
-    background-color: #f9f9f9;
-    padding: 10px;
-    border-radius: 4px;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    li {
+        width: calc(33.33% - 20px); // 3 cột, mỗi cột chiếm 1/3 và cách nhau 20px
+        background-color: #f9f9f9;
+        padding: 10px;
+        border-radius: 4px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
 
-    p {
-        margin: 0;
+        p {
+            margin: 0;
 
-        strong {
-            display: block;
-            margin-bottom: 5px;
+            strong {
+                display: block;
+                margin-bottom: 5px;
+            }
+        }
+
+        img {
+            max-width: 100%;
+            border-radius: 4px;
+            margin-top: 10px;
         }
     }
 
-    img {
-        max-width: 100%;
-        border-radius: 4px;
-        margin-top: 10px;
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        overflow-x: auto; // Bật thanh cuộn ngang khi bảng quá rộng
+
+        th,
+        td {
+            border: 1px solid $border-color;
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: $secondary-color;
+            font-weight: bold;
+        }
+
+        td {
+            img {
+                max-width: 100%;
+                height: auto;
+                border-radius: 4px;
+            }
+        }
+    }
+}
+
+button {
+    width: auto !important;
+    height: auto !important;
+}
+
+$treatment-table-width: 100%; // Định nghĩa chiều rộng của bảng
+$treatment-table-font-size: 11px; // Định nghĩa kích thước font chữ cho bảng
+
+.treatment-table-as {
+    width: $treatment-table-width !important;
+
+    thead th {
+        width: $treatment-table-width !important;
+        font-size: $treatment-table-font-size !important;
+    }
+
+    tbody td {
+        font-size: $treatment-table-font-size; // Đặt font-size cho các ô dữ liệu trong tbody
     }
 }

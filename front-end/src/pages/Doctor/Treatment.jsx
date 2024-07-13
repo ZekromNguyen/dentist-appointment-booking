@@ -181,7 +181,7 @@ const TreatmentUpload = () => {
     return (
         <div className='treatment-booking'>
             <div className='treatment-title mt-100'>Treatment Patients</div>
-            <div className='treatment-table mt-30 mx-10'>
+            <div className='treatment-table-as mt-30 mx-10'>
                 <table>
                     <thead>
                         <tr>
