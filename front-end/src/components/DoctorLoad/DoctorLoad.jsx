@@ -81,7 +81,7 @@ const DoctorLoad = () => {
                         }
                     });
                     if (response.status === 200) {
-                        setSchedules(response.data);
+                        setSchedules(response.data.slots);
                         setError('');
                     } else {
                         throw new Error('Failed to fetch schedules');

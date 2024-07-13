@@ -38,6 +38,10 @@ const ClinicManager = () => {
     fetchClinics();
   }, []);
 
+  const handleClinicUpdated = (updatedClinics) => {
+    setClinics(updatedClinics);
+  };
+
   return (
     <div>
       <h1>Manage Clinics</h1>
@@ -45,7 +49,7 @@ const ClinicManager = () => {
         Add New Clinic
       </Button>
       <AddClinicModal show={showModal} handleClose={handleClose} onClinicAdded={handleClinicAdded} />
-      <ClinicList clinics={clinics} />
+      <ClinicList clinics={clinics} onClinicUpdated={handleClinicUpdated} />
     </div>
   );
 };

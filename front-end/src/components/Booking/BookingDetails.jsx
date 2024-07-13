@@ -1,61 +1,73 @@
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import Modal from "react-bootstrap/Modal";
+import Button from "react-bootstrap/Button";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import "./BookingDetails.scss"; // Import CSS
+import axios from "axios";
+import BASE_URL from "../../ServiceSystem/axios";
 
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import Modal from 'react-bootstrap/Modal';
-import Button from 'react-bootstrap/Button';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import './BookingDetails.scss'; // Import CSS
-import axios from 'axios';
-import BASE_URL from '../../ServiceSystem/axios';
-
-const BookingDetails = ({ show, handleClose, bookingDetails, onCancelBooking }) => {
+const BookingDetails = ({
+  show,
+  handleClose,
+  bookingDetails,
+  onCancelBooking,
+}) => {
   const navigate = useNavigate(); // Initialize navigate hook
-  const totalPrice = bookingDetails.reduce((total, booking) => total + booking.price, 0);
-  const bankCode = 'ncb';
-  localStorage.setItem('totalPrice', totalPrice);
+  const totalPrice = bookingDetails.reduce(
+    (total, booking) => total + booking.price,
+    0
+  );
+  const bankCode = "ncb";
+  localStorage.setItem("totalPrice", totalPrice);
   if (!bookingDetails || bookingDetails.length === 0) return null;
-
-
 
   const handlePayment = async () => {
     try {
-      const bookings = JSON.parse(localStorage.getItem('bookings'));
+      const bookings = JSON.parse(localStorage.getItem("bookings"));
       if (bookings && bookings.length > 0) {
-        const saveData = bookings.map(detail => ({
+        const saveData = bookings.map((detail) => ({
           customerId: detail.customerId,
           status: detail.status,
           typeBook: detail.typeBook,
           price: parseFloat(detail.price),
+          priceBooking: parseFloat(detail.priceBooking),
           date: detail.date,
-          scheduleId: detail.ScheduleId
+          scheduleId: detail.ScheduleId,
+          recurringType: detail.RecurringType,
+          recurringEndDate: detail.RecurringEndDate
         }));
-        const totalPrice = localStorage.getItem('totalPrice');
+        const totalPrice = localStorage.getItem("totalPrice");
         const booking = {
           customerId: saveData[0].customerId,
           status: saveData[0].status,
           totalPrice: totalPrice,
-        }
+        };
         // Thực hiện gọi API để lưu booking
         const response1 = await axios.post(`${BASE_URL}/booking`, {
-          bookings: saveData, booking: booking
+          bookings: saveData,
+          booking: booking,
         });
         if (response1.status === 200) {
           const BookingID = response1.data.booking.BookingID;
-          localStorage.setItem('bookingID', BookingID);
-          localStorage.removeItem('bookings');
+          localStorage.setItem("bookingID", BookingID);
+          localStorage.removeItem("bookings");
         }
       }
-      const BookingID = localStorage.getItem('bookingID');
-      const response = await axios.post(`${BASE_URL}/order/create_payment_url`, {
-        amount: totalPrice,
-        bankCode,
-        BookingID,
-      }, { withCredentials: true });
-
+      const BookingID = localStorage.getItem("bookingID");
+      const response = await axios.post(
+        `${BASE_URL}/order/create_payment_url`,
+        {
+          amount: totalPrice,
+          bankCode,
+          BookingID,
+        },
+        { withCredentials: true }
+      );
 
       // Hiển thị thông báo thành công
-      toast.success('Booking appointment successful!', {
+      toast.success("Booking appointment successful!", {
         position: "top-right",
         autoClose: 2000, // Thời gian hiển thị 2 giây
         hideProgressBar: true,
@@ -68,9 +80,9 @@ const BookingDetails = ({ show, handleClose, bookingDetails, onCancelBooking }) 
       // Redirect to the payment URL
       window.location.href = response.data; // Giả sử backend gửi lại một URL để chuyển hướng đến
     } catch (error) {
-      console.error('Error during payment:', error);
+      console.error("Error during payment:", error);
       // Xử lý lỗi ở đây (ví dụ: hiển thị thông báo lỗi)
-      toast.error('Payment failed. Please try again later.', {
+      toast.error("Payment failed. Please try again later.", {
         position: "top-right",
         autoClose: 5000, // Hiển thị thông báo lỗi trong 5 giây
         hideProgressBar: true,
@@ -82,29 +94,10 @@ const BookingDetails = ({ show, handleClose, bookingDetails, onCancelBooking }) 
     }
   };
 
-
-  // const handlePayment = () => {
-  //   // Hiển thị thông báo thành công
-  //   toast.success('Booking appointment successful!', {
-  //     position: "top-right",
-  //     autoClose: 2000, // Thời gian hiển thị 2 giây
-  //     hideProgressBar: true,
-  //     closeOnClick: true,
-  //     pauseOnHover: true,
-  //     draggable: true,
-  //     progress: undefined,
-  //   });
-
-  //   // Redirect to payment page using navigate
-  //   setTimeout(() => {
-  //     navigate('/payment', { state: { bookingDetails } });
-  //   }, 2000); // Đợi 2 giây trước khi chuyển trang
-  // };
-
   const handleCancelBooking = (details) => {
     onCancelBooking(details);
     // Hiển thị thông báo hủy đặt lịch
-    toast.info('Booking cancelled!', {
+    toast.info("Booking cancelled!", {
       position: "top-right",
       autoClose: 2000, // Thời gian hiển thị 2 giây
       hideProgressBar: true,
@@ -117,13 +110,16 @@ const BookingDetails = ({ show, handleClose, bookingDetails, onCancelBooking }) 
 
   const handleModalClose = () => {
     handleClose(); // Đóng modal
-    localStorage.removeItem('bookings');
-    window.location.reload(); // Tải lại trang sau khi đóng modal
   };
 
   return (
     <>
-      <Modal show={show} onHide={handleModalClose} size="lg" className="booking-details-modal">
+      <Modal
+        show={show}
+        onHide={handleModalClose}
+        size="lg"
+        className="booking-details-modal"
+      >
         <Modal.Header closeButton>
           <Modal.Title>Booking Details</Modal.Title>
         </Modal.Header>
@@ -135,6 +131,7 @@ const BookingDetails = ({ show, handleClose, bookingDetails, onCancelBooking }) 
                 <th>Dentist</th>
                 <th>Date</th>
                 <th>Slot Time</th>
+                <th>Type</th>
                 <th>Price</th>
                 <th>Action</th>
               </tr>
@@ -146,9 +143,18 @@ const BookingDetails = ({ show, handleClose, bookingDetails, onCancelBooking }) 
                   <td>{details.dentist}</td>
                   <td>{details.date}</td>
                   <td>{details.slotTime}</td>
-                  <td>{details.price.toLocaleString('vi-VN')} VNĐ</td>
                   <td>
-                    <Button variant="danger" className="cancel-booking-btn" onClick={() => handleCancelBooking(details)}>
+                    {details.RecurringType === "None" && "Đơn lẻ"}
+                    {details.RecurringType === "Weekly" && "Hằng tuần"}
+                    {details.RecurringType === "Monthly" && "Hằng tháng"}
+                  </td>
+                  <td>{details.price.toLocaleString("vi-VN")} VNĐ</td>
+                  <td>
+                    <Button
+                      variant="danger"
+                      className="cancel-booking-btn"
+                      onClick={() => handleCancelBooking(details)}
+                    >
                       Cancel Booking
                     </Button>
                   </td>
@@ -159,13 +165,25 @@ const BookingDetails = ({ show, handleClose, bookingDetails, onCancelBooking }) 
         </Modal.Body>
         <Modal.Footer className="justify-content-between">
           <div>
-            Total Price: {bookingDetails.reduce((total, booking) => total + booking.price, 0).toLocaleString('vi-VN')} VNĐ
+            Total Price:{" "}
+            {bookingDetails
+              .reduce((total, booking) => total + booking.price, 0)
+              .toLocaleString("vi-VN")}{" "}
+            VNĐ
           </div>
           <div>
-            <Button variant="primary" onClick={handlePayment} className="small-button">
+            <Button
+              variant="primary"
+              onClick={handlePayment}
+              className="small-button"
+            >
               Payment
             </Button>
-            <Button variant="secondary" onClick={handleModalClose} className="small-button">
+            <Button
+              variant="secondary"
+              onClick={handleModalClose}
+              className="small-button"
+            >
               Close
             </Button>
           </div>
@@ -177,6 +195,3 @@ const BookingDetails = ({ show, handleClose, bookingDetails, onCancelBooking }) 
 };
 
 export default BookingDetails;
-
-
-

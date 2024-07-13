@@ -103,13 +103,45 @@ const TreatmentUpload = () => {
         setResultImage(null);
     };
 
+    // const handleChangeStatus = async () => {
+    //     const { selectedBookingId, selectedStatus } = this.state;
+    //     try {
+    //         const updateStatus = {
+    //             BookingID: selectedBookingId,
+    //             Status: selectedStatus,
+    //         };
+    //         const response = await axios.put(`${BASE_URL}/updateBookingStatus`, updateStatus);
+    //         if (response.status === 200 && response.data.updateBooking !== null) {
+    // //             Update the state to reflect the new status
+    //             const updatedBookings = this.state.bookings.map(booking => {
+    //                 if (booking.BookingID === selectedBookingId) {
+    //                     return {
+    //                         ...booking,
+    //                         BookingDetails: booking.BookingDetails.map(detail => ({
+    //                             ...detail,
+    //                             Status: selectedStatus
+    //                         }))
+    //                     };
+    //                 }
+    //                 return booking;
+    //             });
+    //             this.setState({ bookings: updatedBookings, showModal: false });
+    //         } else {
+    //             alert('Error updating status');
+    //         }
+    //     } catch (error) {
+    //         console.error('Error updating status:', error);
+    //     }
+    // };
+
     const handleChangeStatus = async () => {
         try {
-            const response = await axios.put(`${BASE_URL}/updateBookingStatus`, {
-                bookingId: selectedBookingId,
-                status: selectedStatus
-            });
-            if (response.data && response.data.errCode === 0) {
+            const updateStatus = {
+                BookingID: selectedBookingId,
+                Status: selectedStatus,
+            };
+            const response = await axios.put(`${BASE_URL}/updateBookingStatus`, updateStatus);
+            if (response.status === 200 && response.data.updateBooking !== null) {
                 const updatedBookings = bookings.map(booking =>
                     booking.BookingID === selectedBookingId ? { ...booking, Status: selectedStatus } : booking
                 );
@@ -177,6 +209,11 @@ const TreatmentUpload = () => {
             console.error('Error deleting treatment:', error);
         }
     };
+    const toVietnamTime = (dateString) => {
+        const date = new Date(dateString);
+        date.setHours(date.getHours() - 7); // Cộng thêm 7 giờ để đúng với giờ Việt Nam
+        return date;
+    };
 
     return (
         <div className='treatment-booking'>
@@ -217,15 +254,15 @@ const TreatmentUpload = () => {
                                                             <td rowSpan={booking.BookingDetails.length}>{booking.Customer.CustomerName}</td>
                                                         </>
                                                     )}
-                                                    <td>{new Date(detail.DateBook).toLocaleString()}</td>
+                                                    <td>{(detail.DateBook).toLocaleString('vi-VN')}</td>
                                                     <td>{detail.TypeBook}</td>
-                                                    <td>{new Date(detail.MedicalDay).toLocaleDateString()}</td>
+                                                    <td>{new Date(detail.MedicalDay).toLocaleDateString('vi-VN')}</td>
                                                     <td>{detail.DentistSchedule?.AvailableSlot?.Time}</td>
                                                     <td>{detail.DentistSchedule?.Dentist?.DentistName}</td>
                                                     <td>{detail.Status}</td>
-                                                    <td>{detail.PriceBooking}</td>
+                                                    <td>{parseFloat(detail.PriceBooking).toLocaleString('vi-VN')} VND</td>
                                                     <td>{treatment.TreatmentID}</td>
-                                                    <td>{new Date(treatment.TreatmentDate).toLocaleDateString()}</td>
+                                                    <td>{new Date(treatment.TreatmentDate).toLocaleDateString('vi-VN')}</td>
                                                     <td>{treatment.Note}</td>
                                                     <td>
                                                         <img
@@ -369,3 +406,4 @@ const TreatmentUpload = () => {
 };
 
 export default TreatmentUpload;
+

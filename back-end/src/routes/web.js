@@ -7,6 +7,7 @@ import dentistController from "../controllers/dentistController";
 import TreatmentController, {
   upload,
 } from "../controllers/treatmentController";
+import clinicController from "../controllers/clinicController";
 import profileController from "../controllers/profileController";
 // init all web routes
 
@@ -57,7 +58,9 @@ let initAllWebRoutes = (app) => {
   router.get("/getAllClinic", AccountController.getAllClinic);
   router.get("/getAllBooking", BookingController.getAllBooking);
   router.put("/booking/updateStatus", BookingController.updateBookingStatus);
-
+  router.put("/updateBookingStatus", BookingController.updateBookingStatusFromOwner);
+  router.post("/clinics", clinicController.createNewClinic);
+  router.put('/clinics/:id', clinicController.updateClinic);
   ///////////////////////////user
   router.post("/handleCreateUser", AccountController.handleCreateUser);
   router.get("/getAllUser", AccountController.handleGetAllUser);
@@ -74,6 +77,10 @@ let initAllWebRoutes = (app) => {
   router.get("/handleGetAllDentist/:id", dentistController.getAllDentist);
   router.delete("/handleDeleteDentist", dentistController.handleDeleteDentist);
   router.put("/handleEditDentist", dentistController.handleEditDentist);
+
+  ////////////////clinic
+  router.get("/handleGetAllClinic", clinicController.handleGetAllClinic);
+  router.get("/handleGetClinicOwner", clinicController.handleGetClinicOwner);
 
   /**************************Nam New API***************/
   router.get("/getAllDentists", DentistController.getAllDentist);
@@ -93,7 +100,6 @@ let initAllWebRoutes = (app) => {
   );
   router.delete('/treatments/:id', TreatmentController.deleteTreatment);
   router.patch('/treatments/:id', upload.single('Result'), TreatmentController.updateTreatment);
-  //router.get('/treatments/customer/:customerId', TreatmentController.getAllCustomerTreatments);
   router.get("/treatmentCus", TreatmentController.getTreatments);
 
   router.get('/profile/:accountId', profileController.viewProfile);

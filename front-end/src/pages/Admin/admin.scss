@@ -16,7 +16,7 @@
     background-color: #1d2634;
     color: #9e9ea4;
     font-family: 'Montserrat', sans-serif;
-    height: 10000px;
+    height: 100%;
 }
 
 .icon {
@@ -50,7 +50,6 @@
     grid-template-areas:
         'sidebar header header header'
         'sidebar main main main';
-    height: 100vh;
 }
 
 /* Header  */
@@ -174,6 +173,11 @@
 
 .card:nth-child(4) {
     background-color: #d50000;
+}
+
+.card:nth-child(5) {
+    background-color: bisque;
+    color: black;
 }
 
 .card-inner {

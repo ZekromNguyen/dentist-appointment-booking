@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
+import axios from 'axios';
+import BASE_URL from '../../ServiceSystem/axios';
 
 const EditClinicModal = ({ show, handleClose, clinic, onClinicUpdated }) => {
   const [updatedClinic, setUpdatedClinic] = useState(clinic);
@@ -15,13 +17,10 @@ const EditClinicModal = ({ show, handleClose, clinic, onClinicUpdated }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`/api/clinics/${updatedClinic.ClinicID}`, {
-        method: 'PUT',
+      const response = await axios.put(`${BASE_URL}/clinics/${updatedClinic.ClinicID}`, updatedClinic, {
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updatedClinic)
       });
-      const data = await response.json();
-      onClinicUpdated(data);
+      onClinicUpdated(response.data);
       handleClose();
     } catch (error) {
       console.error('Error updating clinic:', error);
@@ -81,6 +80,16 @@ const EditClinicModal = ({ show, handleClose, clinic, onClinicUpdated }) => {
               value={updatedClinic.LocationID}
               onChange={handleChange}
               required
+            />
+          </Form.Group>
+          <Form.Group>
+            <Form.Label>Description</Form.Label>
+            <Form.Control
+              as="textarea"
+              name="Description"
+              value={updatedClinic.Description}
+              onChange={handleChange}
+              rows={3}
             />
           </Form.Group>
           <div className="d-flex justify-content-between">

@@ -152,3 +152,12 @@
     color: white;
     background-color: cadetblue;
 }
+
+.user-table {
+    max-height: 500px;
+    /* Chiều cao tối đa của bảng */
+    /* Ngăn không cho nội dung tràn ra ngoài chiều ngang */
+    overflow-y: auto;
+    overflow-x: hidden;
+    width: 900px;
+}

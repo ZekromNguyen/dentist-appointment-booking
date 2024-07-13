@@ -1,7 +1,5 @@
 import express from 'express';
-import Treatment from '../model/treatment';
-import Booking from '../model/booking';
-import BookingDetail from '../model/bookingDetail';
+import {Booking, BookingDetail, Treatment} from "../model/model";
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';

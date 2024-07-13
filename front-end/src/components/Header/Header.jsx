@@ -67,38 +67,38 @@ export default function Header() {
                     </div>
                 </div>
                 <div className="content-login-register">
-                    {account ? (
-                        <div className="logged-in">
-                            <FaUser className="icon-user" />
-                            <span>Xin chào, {account.user}</span>
-                            <div className="dropdown-menu">
-                                <Link to={`/profile/${account.id}`}>
-                                    <FaUser />
-                                    Profile
-                                </Link>
-                                <Link to="/settings">
-                                    <FaCogs />
-                                    Settings
-                                </Link>
-                                <button onClick={handleLogout}>
-                                    <FaSignOutAlt />
-                                    Logout
-                                </button>
-                            </div>
-                        </div>
-                    ) : (
-                        <div className="content-auth">
-                            <div className="auth-left">
-                                <FaUser className="icon-user" />
-                                <Link to="/Login" className="Login">Login</Link>
-                            </div>
-                            <div className='auth-right'>
-                                <div className="seperate">|</div>
-                                <Link to="/Register" className="register">Sign up</Link>
-                            </div>
-                        </div>
-                    )}
+            {account ? (
+                <div className="logged-in">
+                    <FaUser className="icon-user" />
+                    <span>Xin chào, {account.user}</span>
+                    <div className="dropdown-menu">
+                        <Link to={`/profile/${account.id}`}>
+                            <FaUser />
+                            Profile
+                        </Link>
+                        <Link to="/settings">
+                            <FaCogs />
+                            Settings
+                        </Link>
+                        <button onClick={handleLogout}>
+                            <FaSignOutAlt />
+                            Logout
+                        </button>
+                    </div>
                 </div>
+            ): (
+                <div className="content-auth">
+                    <div className="auth-left">
+                        <FaUser className="icon-user" />
+                        <Link to="/Login" className="Login">Login</Link>
+                    </div>
+                    <div className='auth-right'>
+                        <div className="seperate">|</div>
+                        <Link to="/Register" className="register">Sign up</Link>
+                    </div>
+                </div>
+            )}
+            </div>
                 <div className="content-support">
                     <div className='support-child'>
                         <FaUserClock className="clock-history" />

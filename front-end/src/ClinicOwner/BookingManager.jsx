@@ -5,6 +5,7 @@ import { Modal, Button, Form } from 'react-bootstrap';
 import './BookingManager.scss';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import BASE_URL from '../ServiceSystem/axios';
+
 class BookingManager extends Component {
     constructor(props) {
         super(props);
@@ -20,6 +21,7 @@ class BookingManager extends Component {
         await this.handleGetAllBookings();
     }
 
+
     handleGetAllBookings = async () => {
         try {
             const response = await axios.get(`${BASE_URL}/getAllBooking`);
@@ -33,12 +35,15 @@ class BookingManager extends Component {
         }
     };
 
-    handleOpenModal = (bookingId, currentStatus) => {
-        this.setState({
-            showModal: true,
-            selectedBookingId: bookingId,
-            selectedStatus: currentStatus
-        });
+    handleOpenModal = (bookingId) => {
+        const selectedBooking = this.state.bookings.find(booking => booking.BookingID === bookingId);
+        if (selectedBooking) {
+            this.setState({
+                showModal: true,
+                selectedBookingId: bookingId,
+                selectedStatus: selectedBooking.BookingDetails[0].Status // lấy trạng thái của chi tiết đầu tiên
+            });
+        }
     };
 
     handleCloseModal = () => {
@@ -52,14 +57,25 @@ class BookingManager extends Component {
     handleChangeStatus = async () => {
         const { selectedBookingId, selectedStatus } = this.state;
         try {
-            const response = await axios.put(`${BASE_URL}/updateBookingStatus`, {
-                bookingId: selectedBookingId,
-                status: selectedStatus
-            });
-            if (response.data && response.data.errCode === 0) {
-                const updatedBookings = this.state.bookings.map(booking =>
-                    booking.BookingID === selectedBookingId ? { ...booking, Status: selectedStatus } : booking
-                );
+            const updateStatus = {
+                BookingID: selectedBookingId,
+                Status: selectedStatus,
+            };
+            const response = await axios.put(`${BASE_URL}/updateBookingStatus`, updateStatus);
+            if (response.status === 200 && response.data.updateBooking !== null) {
+                // Update the state to reflect the new status
+                const updatedBookings = this.state.bookings.map(booking => {
+                    if (booking.BookingID === selectedBookingId) {
+                        return {
+                            ...booking,
+                            BookingDetails: booking.BookingDetails.map(detail => ({
+                                ...detail,
+                                Status: selectedStatus
+                            }))
+                        };
+                    }
+                    return booking;
+                });
                 this.setState({ bookings: updatedBookings, showModal: false });
             } else {
                 alert('Error updating status');
@@ -71,6 +87,12 @@ class BookingManager extends Component {
 
     handleStatusChange = (event) => {
         this.setState({ selectedStatus: event.target.value });
+    };
+
+    toVietnamTime = (dateString) => {
+        const date = new Date(dateString);
+        date.setHours(date.getHours() - 7); // Cộng thêm 7 giờ để đúng với giờ Việt Nam
+        return date;
     };
 
     render() {
@@ -109,13 +131,13 @@ class BookingManager extends Component {
                                                     {booking.Customer.CustomerName}
                                                 </td>
                                             )}
-                                            <td>{new Date(detail.DateBook).toLocaleString()}</td>
+                                            <td>{this.toVietnamTime(detail.DateBook).toLocaleString('vi-VN')}</td>
                                             <td>{detail.TypeBook}</td>
-                                            <td>{new Date(detail.MedicalDay).toLocaleDateString()}</td>
+                                            <td>{new Date(detail.MedicalDay).toLocaleDateString('vi-VN')}</td>
                                             <td>{detail.DentistSchedule?.AvailableSlot?.Time}</td>
                                             <td>{detail.DentistSchedule?.Dentist?.DentistName}</td>
                                             <td>{detail.Status}</td>
-                                            <td>{detail.PriceBooking}</td>
+                                            <td>{parseFloat(detail.PriceBooking).toLocaleString('vi-VN')} VNĐ</td>
                                             {index === 0 && (
                                                 <td rowSpan={booking.BookingDetails.length}>
                                                     <Button onClick={() => this.handleOpenModal(booking.BookingID, booking.Status)}>
@@ -144,8 +166,8 @@ class BookingManager extends Component {
                                     onChange={this.handleStatusChange}
                                 >
                                     <option value="Pending">Pending</option>
-                                    <option value="Confirmed">Confirmed</option>
-                                    <option value="Completed">Completed</option>
+                                    {/* <option value="Confirmed">Confirmed</option>
+                                    <option value="Completed">Completed</option> */}
                                     <option value="Cancelled">Cancelled</option>
                                 </Form.Control>
                             </Form.Group>

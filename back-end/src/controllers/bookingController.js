@@ -14,15 +14,20 @@ class BookingController {
   //Hàm get các slot khám theo ngày
   async getSlotsByDateByDentistService(req, res) {
     try {
-      const { dentistID, date } = req.query;
+      const { dentistID, date, isNotCustomer } = req.query;
       console.log(dentistID);
       console.log(date);
+      console.log(isNotCustomer);
       const slots = await BookingService.getSlotsByDateByDentistService(
         date,
-        dentistID
+        dentistID,
+        isNotCustomer
       );
       console.log(slots);
-      res.json(slots);
+      if(!slots) {
+        return res.status(404).json({message:"Success, Not found"});
+      }
+      res.status(200).json({message:"Success",slots});
     } catch (error) {
       console.error("Error fetching1 slots by date:", error);
       res.status(500).send("Internal Server Error");
@@ -32,7 +37,6 @@ class BookingController {
   async getAllBookingByCustomerId(req, res) {
     try {
       const { customerId } = req.query;
-      console.log(customerId);
       const bookings = await BookingService.getAllBookingByCustomerId(
         customerId
       );
@@ -66,7 +70,7 @@ class BookingController {
       }
       const results = [];
       for (const booking of bookings) {
-        const { price, status, typeBook, date, scheduleId } =
+        const { priceBooking, status, typeBook, date, scheduleId, recurringType,recurringEndDate } =
           booking;
         const currentDateTime = new Date(); // Lấy thời gian hiện tại
         const currentDateTimeGMT7 = new Date(
@@ -77,10 +81,12 @@ class BookingController {
           currentDateTimeGMT7,
           typeBook,
           status,
-          price,
+          priceBooking,
           date,
           newBooking.BookingID,
-          scheduleId
+          scheduleId,
+          recurringType,
+          recurringEndDate,
         );
         if (!newBookingDetail) {
           return res
@@ -210,7 +216,21 @@ class BookingController {
       res.status(500).json({ error: "Internal Server Error" });
     }
   }
-
+ async updateBookingStatusFromOwner(req,res){
+  try {
+    const updateStatus = req.body;
+    console.log(updateStatus);
+    const {BookingID, Status} = updateStatus;
+    const updateBooking = await BookingService.updateBookingStatusFromOwner(BookingID,Status);
+      if(!updateBooking){
+        res.status(400).json({message:"Failed"})
+      }
+      res.status(200).json({message:"Success",updateBooking});
+  } catch (error) {
+    console.error("Error update Booking status:", error);
+      res.status(500).json({ error: "Error update Booking status from Owner" });
+  }
+ }
   async updateBookingStatus(req,res){
     try {
       const updateStatus = req.body;
@@ -226,6 +246,7 @@ class BookingController {
       res.status(500).json({ error: "Error update Booking status" });
     }
   }
+
 
   async showPaymentPage(req, res) {
     try {

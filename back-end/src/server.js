@@ -13,7 +13,7 @@ let app = express();
 // Enable CORS for all routes
 app.use(
   cors({
-    origin: "http://localhost:5173", // URL của ứng dụng React
+    origin: ["http://datlich99.site","http://localhost:5173"], // URL của ứng dụng React
     credentials: true,
   })
 );
@@ -58,7 +58,9 @@ configViewEngine(app);
 //init all web routes
 initWebAllRoutes(app);
 // app.use(authRoutes);
-
+app.on('clientError', (err, socket) => {
+  socket.destroy(err); // Xử lý và đóng socket khi xảy ra lỗi
+});
 let port = process.env.PORT;
 
 app.listen(port, () => {

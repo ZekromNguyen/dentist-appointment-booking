@@ -39,7 +39,7 @@ export default function Login() {
 
             if (response && response.data && response.data.message === "Login successfully") {
                 localStorage.setItem('account', JSON.stringify(response.data.user));
-                const Role = response.data.user.RoleID;
+                const Role = response.data.user.RoleID; // Đảm bảo rằng `RoleID` tồn tại trong đối tượng user
                 console.log('check role', Role);
 
                 if (Role === 1) {
@@ -47,8 +47,6 @@ export default function Login() {
                     navigate("/");
                 } else if (Role === 2) {
                     toast.success("Chúc mừng bạn đăng nhập thành công");
-                    localStorage.setItem('dentistId', response.data.user.DentistID); // Store dentistID in local storage
-                    console.log("check local", localStorage)
                     navigate("/Doctor");
                 } else if (Role === 3) {
                     toast.success("Chúc mừng bạn đăng nhập thành công");

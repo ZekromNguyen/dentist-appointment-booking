@@ -11,7 +11,7 @@ import bookingpageIcon from '/img-logo-home.jpg';
 import goback from '/GoBack.png';
 import Booking from '../Booking/Booking'; // Import the Booking component
 import Payment from '../PaymentPage/Payment';
-import { checkSession } from '../../Service/userService';
+import { checkSession, logout } from '../../Service/userService';
 import BookingHistory from '../BookingHistory/BookingHistory';
 import BookingResult from '../BookingResult/BookingResult'; // Import the BookingResult component
 
@@ -48,6 +48,7 @@ function BookingPage() {
 
   const handleLogout = () => {
     localStorage.removeItem('account');
+    logout();
     navigate('/login'); // Navigate to the login page
   };
 
@@ -82,6 +83,7 @@ function BookingPage() {
             <a className="nav-link active" onClick={handleHomeClick} style={{ cursor: 'pointer' }}>
               <img src={homeIcon} alt="Home" className="icon" /> Home
             </a>
+            
             <a className="nav-link" onClick={handleBookingClick} style={{ cursor: 'pointer' }}>
               <img src={bookingIcon} alt="Booking" className="icon" /> Booking Now
             </a>
@@ -112,7 +114,7 @@ function BookingPage() {
             {showBooking && <Booking />}
             {showBookingHistory && <BookingHistory />}
             {showBookingResult && <BookingResult />}
-
+            
             {!showBooking && !showBookingHistory && !showBookingResult && (
               <img src={bookingpageIcon} alt="Booking Image" className="booking-image" />
             )}

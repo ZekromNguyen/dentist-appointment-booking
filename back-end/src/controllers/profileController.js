@@ -1,10 +1,11 @@
 // controllers/profileController.js
-
-import Account from '../model/account';
-import ClinicOwner from '../model/clinicOwner';
-import Customer from '../model/customer';
-import Dentist from '../model/dentist';
-import Role from '../model/role';
+import {
+    Account,
+    Customer,
+    Dentist,
+    ClinicOwner,
+    Role,
+} from "../model/model";
 
 class ProfileController {
     async viewProfile(req, res) {
@@ -33,7 +34,7 @@ class ProfileController {
                 Role: account.Role ? account.Role.RoleName : 'No role assigned',
                 CustomerName: account.Customer ? account.Customer.CustomerName : null,
                 DentistName: account.Dentist ? account.Dentist.DentistName : null,
-                ClinicOwnerName: account.ClinicOwner ? account.ClinicOwner.ClinicOwnerName : null
+                ClinicOwnerName: account.ClinicOwner ? account.ClinicOwner.ClinicOWnerName : null
             };
 
             res.json(profileData);
@@ -71,7 +72,7 @@ class ProfileController {
                 Role: account.Role ? account.Role.RoleName : 'No role assigned',
                 CustomerName: account.Customer ? account.Customer.CustomerName : null,
                 DentistName: account.Dentist ? account.Dentist.DentistName : null,
-                ClinicOwnerName: account.ClinicOwner ? account.ClinicOwner.ClinicOwnerName : null
+                ClinicOwnerName: account.ClinicOwner ? account.ClinicOwner.ClinicOWnerName : null
             };
 
             res.render('editProfile', { profileData });
@@ -102,7 +103,7 @@ class ProfileController {
 
             const clinicOwner = await ClinicOwner.findOne({ where: { AccountID: accountId } });
             if (clinicOwner) {
-                await ClinicOwner.update({ ClinicOwnerName: clinicOwnerName }, { where: { AccountID: accountId } });
+                await ClinicOwner.update({ ClinicOWnerName: clinicOwnerName }, { where: { AccountID: accountId } });
             }
 
             res.redirect(`/profile/${accountId}`);

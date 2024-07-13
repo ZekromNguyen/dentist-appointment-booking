@@ -1,8 +1,7 @@
 import { Model, DataTypes } from "sequelize";
 import sequelize from "../config/database";
-import Role from "./role";
 
-class Account extends Model { }
+class Account extends Model {}
 Account.init(
   {
     AccountID: {
@@ -37,7 +36,7 @@ Account.init(
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: Role, // use the Role model
+        model: "Role", // name of the Role model
         key: "RoleID",
       },
     },
@@ -53,9 +52,5 @@ Account.init(
     timestamps: false,
   }
 );
-
-// Establish association
-Account.belongsTo(Role, { foreignKey: "RoleID" });
-Role.hasMany(Account, { foreignKey: "RoleID" });
 
 export default Account;

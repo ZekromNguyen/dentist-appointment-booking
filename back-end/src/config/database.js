@@ -8,8 +8,7 @@ const sequelize = new Sequelize(
   {
     host: process.env.DB_HOST,
     dialect: process.env.DB_TYPE,
+    logging: false,
   }
 );
-
-
-module.exports = sequelize;
+export default sequelize;
