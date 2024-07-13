@@ -47,6 +47,16 @@ BookingDetail.init(
         key: "ScheduleID",
       },
     },
+    RecurringType: {
+      type: DataTypes.ENUM,
+      values: ["None", "Weekly", "Monthly"],
+      allowNull: false,
+      defaultValue: "None",
+    },
+    RecurringEndDate: {
+      type: DataTypes.DATEONLY,
+      allowNull: true,
+    },
   },
   {
     sequelize,

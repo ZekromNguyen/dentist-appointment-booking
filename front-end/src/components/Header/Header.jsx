@@ -70,7 +70,7 @@ export default function Header() {
                     <FaUser className="icon-user" />
                     <span>Xin chào, {account.user}</span>
                     <div className="dropdown-menu">
-                        <Link to="/profile">
+                        <Link to={`/profile/${account.id}`}>
                             <FaUser />
                             Profile
                         </Link>

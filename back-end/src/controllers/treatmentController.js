@@ -1,6 +1,10 @@
-import Treatment from '../model/treatment';
+import express from 'express';
+import {Booking, BookingDetail, Treatment} from "../model/model";
 import multer from 'multer';
 import path from 'path';
+import fs from 'fs';
+
+const router = express.Router();
 
 // Multer configuration
 const storage = multer.diskStorage({
@@ -59,7 +63,6 @@ class TreatmentController {
             if (!treatment || !treatment.Result) {
                 return res.status(404).json({ message: 'Treatment or image not found' });
             }
-            // Assuming Result is the URL or path to the image
             res.status(200).sendFile(path.resolve(treatment.Result));
         } catch (error) {
             console.error('Error fetching treatment image:', error);
@@ -82,10 +85,59 @@ class TreatmentController {
         }
     }
 
+    // async updateTreatment(req, res) {
+    //     const treatmentId = req.params.id; // Extract treatment ID from URL params
+    //     const { BookingDetailID, TreatmentDate, Note } = req.body; // Extract updated treatment data
+    //     let Result = null;
+
+    //     // Check if a new image file is uploaded
+    //     if (req.file) {
+    //         Result = `/uploads/images/${req.file.filename}`; // Set new image URL
+    //     }
+
+    //     try {
+    //         // Find the treatment record by ID
+    //         const treatment = await Treatment.findByPk(treatmentId);
+
+    //         if (!treatment) {
+    //             return res.status(404).json({ message: 'Treatment not found' });
+    //         }
+
+    //         // Update treatment fields
+    //         treatment.BookingDetailID = BookingDetailID;
+    //         treatment.TreatmentDate = TreatmentDate;
+    //         treatment.Note = Note;
+
+    //         // Update Result field only if a new image is uploaded
+    //         if (Result) {
+    //             const currentResultFilePath = treatment.Result; // Get current image file path
+
+    //             // Delete current image file
+    //             if (currentResultFilePath) {
+    //                 deleteFile(path.resolve(currentResultFilePath));
+    //                 console.log(`Deleted old file: ${currentResultFilePath}`);
+    //             }
+
+    //             treatment.Result = Result; // Set new image URL to treatment record
+    //         }
+
+    //         // Save updated treatment record to database
+    //         await treatment.save();
+
+    //         // Return success response
+    //         return res.status(200).json({ message: 'Treatment updated successfully', treatment });
+    //     } catch (error) {
+    //         console.error('Error updating treatment:', error);
+    //         return res.status(500).json({ message: 'Internal server error' });
+    //     }
+    // }
+
     async updateTreatment(req, res) {
         const treatmentId = req.params.id; // Extract treatment ID from URL params
-        const { BookingDetailID, TreatmentDate, Note } = req.body; // Extract updated treatment data
+        const { TreatmentDate, Note } = req.body; // Extract updated treatment data
         let Result = null;
+        console.log('Treatment ID:', treatmentId);
+        console.log('Request body:', req.body);
 
         // Check if a new image file is uploaded
         if (req.file) {
@@ -101,15 +153,18 @@ class TreatmentController {
             }
 
             // Update treatment fields
-            treatment.BookingDetailID = BookingDetailID;
             treatment.TreatmentDate = TreatmentDate;
             treatment.Note = Note;
 
             // Update Result field only if a new image is uploaded
             if (Result) {
                 const currentResultFilePath = treatment.Result; // Get current image file path
+
                 // Delete current image file
-                // Implement your file deletion logic here (e.g., using fs.unlinkSync)
+                if (currentResultFilePath) {
+                    deleteFile(path.resolve(currentResultFilePath));
+                    console.log(`Deleted old file: ${currentResultFilePath}`);
+                }
 
                 treatment.Result = Result; // Set new image URL to treatment record
             }
@@ -141,15 +196,68 @@ class TreatmentController {
             return res.status(500).json({ message: 'Internal server error' });
         }
     }
+
     async getAllTreatments(req, res) {
         try {
-            const treatments = await Treatment.findAll(); // Example Sequelize findAll usage
-            res.json({ treatments: treatments }); // Return treatments as JSON
+            const treatments = await Treatment.findAll();
+            res.json({ treatments: treatments });
         } catch (error) {
             console.error('Error fetching treatments:', error);
             res.status(500).send('Error fetching treatments');
         }
     }
+
+    // New method to get treatments by BookingDetailID
+    async getTreatmentsByBookingDetailID(req, res) {
+        const { bookingDetailID } = req.params;
+
+        try {
+            const treatments = await Treatment.findAll({
+                where: { BookingDetailID: bookingDetailID }
+            });
+            if (!treatments.length) {
+                return res.status(404).json({ message: 'No treatments found for this BookingDetailID' });
+            }
+            res.status(200).json({ treatments });
+        } catch (error) {
+            console.error('Error fetching treatments:', error);
+            res.status(500).json({ message: 'Internal server error' });
+        }
+    }
+
+    // Method to get treatments with associated booking details
+    async getTreatments(req, res) {
+        const { customerId, bookingId } = req.query;
+
+        try {
+            const treatments = await Treatment.findAll({
+                include: [
+                    {
+                        model: BookingDetail,
+                        as: 'BookingDetail',
+                        include: [
+                            {
+                                model: Booking,
+                                as: 'Booking',
+                                where: {
+                                    CustomerID: customerId,
+                                    BookingID: bookingId
+                                }
+                            }
+                        ]
+                    }
+                ]
+            });
+
+            res.status(200).json({ treatments });
+        } catch (error) {
+            console.error('Error fetching treatments:', error);
+            res.status(500).json({ message: 'Internal server error' });
+        }
+    }
+
+
 }
+
 export default new TreatmentController();
 export { upload, deleteFile };

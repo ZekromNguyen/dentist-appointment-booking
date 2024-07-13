@@ -1,0 +1,127 @@
+$primary-color: #007bff;
+$secondary-color: #f0f2f5;
+$text-color: #333;
+$border-color: #ccc;
+$box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+$font-family: 'Arial, sans-serif';
+
+@mixin flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+@mixin container {
+    padding: 20px;
+    border-radius: 8px;
+    width: 800px;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.body-treatment {
+    display: flex;
+    justify-content: center;
+}
+
+.treatment-upload-container {
+    @include container;
+}
+
+h1,
+h2 {
+    color: $text-color;
+    margin-bottom: 20px;
+}
+
+.treatment-form-group {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+}
+
+.treatment-form-group label {
+    flex: 1;
+    text-align: left;
+    margin-right: 10px;
+    font-weight: bold;
+}
+
+.treatment-form-group input[type='text'],
+.treatment-form-group input[type='file'] {
+    flex: 2;
+    width: calc(100% - 10px);
+    padding: 10px;
+    border: 1px solid $border-color;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.treatment-form-group input[type='file'] {
+    padding: 3px;
+}
+
+button {
+    background-color: $primary-color;
+    color: #fff;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+        background-color: darken($primary-color, 10%);
+    }
+}
+
+.treatment-message {
+    margin-top: 20px;
+    font-size: 14px;
+    color: $text-color;
+}
+
+.treatment-list {
+    list-style-type: none;
+    padding: 0;
+    text-align: left;
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.treatment-list li {
+    background-color: #f9f9f9;
+    padding: 10px;
+    border-radius: 4px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+
+    p {
+        margin: 0;
+
+        strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+    }
+
+    img {
+        max-width: 100%;
+        border-radius: 4px;
+        margin-top: 10px;
+    }
+}
+
+$treatment-table-width: 100%; // Định nghĩa chiều rộng của bảng
+$treatment-table-font-size: 16px; // Định nghĩa kích thước font chữ cho bảng
+
+.treatment-table {
+    width: $treatment-table-width !important;
+
+    thead th {
+        width: $treatment-table-width !important;
+        font-size: $treatment-table-font-size !important;
+    }
+}

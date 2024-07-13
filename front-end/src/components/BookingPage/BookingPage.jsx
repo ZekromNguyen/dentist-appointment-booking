@@ -8,11 +8,13 @@ import paymentIcon from '/History.png';
 import historyIcon from '/History.png';
 import logoutIcon from '/logout.png';
 import bookingpageIcon from '/img-logo-home.jpg';
+import resultIcon from '/resultIcon.jpg';
 import goback from '/GoBack.png';
 import Booking from '../Booking/Booking'; // Import the BookingComponent
 import Payment from '../PaymentPage/Payment';
 import { checkSession,logout } from '../../Service/userService';
 import BookingHistory from '../BookingHistory/BookingHistory';
+import BookingResult from '../BookingResult/BookingResult'; // Import the BookingResult component
 
 function BookingPage() {
   const navigate = useNavigate();
@@ -20,6 +22,7 @@ function BookingPage() {
   const [customerId, setCustomerId] = useState('');
   const [customerName, setCustomerName] = useState(''); // State to hold customer name
   const [showBookingHistory, setShowBookingHistory] = useState(false); // State to control BookingHistory component display
+  const [showBookingResult, setShowBookingResult] = useState(false); // State to control BookingResult component display
 
   useEffect(() => {
     // Check session when component mounts
@@ -57,11 +60,19 @@ function BookingPage() {
   const handleBookingClick = () => {
     setShowBooking(true); // Show Booking component when Booking button is clicked
     setShowBookingHistory(false); // Hide BookingHistory component
+    setShowBookingResult(false); // Hide BookingResult component
   };
 
   const handleBookingHistoryClick = () => {
     setShowBookingHistory(true); // Show BookingHistory component when BookingHistory button is clicked
     setShowBooking(false); // Hide Booking component
+    setShowBookingResult(false); // Hide BookingResult component
+  };
+
+  const handleBookingResultClick = () => {
+    setShowBookingResult(true); // Show BookingResult component when BookingResult button is clicked
+    setShowBooking(false); // Hide Booking component
+    setShowBookingHistory(false); // Hide BookingHistory component
   };
 
   return (
@@ -73,6 +84,7 @@ function BookingPage() {
             <a className="nav-link active" onClick={handleHomeClick} style={{ cursor: 'pointer' }}>
               <img src={homeIcon} alt="Home" className="icon" /> Home
             </a>
+            
             <a className="nav-link" onClick={handleBookingClick} style={{ cursor: 'pointer' }}>
               <img src={bookingIcon} alt="Booking" className="icon" /> Booking Now
             </a>
@@ -81,6 +93,9 @@ function BookingPage() {
             </a>
             <a className="nav-link" onClick={handleBookingHistoryClick} style={{ cursor: 'pointer' }}>
               <img src={historyIcon} alt="Booking History" className="icon" /> Booking History
+            </a>
+            <a className="nav-link" onClick={handleBookingResultClick} style={{ cursor: 'pointer' }}>
+              <img src={resultIcon} alt="Booking Result" className="icon" /> Booking Result
             </a>
             <a className="nav-link" onClick={handleGoBack} style={{ cursor: 'pointer' }}>
               <img src={goback} alt="Go Back" className="icon" /> Go Back
@@ -99,8 +114,9 @@ function BookingPage() {
           <div className="body-section">
             {showBooking && <Booking />}
             {showBookingHistory && <BookingHistory />}
-
-            {!showBooking && !showBookingHistory && (
+            {showBookingResult && <BookingResult />}
+            
+            {!showBooking && !showBookingHistory && !showBookingResult && (
               <img src={bookingpageIcon} alt="Booking Image" className="booking-image" />
             )}
           </div>

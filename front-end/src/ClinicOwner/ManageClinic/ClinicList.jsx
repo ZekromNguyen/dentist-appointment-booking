@@ -3,7 +3,7 @@ import { Table, Button } from 'react-bootstrap';
 import EditClinicModal from './ModelEditClinic';
 import './ClinicList.scss';
 
-const ClinicList = ({ clinics }) => {
+const ClinicList = ({ clinics, onClinicUpdated }) => {
   const [selectedClinic, setSelectedClinic] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
 
@@ -18,11 +18,11 @@ const ClinicList = ({ clinics }) => {
   };
 
   const handleClinicUpdated = (updatedClinic) => {
-    // Update the clinics list with the updated clinic
+    // Cập nhật danh sách phòng khám với phòng khám đã được chỉnh sửa
     const updatedClinics = clinics.map(clinic =>
       clinic.ClinicID === updatedClinic.ClinicID ? updatedClinic : clinic
     );
-    // Do something with the updatedClinics, like updating the state
+    onClinicUpdated(updatedClinics);
   };
 
   return (

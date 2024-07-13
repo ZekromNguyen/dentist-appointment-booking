@@ -1,5 +1,6 @@
 import { Sequelize } from "sequelize";
-import Clinic from '../model/clinic'; // Điều chỉnh đường dẫn và tên file nếu cần thiết
+import Clinic from "../model/clinic"; // Điều chỉnh đường dẫn và tên file nếu cần thiết
+import moment from "moment";
 
 import {
   AvailableSlot,
@@ -72,7 +73,10 @@ class DentistService {
             },
           },
         ],
-        order:[["Date","DESC"],["SlotID","ASC"]]
+        order: [
+          ["Date", "DESC"],
+          ["SlotID", "ASC"],
+        ],
       });
       const plainSchedules = schedules.map((schedule) => schedule.toJSON());
       return plainSchedules;
@@ -186,7 +190,6 @@ class DentistService {
   //   }
   // }
 
-
   async getAllDentist(DentistID, date) {
     try {
       let options = {
@@ -201,21 +204,27 @@ class DentistService {
         include: [
           {
             model: Clinic,
-            attributes: ["ClinicID", "ClinicName", "Address", "OpenTime", "CloseTime"],
-            as: 'clinic',
+            attributes: [
+              "ClinicID",
+              "ClinicName",
+              "Address",
+              "OpenTime",
+              "CloseTime",
+            ],
+            as: "clinic",
           },
           {
             model: DentistSchedule,
             attributes: ["ScheduleID", "Date", "DayOfWeek", "Status", "SlotID"],
-            as: 'DentistSchedules',
+            as: "DentistSchedules",
             include: [
               {
                 model: AvailableSlot,
                 attributes: ["SlotID", "Time"],
-                as: 'AvailableSlot'
-              }
-            ]
-          }
+                as: "AvailableSlot",
+              },
+            ],
+          },
         ],
       };
 
@@ -279,6 +288,57 @@ class DentistService {
     } catch (error) {
       console.error("Error updating dentist:", error);
       throw error;
+    }
+  }
+  async getDetailDentistSchedule(scheduleId) {
+    try {
+      const detailDentistSchedule = await DentistSchedule.findByPk(scheduleId);
+      if (!detailDentistSchedule) {
+        console.log(`Not Found Detail Schedule By ScheduleID:${scheduleId}`);
+        return null;
+      }
+      return detailDentistSchedule;
+    } catch (error) {
+      console.log("Error getDetailDentistSchedule: ", error);
+    }
+  }
+
+  async updateExpiredSlots() {
+    const dateNow = moment().format("YYYY-MM-DD");
+    const hourNow = moment().format("HH:mm");
+    try {
+      // Lấy tất cả các slot
+      const slots = await AvailableSlot.findAll();
+      const expiredSlotIDs = [];
+
+      // Kiểm tra nếu giờ khám đã qua thì thêm SlotID vào mảng expiredSlotIDs
+      slots.forEach((slot) => {
+        const slotTime = moment(slot.Time, "HH:mm"); // Chuyển đổi Time từ string sang moment object
+        if (slotTime.isBefore(moment(hourNow, "HH:mm"))) {
+          expiredSlotIDs.push(slot.SlotID);
+        }
+      });
+      console.log(expiredSlotIDs);
+      if (expiredSlotIDs.length > 0) {
+        // Cập nhật trạng thái các DentistSchedule có SlotID nằm trong expiredSlotIDs
+        await DentistSchedule.update(
+          { Status: "Expired" },
+          {
+            where: {
+              SlotID: {
+                [Sequelize.Op.in]: expiredSlotIDs,
+              },
+              Date: {
+                [Sequelize.Op.lte]: dateNow,
+              },
+              Status: "Available",
+            },
+          }
+        );
+      }
+      console.log("Update Expired Slot success");
+    } catch (error) {
+      console.error("Error updating ExpiredSlots:", error);
     }
   }
 }

@@ -13,6 +13,7 @@ export default function ScheduleManage(props) {
   const [schedules, setSchedules] = useState([]);
   const [availableSlots, setAvailableSlots] = useState([]);
   const [bookedSchedules, setBookedSchedules] = useState([]);
+  const [expiredSlots, setExpiredSlots] = useState([]);
   const [remainingSlots, setRemainingSlots] = useState([]);
   const [error, setError] = useState('');
   const [isScheduleVisible, setIsScheduleVisible] = useState(true);
@@ -46,18 +47,30 @@ export default function ScheduleManage(props) {
   }, []);
 
   // Get API All Slots
-  useEffect(() => {
-    const fetchSlots = async () => {
-      try {
-        const response = await axios.get(`${BASE_URL}/scheduleSlot`);
-        setSlots(Array.isArray(response.data) ? response.data : []);
-      } catch (error) {
-        console.error('Error fetching slots:', error);
-      }
-    };
+  const fetchSlots = async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/scheduleSlot`);
+      setSlots(Array.isArray(response.data) ? response.data : []);
+    } catch (error) {
+      console.error('Error fetching slots:', error);
+    }
+  };
 
+  useEffect(() => {
     fetchSlots();
   }, []);
+  // useEffect(() => {
+  //   const fetchSlots = async () => {
+  //     try {
+  //       const response = await axios.get(`${BASE_URL}/scheduleSlot`);
+  //       setSlots(Array.isArray(response.data) ? response.data : []);
+  //     } catch (error) {
+  //       console.error('Error fetching slots:', error);
+  //     }
+  //   };
+
+  //   fetchSlots();
+  // }, []);
 
   // Get Available Slots By Dentist and Date
   useEffect(() => {
@@ -68,12 +81,13 @@ export default function ScheduleManage(props) {
             params: {
               dentistID: selectedDentist,
               date: selectedDate,
+              isNotCustomer: 1,
             },
           });
           if (response.status !== 200) {
             throw new Error('Failed to fetch slots');
           }
-          setAvailableSlots(response.data);
+          setAvailableSlots(response.data.slots);
         } catch (error) {
           console.error('Error fetching slots:', error);
         }
@@ -92,6 +106,8 @@ export default function ScheduleManage(props) {
         // Filter and set booked schedules
         const booked = allSchedules.filter(schedule => schedule.Status === 'Booked');
         setBookedSchedules(booked);
+        const expired = allSchedules.filter(schedule => schedule.Status === 'Expired');
+        setExpiredSlots(expired);
       } catch (error) {
         console.error('Error fetching schedules:', error);
       }
@@ -100,11 +116,12 @@ export default function ScheduleManage(props) {
     fetchSchedules();
   }, []);
 
-  useEffect(() => {
+  const updateRemainingSlots = () => {
     if (slots.length > 0) {
       if (availableSlots.length > 0) {
         // Extract slotIDs from availableSlots
         const availableSlotIDs = availableSlots.map(slot => slot.SlotID);
+        console.log(availableSlotIDs);
         // Filter out slots that are already booked for the selected date
         const bookedSlotIDs = schedules
           .filter(schedule =>
@@ -132,7 +149,46 @@ export default function ScheduleManage(props) {
         setRemainingSlots(remainingSlots);
       }
     }
+  };
+  useEffect(() => {
+    updateRemainingSlots();
   }, [slots, availableSlots, schedules, selectedDate, loggedInDentistID]);
+
+  // useEffect(() => {
+  //   if (slots.length > 0) {
+  //     if (availableSlots.length > 0) {
+  //       // Extract slotIDs from availableSlots
+  //       const availableSlotIDs = availableSlots.map(slot => slot.SlotID);
+  //       console.log(availableSlotIDs);
+  //       // Filter out slots that are already booked for the selected date
+  //       const bookedSlotIDs = schedules
+  //         .filter(schedule =>
+  //           schedule.DentistID === loggedInDentistID &&
+  //           schedule.Date === selectedDate
+  //         )
+  //         .map(schedule => schedule.SlotID);
+  //       // Find remaining slots by filtering out availableSlotIDs and bookedSlotIDs from slots
+  //       const remainingSlots = slots.filter(slot =>
+  //         !availableSlotIDs.includes(slot.SlotID) &&
+  //         !bookedSlotIDs.includes(slot.SlotID) 
+
+  //       );
+  //       setRemainingSlots(remainingSlots);
+  //     } else {
+  //       // If no available slots found, show all slots except booked ones
+  //       const bookedSlotIDs = schedules
+  //         .filter(schedule =>
+  //           schedule.DentistID === loggedInDentistID &&
+  //           schedule.Date === selectedDate
+  //         )
+  //         .map(schedule => schedule.SlotID);
+  //       const remainingSlots = slots.filter(slot =>
+  //         !bookedSlotIDs.includes(slot.SlotID) 
+  //       );
+  //       setRemainingSlots(remainingSlots);
+  //     }
+  //   }
+  // }, [slots, availableSlots, schedules, selectedDate, loggedInDentistID,expiredSlots]);
 
   const toggleScheduleVisibility = () => {
     setIsScheduleVisible(!isScheduleVisible);
@@ -188,17 +244,34 @@ export default function ScheduleManage(props) {
         const response = await axios.post(`${BASE_URL}/schedule`, {
           date: selectedDate,
           slotId: slotId,
-          dentistId: dentistIDToUse
+          dentistId: parseInt(dentistIDToUse)
         });
         return response.data.newSchedule;
       }));
 
-      setSchedules([...schedules, ...newSchedules]);
+      const updatedSchedules = [...schedules, ...newSchedules];
+
+      // Sort the updated schedules by date and slotID
+      updatedSchedules.sort((a, b) => {
+        const dateA = new Date(a.Date);
+        const dateB = new Date(b.Date);
+
+        if (dateA < dateB) return -1;
+        if (dateA > dateB) return 1;
+
+        return a.SlotID - b.SlotID;
+      });
+
+      setSchedules(updatedSchedules);
+      //setSchedules([...schedules, ...newSchedules]);
       setSelectedDentist('');
       setSelectedDate('');
       setSelectedSlots([]);
       setError('');
-      window.location.reload();
+      setAvailableSlots([]);
+      fetchSlots();
+      updateRemainingSlots();
+      //window.location.reload();
     } catch (error) {
       console.error('Error creating schedule:', error);
       setError('Error creating schedule');
@@ -206,11 +279,15 @@ export default function ScheduleManage(props) {
   };
 
   const filteredSchedules = isDentistLoggedIn
-    ? schedules.filter(schedule => schedule.DentistID === loggedInDentistID)
+    ? schedules.filter(schedule => schedule.DentistID === loggedInDentistID &&
+      schedule.Date === currentDate
+    )
     : schedules;
 
   const filteredBookedSchedules = isDentistLoggedIn
-    ? bookedSchedules.filter(schedule => schedule.DentistID === loggedInDentistID)
+    ? bookedSchedules.filter(schedule => schedule.DentistID === loggedInDentistID &&
+      schedule.Date === currentDate
+    )
     : bookedSchedules;
 
   return (
@@ -322,7 +399,6 @@ export default function ScheduleManage(props) {
                         <th scope="col">Dentist Name</th>
                         <th scope="col">Date</th>
                         <th scope="col">Slot Time</th>
-                        <th scope="col">Customer Name</th>
                         <th scope="col">Status</th>
                       </tr>
                     </thead>
@@ -332,9 +408,8 @@ export default function ScheduleManage(props) {
                           <tr key={schedule.ScheduleID}>
                             <td>{schedule.ScheduleID}</td>
                             <td>{dentists.find(dentist => dentist.DentistID === schedule.DentistID)?.DentistName}</td>
-                            <td>{schedule.Date}</td>
+                            <td>{new Date(schedule.Date).toLocaleDateString('vi-VN')}</td>
                             <td>{slots.find(availableslot => availableslot.SlotID === schedule.SlotID)?.Time}</td>
-                            <td>{schedule.BookingDetail?.Booking?.Customer?.CustomerName || 'N/A'}</td>
                             <td>{schedule.Status}</td>
                           </tr>
                         )
@@ -370,7 +445,7 @@ export default function ScheduleManage(props) {
                           <tr key={schedule.ScheduleID}>
                             <td>{schedule.ScheduleID}</td>
                             <td>{dentists.find(dentist => dentist.DentistID === schedule.DentistID)?.DentistName}</td>
-                            <td>{schedule.Date}</td>
+                            <td>{new Date(schedule.Date).toLocaleDateString('vi-VN')}</td>
                             <td>{slots.find(availableslot => availableslot.SlotID === schedule.SlotID)?.Time}</td>
                             <td>{schedule.BookingDetail?.Booking?.Customer?.CustomerName || 'N/A'}</td>
                             <td>{schedule.Status}</td>

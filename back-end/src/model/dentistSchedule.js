@@ -43,7 +43,7 @@ DentistSchedule.init(
       ],
     },
     Status: {
-      type: DataTypes.ENUM("Available", "Booked", "Cancelled"),
+      type: DataTypes.ENUM("Available", "Booked", "Cancelled","Expired"),
       defaultValue: "Available", // Giá trị mặc định khi tạo mới
       allowNull: false,
     },

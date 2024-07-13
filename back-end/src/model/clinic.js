@@ -45,7 +45,15 @@ Clinic.init(
         model: "ClinicOwner",
         key: "ClinicOwnerID",
       }
-    }
+    },
+    Description: {
+     type: DataTypes.TEXT,
+     allowNull: true,
+    },
+    ImagePath: {
+     type: DataTypes.STRING,
+     allowNull:false,
+    },
   },
   {
     sequelize,
