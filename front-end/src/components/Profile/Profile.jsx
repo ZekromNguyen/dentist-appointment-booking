@@ -30,7 +30,7 @@ const Profile = () => {
     };
 
     if (!profile) {
-        return <div>Loading...</div>;
+        return <div>Loading Profile...</div>;
     }
     console.log('Profile Role:', profile.Role);
 

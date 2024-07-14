@@ -8,6 +8,7 @@ import {
   BookingDetail,
   Customer,
   Account,
+  Treatment
 } from "../model/model";
 import DentistService from "./dentistService";
 import Payment from "../model/payment"; // Import lớp Payment
@@ -401,7 +402,7 @@ class BookingService {
       const booking = await this.getBookingById(bookingId);
       if (booking) {
         booking.Status = status;
-        await booking.save({transaction});
+        await booking.save({ transaction });
         await BookingDetail.update(
           { Status: status },
           {
@@ -424,7 +425,7 @@ class BookingService {
             // Update DentistSchedule
             await DentistSchedule.update(
               { Status: "Booked" },
-              { where: { ScheduleID: ScheduleID },transaction, }
+              { where: { ScheduleID: ScheduleID }, transaction, }
             );
           }
         }
@@ -582,6 +583,16 @@ class BookingService {
       throw error;
     }
   }
+
+  checkIfTreatmentExists = async (bookingDetailId) => {
+    try {
+      const treatment = await Treatment.findOne({ where: { BookingDetailID: bookingDetailId } });
+      return !!treatment;
+    } catch (error) {
+      console.error('Error checking treatment existence in service:', error);
+      throw new Error('Error checking treatment existence');
+    }
+  };
 }
 
 export default new BookingService();

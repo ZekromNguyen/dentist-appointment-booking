@@ -56,6 +56,7 @@ const TreatmentUpload = () => {
         try {
             const response = await axios.get(`${BASE_URL}/treatment`);
             setTreatments(Array.isArray(response.data.treatments) ? response.data.treatments : []);
+            setHasUploaded(true); // Đánh dấu là đã upload
         } catch (error) {
             console.error('Error fetching treatments:', error);
         }
@@ -158,8 +159,9 @@ const TreatmentUpload = () => {
     const handleSubmitUpload = async (event) => {
         event.preventDefault();
 
-        if (hasUploaded) {
-            alert('Đã upload');
+        const hasTreatment = await checkIfTreatmentExists(bookingDetailId);
+        if (hasTreatment) {
+            alert('This booking already has a treatment result.');
             return;
         }
 
@@ -174,9 +176,18 @@ const TreatmentUpload = () => {
             alert('Treatment uploaded successfully');
             handleCloseUploadModal();
             fetchTreatments();
-            setHasUploaded(true); // Đánh dấu là đã upload
         } catch (error) {
             console.error('Error handling treatment:', error);
+        }
+    };
+
+    const checkIfTreatmentExists = async (bookingDetailId) => {
+        try {
+            const response = await axios.get(`${BASE_URL}/check/${bookingDetailId}`);
+            return response.data.exists;
+        } catch (error) {
+            console.error('Error checking treatment existence:', error);
+            return false;
         }
     };
 

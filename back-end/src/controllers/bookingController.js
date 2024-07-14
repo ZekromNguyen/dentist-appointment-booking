@@ -24,10 +24,10 @@ class BookingController {
         isNotCustomer
       );
       console.log(slots);
-      if(!slots) {
-        return res.status(404).json({message:"Success, Not found"});
+      if (!slots) {
+        return res.status(404).json({ message: "Success, Not found" });
       }
-      res.status(200).json({message:"Success",slots});
+      res.status(200).json({ message: "Success", slots });
     } catch (error) {
       console.error("Error fetching1 slots by date:", error);
       res.status(500).send("Internal Server Error");
@@ -58,7 +58,7 @@ class BookingController {
       if (!Array.isArray(bookings) || !booking) {
         return res.status(400).json({ message: "Invalid data format" });
       }
-      const {customerId, status, totalPrice} = booking;
+      const { customerId, status, totalPrice } = booking;
       const newBooking = await BookingService.createBooking(
         customerId,
         status,
@@ -70,13 +70,13 @@ class BookingController {
       }
       const results = [];
       for (const booking of bookings) {
-        const { priceBooking, status, typeBook, date, scheduleId, recurringType,recurringEndDate } =
+        const { priceBooking, status, typeBook, date, scheduleId, recurringType, recurringEndDate } =
           booking;
         const currentDateTime = new Date(); // Lấy thời gian hiện tại
         const currentDateTimeGMT7 = new Date(
           currentDateTime.getTime() + 7 * 60 * 60 * 1000
         );
-        
+
         const newBookingDetail = await BookingService.createBookingDetail(
           currentDateTimeGMT7,
           typeBook,
@@ -216,31 +216,31 @@ class BookingController {
       res.status(500).json({ error: "Internal Server Error" });
     }
   }
- async updateBookingStatusFromOwner(req,res){
-  try {
-    const updateStatus = req.body;
-    console.log(updateStatus);
-    const {BookingID, Status} = updateStatus;
-    const updateBooking = await BookingService.updateBookingStatusFromOwner(BookingID,Status);
-      if(!updateBooking){
-        res.status(400).json({message:"Failed"})
-      }
-      res.status(200).json({message:"Success",updateBooking});
-  } catch (error) {
-    console.error("Error update Booking status:", error);
-      res.status(500).json({ error: "Error update Booking status from Owner" });
-  }
- }
-  async updateBookingStatus(req,res){
+  async updateBookingStatusFromOwner(req, res) {
     try {
       const updateStatus = req.body;
       console.log(updateStatus);
-      const {BookingID, Status} = updateStatus;
-      const updateBooking = await BookingService.updateBookingStatus(BookingID,Status);
-      if(!updateBooking){
-        res.status(400).json({message:"Failed"})
+      const { BookingID, Status } = updateStatus;
+      const updateBooking = await BookingService.updateBookingStatusFromOwner(BookingID, Status);
+      if (!updateBooking) {
+        res.status(400).json({ message: "Failed" })
       }
-      res.status(200).json({message:"Success",updateBooking});
+      res.status(200).json({ message: "Success", updateBooking });
+    } catch (error) {
+      console.error("Error update Booking status:", error);
+      res.status(500).json({ error: "Error update Booking status from Owner" });
+    }
+  }
+  async updateBookingStatus(req, res) {
+    try {
+      const updateStatus = req.body;
+      console.log(updateStatus);
+      const { BookingID, Status } = updateStatus;
+      const updateBooking = await BookingService.updateBookingStatus(BookingID, Status);
+      if (!updateBooking) {
+        res.status(400).json({ message: "Failed" })
+      }
+      res.status(200).json({ message: "Success", updateBooking });
     } catch (error) {
       console.error("Error update Booking status:", error);
       res.status(500).json({ error: "Error update Booking status" });
@@ -289,5 +289,17 @@ class BookingController {
       res.status(500).send("Internal Server Error");
     }
   }
+
+
+  checkTreatmentExistence = async (req, res) => {
+    const { bookingDetailId } = req.params;
+    try {
+      const exists = await BookingService.checkIfTreatmentExists(bookingDetailId);
+      res.json({ exists });
+    } catch (error) {
+      console.error('Error checking treatment existence in controller:', error);
+      res.status(500).json({ error: 'Error checking treatment existence' });
+    }
+  };
 }
 export default new BookingController();

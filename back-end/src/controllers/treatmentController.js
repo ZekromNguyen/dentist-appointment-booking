@@ -1,5 +1,5 @@
 import express from 'express';
-import {Booking, BookingDetail, Treatment} from "../model/model";
+import { Booking, BookingDetail, Treatment } from "../model/model";
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
@@ -255,6 +255,8 @@ class TreatmentController {
             res.status(500).json({ message: 'Internal server error' });
         }
     }
+
+
 
 
 }
