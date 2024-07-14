@@ -114,9 +114,10 @@ function App() {
             <Route path="system/*" element={<System />} />
           </Route>
           {/* <Route path="dentistDetail" element={<DoctorLoad />}></Route> */}
-          <Route path="/dentistDetail" element={<DoctorLoad />} />
+          <Route path="/dentistDetail/:dentistId" element={<DoctorLoad />} />
 
           <Route path="/clinicDetail/:clinicID" element={<ClinicLoad />}></Route>
+
           <Route path="admin/*" element={<AdminRoutes />} />
 
           <Route path="*" element={<Navigate to="/" />} />
