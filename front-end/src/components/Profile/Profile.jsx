@@ -13,6 +13,7 @@ const Profile = () => {
             try {
                 const response = await axios.get(`${BASE_URL}/profile/${accountId}`);
                 setProfile(response.data);
+                console.log('Fetched Profile:', response.data); // Debug log
             } catch (error) {
                 console.error('Error fetching profile:', error);
             }
@@ -45,20 +46,19 @@ const Profile = () => {
                     <p><strong>Role:</strong> {profile.Role}</p>
                 )}
             </div>
-            <p><strong>Customer Name:</strong> {profile.CustomerName || 'No Name provided'}</p>
-            {/* {profile.CustomerName && (
+            {profile.CustomerName && (
                 <div className="section">
-                    <p><strong>Customer Name:</strong> {profile.CustomerName || 'No Name provided'}</p>
+                    <p><strong>Customer Name:</strong> {profile.CustomerName}</p>
                 </div>
-            )} */}
+            )}
             {profile.DentistName && (
                 <div className="section">
-                    <p><strong>Dentist Name:</strong> {profile.DentistName || 'No Name provided'}</p>
+                    <p><strong>Dentist Name:</strong> {profile.DentistName}</p>
                 </div>
             )}
             {profile.ClinicOwnerName && (
                 <div className="section">
-                    <p><strong>Clinic Owner Name:</strong> {profile.ClinicOwnerName || 'No Name provided'}</p>
+                    <p><strong>Clinic Owner Name:</strong> {profile.ClinicOwnerName}</p>
                 </div>
             )}
             <div>

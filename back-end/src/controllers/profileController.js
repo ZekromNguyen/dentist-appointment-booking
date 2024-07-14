@@ -25,7 +25,6 @@ class ProfileController {
                 return res.status(404).json({ error: "Account not found" });
             }
 
-            // Prepare data to send to the frontend
             const profileData = {
                 AccountID: account.AccountID,
                 UserName: account.UserName,
@@ -34,9 +33,10 @@ class ProfileController {
                 Role: account.Role ? account.Role.RoleName : 'No role assigned',
                 CustomerName: account.Customer ? account.Customer.CustomerName : null,
                 DentistName: account.Dentist ? account.Dentist.DentistName : null,
-                ClinicOwnerName: account.ClinicOwner ? account.ClinicOwner.ClinicOWnerName : null
+                ClinicOwnerName: account.ClinicOwner ? account.ClinicOwner.ClinicOwnerName : null
             };
 
+            console.log("Profile Data:", profileData); // Debug log
             res.json(profileData);
         } catch (error) {
             console.error("Error fetching profile:", error);

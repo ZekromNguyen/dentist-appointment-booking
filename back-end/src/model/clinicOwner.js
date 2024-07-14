@@ -1,5 +1,6 @@
 import { DataTypes, Model } from "sequelize";
 import sequelize from "../config/database";
+import Account from "./account";
 
 class ClinicOwner extends Model { }
 
@@ -39,5 +40,8 @@ ClinicOwner.init(
     timestamps: false,
   }
 );
+
+ClinicOwner.belongsTo(Account, { foreignKey: "AccountID" });
+Account.hasOne(ClinicOwner, { foreignKey: "AccountID" });
 
 export default ClinicOwner;
