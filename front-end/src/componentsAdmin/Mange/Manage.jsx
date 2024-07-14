@@ -120,7 +120,7 @@ class UserManage extends Component {
                 <button className='Addbutton' onClick={this.handleAddNewUser}>
                     Add new user
                 </button>
-                <div className='user-table mt-30 mx-10'>
+                <div className='user-table-admin mt-30 mx-10'>
                     <table id='accounts'>
                         <thead>
                             <tr>

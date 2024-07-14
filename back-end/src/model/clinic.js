@@ -1,65 +1,63 @@
-import { Model, DataTypes } from "sequelize";
-import sequelize from "../config/database";
+import { Model, DataTypes } from 'sequelize';
+import sequelize from '../config/database';
+import Location from '../model/location'; // Adjust import path if necessary
 
 class Clinic extends Model { }
-Clinic.init(
-  {
-    ClinicID: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      autoIncrement: true,
-      allowNull: false,
-    },
 
-    ClinicName: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    Address: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: false,
-    },
-
-    OpenTime: {
-      type: DataTypes.TIME,
-      allowNull: true,
-    },
-
-    CloseTime: {
-      type: DataTypes.TIME,
-      allowNull: true,
-    },
-
-    LocationID: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: "Location",
-        key: "LocationID",
-      },
-    },
-    ClinicOwnerID: {
-      type:DataTypes.INTEGER,
-      references: {
-        model: "ClinicOwner",
-        key: "ClinicOwnerID",
-      }
-    },
-    Description: {
-     type: DataTypes.TEXT,
-     allowNull: true,
-    },
-    ImagePath: {
-     type: DataTypes.STRING,
-     allowNull:false,
+Clinic.init({
+  ClinicID: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+    allowNull: false,
+  },
+  ClinicName: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  Address: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  OpenTime: {
+    type: DataTypes.TIME,
+    allowNull: false,
+  },
+  CloseTime: {
+    type: DataTypes.TIME,
+    allowNull: false,
+  },
+  LocationID: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'Location', // Ensure Location is correctly referenced
+      key: 'LocationID',
     },
   },
-  {
-    sequelize,
-    modelName: "Clinic",
-    tableName: "clinic",
-    timestamps: false,
-  }
-);
+  ClinicOwnerID: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  Description: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  ImagePath: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+}, {
+  sequelize,
+  modelName: 'Clinic',
+  tableName: 'clinic',
+  timestamps: false,
+});
+
+// Define the association
+Clinic.belongsTo(Location, {
+  foreignKey: 'LocationID',
+  as: 'location'
+});
+
 export default Clinic;

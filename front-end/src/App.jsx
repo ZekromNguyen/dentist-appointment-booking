@@ -73,6 +73,7 @@ import FailurePage from './components/PaymentPage/FailurePage';
 import DoctorLoad from './components/DoctorLoad/DoctorLoad';
 import Profile from './components/Profile/Profile';
 import EditProfile from './components/Profile/EditProfile';
+import ClinicLoad from './components/Clinic/ClinicLoad';
 
 
 function App() {
@@ -113,8 +114,9 @@ function App() {
             <Route path="system/*" element={<System />} />
           </Route>
           {/* <Route path="dentistDetail" element={<DoctorLoad />}></Route> */}
-          <Route path="/dentistDetail/:dentistId" element={<DoctorLoad />} />
+          <Route path="/dentistDetail" element={<DoctorLoad />} />
 
+          <Route path="/clinicDetail/:clinicID" element={<ClinicLoad />}></Route>
           <Route path="admin/*" element={<AdminRoutes />} />
 
           <Route path="*" element={<Navigate to="/" />} />

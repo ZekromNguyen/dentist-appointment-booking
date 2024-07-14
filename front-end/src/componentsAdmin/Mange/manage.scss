@@ -153,11 +153,16 @@
     background-color: cadetblue;
 }
 
-.user-table {
-    max-height: 500px;
-    /* Chiều cao tối đa của bảng */
-    /* Ngăn không cho nội dung tràn ra ngoài chiều ngang */
-    overflow-y: auto;
-    overflow-x: hidden;
-    width: 900px;
+$user-table-admin-height: 500px; // Định nghĩa chiều rộng của bảng
+$user-table-admin-width: 900px;
+$user-table-admin-font-size: 16px; // Định nghĩa kích thước font chữ cho bảng
+$user-table-admin-overflow-y: auto;
+$user-table-admin-overflow-x: hidden;
+
+.user-table-admin {
+    width: $user-table-admin-width !important;
+    height: $user-table-admin-height !important;
+    overflow: $user-table-admin-overflow-x;
+    overflow: $user-table-admin-overflow-y;
+    font-size: $user-table-admin-font-size;
 }

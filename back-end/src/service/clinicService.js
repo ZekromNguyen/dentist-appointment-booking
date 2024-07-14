@@ -53,6 +53,12 @@ class ClinicService {
                         "ClinicID",
                         "ClinicName",
                         "Address",
+                        "OpenTime",
+                        "CloseTime",
+                        "LocationID",
+                        "ClinicOwnerID",
+                        "Description",
+                        "ImagePath"
                     ],
                 });
             } else if (ClinicID) {
@@ -63,6 +69,12 @@ class ClinicService {
                         "ClinicID",
                         "ClinicName",
                         "Address",
+                        "OpenTime",
+                        "CloseTime",
+                        "LocationID",
+                        "ClinicOwnerID",
+                        "Description",
+                        "ImagePath"
                     ],
                 });
             }
