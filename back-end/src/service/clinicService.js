@@ -1,6 +1,6 @@
 
 import {
-    Clinic, ClinicOwner
+    Clinic, ClinicOwner, Location
 } from "../model/model";
 
 class ClinicService {
@@ -60,6 +60,11 @@ class ClinicService {
                         "Description",
                         "ImagePath"
                     ],
+                    include: [{
+                        model: Location,
+                        attributes: ["LocationName", "LocationID"],
+                        as: "location"
+                    }]
                 });
             } else if (ClinicID) {
                 clinics = await Clinic.findOne({
@@ -76,6 +81,11 @@ class ClinicService {
                         "Description",
                         "ImagePath"
                     ],
+                    include: [{
+                        model: Location,
+                        attributes: ["LocationName", "LocationID"],
+                        as: "location",
+                    }]
                 });
             }
             if (!clinics) {
@@ -87,6 +97,7 @@ class ClinicService {
             throw e;
         }
     }
+
 
 
 

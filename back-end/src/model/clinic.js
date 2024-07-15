@@ -54,10 +54,5 @@ Clinic.init({
   timestamps: false,
 });
 
-// Define the association
-Clinic.belongsTo(Location, {
-  foreignKey: 'LocationID',
-  as: 'location'
-});
 
 export default Clinic;

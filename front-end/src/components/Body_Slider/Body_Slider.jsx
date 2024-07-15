@@ -11,8 +11,7 @@ import 'swiper/css/scrollbar';
 import 'swiper/css/autoplay';
 import BASE_URL from '../../ServiceSystem/axios';
 
-
-export default function BodySlider() {
+const BodySlider = () => {
     const [clinics, setClinics] = useState([]);
     const navigate = useNavigate();
 
@@ -22,10 +21,10 @@ export default function BodySlider() {
 
     const fetchClinics = async () => {
         try {
-            const data = await getAllClinic('ALL'); // Fetch all clinics
+            const data = await getAllClinic('ALL');
             console.log('Fetched clinics data:', data);
             if (data && data.account && Array.isArray(data.account)) {
-                setClinics(data.account); // Extract clinic data from 'account' key
+                setClinics(data.account);
             } else {
                 console.error('Invalid data format received:', data);
             }
@@ -37,7 +36,10 @@ export default function BodySlider() {
     const handleClinicClick = (clinicID) => {
         const clinic = clinics.find(c => c.ClinicID === clinicID);
         if (clinic) {
+            console.log('Clicked clinic:', clinic); // Log clinic data to check for location information
             navigate(`/clinicDetail/${clinicID}`, { state: { clinic } });
+        } else {
+            console.error(`Clinic with ID ${clinicID} not found.`);
         }
     };
 
@@ -76,3 +78,5 @@ export default function BodySlider() {
         </div>
     );
 }
+
+export default BodySlider;

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import './header.scss';
 import { IoMenuOutline } from "react-icons/io5";
 import { FaUser, FaCogs, FaSignOutAlt } from "react-icons/fa";
@@ -10,7 +10,9 @@ import { logout } from '../../Service/userService';
 
 export default function Header() {
     const [account, setAccount] = useState(null);
+    const [showMenu, setShowMenu] = useState(false); // State to toggle menu visibility
     const navigate = useNavigate();
+    const menuRef = useRef(null);
 
     const getAccount = async () => {
         try {
@@ -29,6 +31,19 @@ export default function Header() {
         getAccount();
     }, []);
 
+    useEffect(() => {
+        function handleClickOutside(event) {
+            if (menuRef.current && !menuRef.current.contains(event.target)) {
+                setShowMenu(false);
+            }
+        }
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+
     const handleLogout = async () => {
         try {
             await logout();
@@ -40,11 +55,39 @@ export default function Header() {
         }
     };
 
+    const toggleMenu = () => {
+        setShowMenu(!showMenu); // Toggle showMenu state
+    };
+
     return (
         <div className="home-header-container">
             <div className="header-content">
+                <div className="nav-menu" ref={menuRef}>
+                    <IoMenuOutline className="icon-menu" onClick={toggleMenu} />
+                    <div className={`menu-sidebar ${showMenu ? 'open' : ''}`}>
+                        <ul>
+                            <li>
+                                <Link to="/somewhere">Somewhere</Link>
+                            </li>
+                            <li>
+                                <Link to="/else">Else</Link>
+                            </li>
+                            <li>
+                                <Link to="/somewhere">Somewhere</Link>
+                            </li>
+                            <li>
+                                <Link to="/else">Else</Link>
+                            </li>
+                            <li>
+                                <Link to="/somewhere">Somewhere</Link>
+                            </li>
+                            <li>
+                                <Link to="/else">Else</Link>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
                 <div className="content-logo">
-                    <IoMenuOutline className="icon-menu" />
                     <a href="/" className="header-logo"></a>
                 </div>
                 <div className="content-option">
@@ -67,38 +110,38 @@ export default function Header() {
                     </div>
                 </div>
                 <div className="content-login-register">
-            {account ? (
-                <div className="logged-in">
-                    <FaUser className="icon-user" />
-                    <span>Xin chào, {account.user}</span>
-                    <div className="dropdown-menu">
-                        <Link to={`/profile/${account.id}`}>
-                            <FaUser />
-                            Profile
-                        </Link>
-                        <Link to="/settings">
-                            <FaCogs />
-                            Settings
-                        </Link>
-                        <button onClick={handleLogout}>
-                            <FaSignOutAlt />
-                            Logout
-                        </button>
-                    </div>
+                    {account ? (
+                        <div className="logged-in">
+                            <FaUser className="icon-user" />
+                            <span>Xin chào, {account.user}</span>
+                            <div className="dropdown-menu">
+                                <Link to={`/profile/${account.id}`}>
+                                    <FaUser />
+                                    Profile
+                                </Link>
+                                <Link to="/settings">
+                                    <FaCogs />
+                                    Settings
+                                </Link>
+                                <button onClick={handleLogout}>
+                                    <FaSignOutAlt />
+                                    Logout
+                                </button>
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="content-auth">
+                            <div className="auth-left">
+                                <FaUser className="icon-user" />
+                                <Link to="/Login" className="Login">Login</Link>
+                            </div>
+                            <div className='auth-right'>
+                                <div className="seperate">|</div>
+                                <Link to="/Register" className="register">Sign up</Link>
+                            </div>
+                        </div>
+                    )}
                 </div>
-            ): (
-                <div className="content-auth">
-                    <div className="auth-left">
-                        <FaUser className="icon-user" />
-                        <Link to="/Login" className="Login">Login</Link>
-                    </div>
-                    <div className='auth-right'>
-                        <div className="seperate">|</div>
-                        <Link to="/Register" className="register">Sign up</Link>
-                    </div>
-                </div>
-            )}
-            </div>
                 <div className="content-support">
                     <div className='support-child'>
                         <FaUserClock className="clock-history" />

@@ -10,9 +10,9 @@ import Booking from "./booking";
 import BookingDetail from "./bookingDetail";
 import Clinic from "./clinic";
 import Treatment from "./treatment";
-
-Clinic.belongsTo(ClinicOwner, {foreignKey:"ClinicOwnerID"});
-ClinicOwner.hasMany(Clinic, {foreignKey:"ClinicOwnerID"});
+import Location from "./location"
+Clinic.belongsTo(ClinicOwner, { foreignKey: "ClinicOwnerID" });
+ClinicOwner.hasMany(Clinic, { foreignKey: "ClinicOwnerID" });
 
 
 Account.belongsTo(Role, { foreignKey: "RoleID" });
@@ -42,8 +42,11 @@ DentistSchedule.hasOne(BookingDetail, { foreignKey: "ScheduleID" });
 BookingDetail.belongsTo(Booking, { foreignKey: "BookingID" });
 Booking.hasMany(BookingDetail, { foreignKey: "BookingID" });
 
-Treatment.belongsTo(BookingDetail, {foreignKey:"BookingDetailID"});
-BookingDetail.hasOne(Treatment, {foreignKey: "BookingDetailID"});
+Treatment.belongsTo(BookingDetail, { foreignKey: "BookingDetailID" });
+BookingDetail.hasOne(Treatment, { foreignKey: "BookingDetailID" });
+
+Location.hasMany(Clinic, { foreignKey: 'LocationID', as: 'location' });
+Clinic.belongsTo(Location, { foreignKey: 'LocationID', as: 'location' });
 
 export {
   sequelize,
@@ -58,4 +61,5 @@ export {
   Booking,
   BookingDetail,
   Treatment,
+  Location,
 };
