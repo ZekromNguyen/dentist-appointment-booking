@@ -7,7 +7,7 @@ export default function Body_Youtube() {
             <div className='youtube-header'>Thông tin về Booking Clinic</div>
             <div className='youtube-body'>
                 <div className='body-left'>
-                    <iframe width="630" height="350"
+                    <iframe width="630" height="1000"
                         src="https://www.youtube.com/embed/xMR3FHymtz4"
                         title="How to Book a Medical Appointment With Your Clinic&#39;s Appointment Booking System (ABS)"
                         frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"

@@ -74,7 +74,7 @@ import DoctorLoad from './components/DoctorLoad/DoctorLoad';
 import Profile from './components/Profile/Profile';
 import EditProfile from './components/Profile/EditProfile';
 import ClinicLoad from './components/Clinic/ClinicLoad';
-
+import Chat from './components/chatbox/chat';
 
 function App() {
 
@@ -96,7 +96,7 @@ function App() {
           <Route path="/booking" element={<Booking />} />
           <Route path="/bookinghistory" element={<BookingHistory />} />
           <Route path="/bookingpage" element={<BookingPage />} />
-
+          <Route path="/chat/:senderId/:receiverId" element={<Chat />} />
           {/* profile */}
           <Route path="/profile/:accountId" element={<Profile />} />
           <Route path="/editprofile/:accountId" element={<EditProfile />} />

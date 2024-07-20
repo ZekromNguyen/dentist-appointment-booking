@@ -15,7 +15,7 @@ import Footer from '../../components/Footer/Footer';
 
 export default function Home() {
     return (
-        <div>
+        <div className="All_Home">
             <div className="home-header-container">
                 <div className="header-content"> <Header /></div>
             </div>

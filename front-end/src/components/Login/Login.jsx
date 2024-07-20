@@ -69,6 +69,9 @@ export default function Login() {
         }
     };
 
+    const handleRegister = () => {
+        navigate("/Register")
+    }
     return (
         <div className="body">
             <div className="back-ground col-12 col-sm-4">
@@ -122,9 +125,9 @@ export default function Login() {
 
                     {/* button create account */}
                     <div className="button-create-div">
-                        <div className="create-button">
-                            <Link to='/register'>Tạo tài khoản</Link>
-                        </div>
+                        <button className="create-buttonn" onClick={handleRegister}>
+                            Tạo tài khoản
+                        </button>
                     </div>
 
                     {/* button back home */}

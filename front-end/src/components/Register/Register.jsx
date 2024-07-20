@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import "./register.css";
 import { FaChevronLeft } from "react-icons/fa6";
 import { Link } from 'react-router-dom';
 import { FaEye, FaEyeSlash } from 'react-icons/fa6';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import axios from 'axios';
 import { register } from '../../Service/userService';
 import { useNavigate } from "react-router-dom";
 
@@ -15,63 +14,65 @@ export default function Register(props) {
     const [email, setEmail] = useState("");
     const [phone, setPhone] = useState("");
     const [name, setName] = useState("");
-    const defaultValidInput = {
+    const [isShowPassword, setIsShowPassword] = useState(false);
+    const [checkinput, SetCheckInput] = useState({
         isValidUsername: true,
         isValidPassword: true,
         isValidEmail: true,
         isValidPhone: true,
         isValidName: true
-    }
-    const [isShowPassword, setIsShowPassword] = useState(false);
-    const [checkinput, SetCheckInput] = useState(defaultValidInput);
+    });
+    const [isLoading, setIsLoading] = useState(false); // State cho loading
 
     let navigate = useNavigate();
 
     const isValidInputs = () => {
         if (!username) {
-            toast.error("Tên người dùng bắt buộc")
+            toast.error("Tên người dùng bắt buộc");
             return false;
         }
         if (!password) {
-            SetCheckInput({ ...defaultValidInput, isValidPassword: false })
-            toast.error("Mật khẩu bắt buộc")
+            SetCheckInput({ ...checkinput, isValidPassword: false });
+            toast.error("Mật khẩu bắt buộc");
             return false;
         }
         let reg = /\S+@\S+\.\S+/;
         if (!reg.test(email)) {
-            SetCheckInput({ ...defaultValidInput, isValidEmail: false })
-            toast.error("Vui lòng nhập đúng giá trị địa chỉ email");
+            SetCheckInput({ ...checkinput, isValidEmail: false });
+            toast.error("Vui lòng nhập đúng định dạng địa chỉ email");
             return false;
         }
         if (!email) {
-            SetCheckInput({ ...defaultValidInput, isValidEmail: false })
-            toast.error("Email bắt buộc")
+            SetCheckInput({ ...checkinput, isValidEmail: false });
+            toast.error("Email bắt buộc");
             return false;
         }
-
         if (!phone) {
-            SetCheckInput({ ...defaultValidInput, isValidPhone: false })
-            toast.error("Số điện thoại bắt buộc")
+            SetCheckInput({ ...checkinput, isValidPhone: false });
+            toast.error("Số điện thoại bắt buộc");
             return false;
         }
         if (!name) {
-            toast.error("Tên người dùng bắt buộc")
+            toast.error("Tên người dùng bắt buộc");
             return false;
         }
-
         return true;
-    }
+    };
 
     const handleRegister = async () => {
-        let check = isValidInputs();
+        let isValid = isValidInputs();
 
-        if (check === true) {
+        if (isValid) {
+            setIsLoading(true); // Bắt đầu loading
+
             try {
                 const response = await register(username, password, email, phone, name);
+
                 if (response && response.status === 200) {
-                    navigate("/login");
+                    //navigate("/Login")
                     toast.success(response.data.message);
-                    toast.success("Đăng ký thành công, vui lòng kiểm tra email của bạn để xác minh mới có thể đăng nhập.");
+                    toast.success("Đăng ký thành công, vui lòng kiểm tra email của bạn để xác minh tài khoản.");
+                    // Sau khi gửi email thành công, chuyển hướng hoặc xử lý tiếp theo
                 } else if (response && response.data && response.data.error) {
                     toast.error(response.data.error);
                 } else {
@@ -84,8 +85,10 @@ export default function Register(props) {
                     toast.error("Đã xảy ra lỗi, vui lòng thử lại.");
                 }
             }
+
+            setIsLoading(false); // Kết thúc loading sau khi xử lý xong
         }
-    }
+    };
 
     return (
         <div className="back-ground col-12 col-sm-4">
@@ -141,15 +144,14 @@ export default function Register(props) {
                     />
                 </div>
 
-
                 <div className="div-sign-up">
-                    <button onClick={() => handleRegister()}>
-                        Đăng ký
+                    <button className="button-register" onClick={() => handleRegister()}>
+                        {isLoading ? 'Đang đăng ký...' : 'Đăng ký'}
                     </button>
                 </div>
                 <div className="shift"></div>
                 <div className="account">
-                    <span className='text-gray-600 mr-1'>Already have an account?</span>
+                    <span className='text-gray-600 mr-1'>Đã có tài khoản?</span>
                     <Link className='text-gray-500 underline hover:text-red-500' to='/Login'>
                         Đăng nhập
                     </Link>

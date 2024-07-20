@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import ModalImage from 'react-modal-image';
 import './bookingResult.scss';
 import BASE_URL from '../../ServiceSystem/axios';
 
@@ -14,12 +15,8 @@ const BookingResult = () => {
         const account = JSON.parse(localStorage.getItem('account') || '{}');
         const parsedCustomerID = account.customerId;
         const parsedBookingID = localStorage.getItem('bookingID');
-        console.log("check cus", parsedCustomerID)
-        console.log("check booking", parsedBookingID)
-        console.log("check local", localStorage)
         setCustomerID(parsedCustomerID);
         setBookingID(parsedBookingID);
-
     }, []);
 
     useEffect(() => {
@@ -54,20 +51,6 @@ const BookingResult = () => {
         }
     }, [customerID, bookingID]);
 
-    const handleGetAllBookings = async (dentistId) => {
-        try {
-            const response = await axios.get(`${BASE_URL}/getAllBooking`);
-            if (response.data && response.data.bookings) {
-                const filteredBookings = response.data.bookings.filter(booking =>
-                    booking.BookingDetails.some(detail => detail.DentistSchedule.DentistID === dentistId)
-                );
-                setBookings(filteredBookings);
-                console.log("check filter", filteredBookings)
-            }
-        } catch (error) {
-            console.error('Error fetching bookings:', error);
-        }
-    };
     if (loading) {
         return <p>Loading treatments...</p>;
     }
@@ -98,10 +81,10 @@ const BookingResult = () => {
                                 <td>{treatment.Note}</td>
                                 <td>{new Date(treatment.TreatmentDate).toLocaleDateString()}</td>
                                 <td>
-                                    <img
-                                        src={`${BASE_URL}${treatment.Result}`}
+                                    <ModalImage
+                                        small={`${BASE_URL}${treatment.Result}`}
+                                        large={`${BASE_URL}${treatment.Result}`}
                                         alt={`${treatment.TreatmentID}'s result`}
-                                        style={{ width: '100px', height: '100px', objectFit: 'cover' }}
                                     />
                                 </td>
                             </tr>

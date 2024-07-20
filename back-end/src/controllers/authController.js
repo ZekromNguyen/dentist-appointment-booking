@@ -126,12 +126,20 @@ class AccountController {
   async registerCustomer(req, res) {
     const { username, password, email, phone, name } = req.body;
     const roleID = 1;
+
     try {
+      // Kiểm tra các trường bắt buộc
       if (!username || !password || !email || !phone || !name) {
         return res.status(400).json({ message: "All fields are required" });
       }
+
+      // Băm mật khẩu
       const hashedPassword = bcrypt.hashSync(password, 10);
+
+      // Tạo mã xác nhận ngẫu nhiên
       const verificationToken = crypto.randomBytes(32).toString("hex");
+
+      // Tạo tài khoản khách hàng mới
       const newAccount = await AccountService.createAccountCustomer(
         username,
         hashedPassword,
@@ -140,38 +148,37 @@ class AccountController {
         roleID,
         verificationToken
       );
+
+      // Xử lý lỗi nếu tài khoản không được tạo thành công
       if (newAccount.error) {
         return res.status(400).json({ error: newAccount.error });
       }
-      const newCustomer = await AccountService.createCustomer(
-        name,
-        newAccount.AccountID
-      );
+
+      // Tạo thông tin khách hàng mới
+      const newCustomer = await AccountService.createCustomer(name, newAccount.AccountID);
+
+      // Kiểm tra xác nhận và gửi email
       if (newAccount.verificationToken && newCustomer) {
         const verificationLink = `http://localhost:3000/verify?token=${verificationToken}`;
-        try {
-          await sendVerificationEmail(email, verificationLink);
-          res.status(200).json({
-            message: "A verification email has been sent to: " + email,
-          });
-        } catch (error) {
-          res
-            .status(500)
-            .send("Error sending verification email: " + error.toString());
-        }
-      } else {
-        res.status(500).json({ message: "Failed to create customer" });
 
+        // Gửi email xác nhận
+        await sendVerificationEmail(email, verificationLink);
+
+        // Trả về phản hồi thành công
+        return res.status(200).json({
+          message: "A verification email has been sent to: " + email,
+        });
+      } else {
+        // Xử lý lỗi nếu không tạo được khách hàng
+        return res.status(500).json({ message: "Failed to create customer" });
       }
-      console.log("Account create:", newAccount);
-      console.log("Customer create:", newCustomer);
-      return res
-        .status(200)
-        .json({ message: "Account customer create successfully" });
     } catch (err) {
-      res.status(500).send("Database insert error");
+      // Xử lý lỗi nếu có lỗi xảy ra
+      console.error("Error in registering customer:", err);
+      return res.status(500).send("Lỗi hệ thống");
     }
   }
+
 
   registerDentist = async (req, res) => {
     upload(req, res, async (err) => {

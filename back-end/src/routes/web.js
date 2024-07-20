@@ -9,6 +9,7 @@ import TreatmentController, {
 } from "../controllers/treatmentController";
 import clinicController from "../controllers/clinicController";
 import profileController from "../controllers/profileController";
+import chatController from '../controllers/chatController.js';
 // init all web routes
 
 let router = express.Router();
@@ -69,6 +70,9 @@ let initAllWebRoutes = (app) => {
   router.get("/getAllUser", AccountController.handleGetAllUser);
   router.delete("/deleteUser", AccountController.handleDeleteUser);
   router.get("/handleGetAllCustomer", AccountController.handleGetAllCustomer);
+  router.get('/chat/:senderId/:receiverId', chatController.getMessages);
+  router.post('/chat', chatController.sendMessage);
+
 
 
   ///////////////////////////customer

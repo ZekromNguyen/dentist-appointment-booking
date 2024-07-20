@@ -12,7 +12,7 @@
     display: flex;
     justify-content: center;
     padding: 20px;
-    background-image: url(../../assets/picture/picuture_imgDoctor/clinic.webp);
+    background-image: url(../../assets/Clinic-IMG.jpg);
     background-color: antiquewhite;
     background-size: cover;
     /* Thêm thuộc tính này để đảm bảo hình ảnh phủ đầy */
@@ -89,15 +89,16 @@ button {
     justify-content: center;
 }
 
-.create-button {
+.create-buttonn {
     display: flex;
     justify-content: center;
     line-height: 40px;
-    font-size: 20px;
+    font-size: 30px;
     color: white;
     background-color: greenyellow;
     width: 250px;
     height: 50px;
+    border-radius: 10px;
 
     &:hover {
         background-color: aquamarine;
@@ -121,7 +122,7 @@ button {
     box-sizing: border-box;
     background-color: rgba(255, 255, 255, 0.5);
     /* Màu trắng trong suốt */
-    border-radius: 20px;
+    border-radius: 5px;
     padding: 20px;
 }
 

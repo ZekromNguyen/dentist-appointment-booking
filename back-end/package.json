@@ -45,7 +45,9 @@
     "nodemailer": "^6.9.13",
     "qs": "^6.12.2",
     "request": "^2.88.2",
-    "sequelize": "^6.37.3"
+    "sequelize": "^6.37.3",
+    "socket.io": "^4.7.5",
+    "sqlite3": "^5.1.7"
   },
   "devDependencies": {
     "@babel/cli": "^7.24.5",

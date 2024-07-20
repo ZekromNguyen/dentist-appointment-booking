@@ -7,6 +7,7 @@ import { FaUserClock } from "react-icons/fa";
 import { TfiHeadphoneAlt } from "react-icons/tfi";
 import { MdGTranslate } from "react-icons/md";
 import { logout } from '../../Service/userService';
+import { Navbar, Nav, NavDropdown, Container } from 'react-bootstrap';
 
 export default function Header() {
     const [account, setAccount] = useState(null);
@@ -61,104 +62,50 @@ export default function Header() {
 
     return (
         <div className="home-header-container">
-            <div className="header-content">
-                <div className="nav-menu" ref={menuRef}>
-                    <IoMenuOutline className="icon-menu" onClick={toggleMenu} />
-                    <div className={`menu-sidebar ${showMenu ? 'open' : ''}`}>
-                        <ul>
-                            <li>
-                                <Link to="/somewhere">Somewhere</Link>
-                            </li>
-                            <li>
-                                <Link to="/else">Else</Link>
-                            </li>
-                            <li>
-                                <Link to="/somewhere">Somewhere</Link>
-                            </li>
-                            <li>
-                                <Link to="/else">Else</Link>
-                            </li>
-                            <li>
-                                <Link to="/somewhere">Somewhere</Link>
-                            </li>
-                            <li>
-                                <Link to="/else">Else</Link>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <div className="content-logo">
-                    <a href="/" className="header-logo"></a>
-                </div>
-                <div className="content-option">
-                    <div className="child-option1">
-                        <div><b>Tất cả</b></div>
-                        <div className="sub">Thông tin</div>
-                    </div>
-                    <div className="child-option2">
-                        <div><b>Sống khoẻ</b></div>
-                        <div className="sub">Sống tốt mỗi ngày</div>
-                    </div>
-                    <div className="child-option3">
-                        <a href="/booking" className="booking-link">
-                            <div><b>Đặt lịch</b></div>
-                        </a>
-                    </div>
-                    <div className="child-option4">
-                        <div><b>Vị trí</b></div>
-                        <div className="sub">Địa điểm gần nhất</div>
-                    </div>
-                </div>
-                <div className="content-login-register">
-                    {account ? (
-                        <div className="logged-in">
-                            <FaUser className="icon-user" />
-                            <span>Xin chào, {account.user}</span>
-                            <div className="dropdown-menu">
-                                <Link to={`/profile/${account.id}`}>
-                                    <FaUser />
-                                    Profile
-                                </Link>
-                                <Link to="/settings">
-                                    <FaCogs />
-                                    Settings
-                                </Link>
-                                <button onClick={handleLogout}>
-                                    <FaSignOutAlt />
-                                    Logout
-                                </button>
-                            </div>
-                        </div>
-                    ) : (
-                        <div className="content-auth">
-                            <div className="auth-left">
-                                <FaUser className="icon-user" />
-                                <Link to="/Login" className="Login">Login</Link>
-                            </div>
-                            <div className='auth-right'>
-                                <div className="seperate">|</div>
-                                <Link to="/Register" className="register">Sign up</Link>
-                            </div>
-                        </div>
-                    )}
-                </div>
-                <div className="content-support">
-                    <div className='support-child'>
-                        <FaUserClock className="clock-history" />
-                        <div>Lịch hẹn</div>
-                    </div>
-                    <div className="contact-support">
-                        <TfiHeadphoneAlt className="contact" />
-                        <div>Hỗ trợ</div>
-                    </div>
-                    <div className="translate">
-                        <MdGTranslate className="icon-translate" />
-                        {/* <div>Ngôn ngữ</div> */}
-                    </div>
-                    <div className="languge-vi">VN</div>
-                    <div className="languge-en">EN</div>
-                </div>
-            </div>
+            <Navbar collapseOnSelect expand="lg" className="bg-body-tertiary">
+                <Container>
+                    <Navbar.Brand href="/" className='header-logo'></Navbar.Brand>
+                    <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+                    <Navbar.Collapse id="responsive-navbar-nav">
+                        <Nav className="me-auto">
+                            <Nav.Link className='nav-header' as={Link} to="/">Trang chủ</Nav.Link>
+                            <Nav.Link className='nav-header' as={Link} to="/booking">Đặt lịch</Nav.Link>
+                            <Nav.Link className='nav-header' as={Link} to="/booking">Lịch hẹn</Nav.Link>
+                            <Nav.Link className='nav-header' as={Link} to="/booking">Hỗ trợ</Nav.Link>
+                            <NavDropdown title="Dropdown" id="collapsible-nav-dropdown">
+                                <NavDropdown.Item as={Link} to="/somewhere">Somewhere</NavDropdown.Item>
+                                <NavDropdown.Item as={Link} to="/else">Else</NavDropdown.Item>
+                                <NavDropdown.Divider />
+                                <NavDropdown.Item as={Link} to="/somewhere">Separated link</NavDropdown.Item>
+                            </NavDropdown>
+                        </Nav>
+                        <Nav>
+                            {account ? (
+                                <NavDropdown title={`Xin chào, ${account.user}`} id="account-nav-dropdown">
+                                    <NavDropdown.Item as={Link} to={`/profile/${account.id}`}>
+                                        <FaUser /> Profile
+                                    </NavDropdown.Item>
+                                    <NavDropdown.Item as={Link} to="/settings">
+                                        <FaCogs /> Settings
+                                    </NavDropdown.Item>
+                                    <NavDropdown.Item onClick={handleLogout}>
+                                        <FaSignOutAlt /> Logout
+                                    </NavDropdown.Item>
+                                </NavDropdown>
+                            ) : (
+                                <Nav>
+                                    <Nav.Link as={Link} to="/Login" className="Login">
+                                        <FaUser className="icon-user" /> Login
+                                    </Nav.Link>
+                                    <Nav.Link as={Link} to="/Register" className="register">
+                                        Sign up
+                                    </Nav.Link>
+                                </Nav>
+                            )}
+                        </Nav>
+                    </Navbar.Collapse>
+                </Container>
+            </Navbar>
         </div>
     );
 }

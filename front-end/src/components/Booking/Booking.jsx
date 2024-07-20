@@ -219,7 +219,7 @@ const Booking = () => {
     try {
       const newBookings = selectedTimes.map((time) => {
         let recurringEndDate = null; // Giá trị mặc định là null
-      
+
         if (selectedType === "Weekly") {
           // Nếu là hàng tuần, đặt RecurringEndDate là tháng sau
           recurringEndDate = new Date(selectedDate);
@@ -229,7 +229,7 @@ const Booking = () => {
           recurringEndDate = new Date(selectedDate);
           recurringEndDate.setFullYear(recurringEndDate.getFullYear() + 1);
         }
-      
+
         // if(customerid === null){
         //   const customerData = JSON.parse(localStorage.getItem('account'));
         //   const customer = {
@@ -324,7 +324,7 @@ const Booking = () => {
 
   useEffect(() => {
     if (selectedTimes.length > 0) {
-      let totalCost =  priceBooking; // Khởi tạo từ giá trị ban đầu
+      let totalCost = priceBooking; // Khởi tạo từ giá trị ban đầu
       if (selectedType === "Weekly") {
         totalCost *= 4; // Nhân với 4 nếu là hàng tuần
       } else if (selectedType === "Monthly") {
@@ -370,13 +370,12 @@ const Booking = () => {
             {availableSlots.map((availableslot) => (
               <div
                 key={availableslot.ScheduleID}
-                className={`hour-slot ${
-                  selectedTimes.find(
-                    (time) => time.SlotId === availableslot.SlotID
-                  )
+                className={`hour-slot ${selectedTimes.find(
+                  (time) => time.SlotId === availableslot.SlotID
+                )
                     ? "selected"
                     : ""
-                }`}
+                  }`}
                 onClick={() =>
                   handleTimeClick(
                     availableslot.SlotID,
@@ -407,9 +406,9 @@ const Booking = () => {
             </div>
           )}
 
-          {selectedTimes.length > 0 && selectedType.length > 0 &&(
+          {selectedTimes.length > 0 && selectedType.length > 0 && (
             <div className="price-booking">
-              <label>Total Cost: {(price*selectedTimes.length).toLocaleString("vi-VN")} VNĐ</label>
+              <label>Total Cost: {(price * selectedTimes.length).toLocaleString("vi-VN")} VNĐ</label>
             </div>
           )}
 
