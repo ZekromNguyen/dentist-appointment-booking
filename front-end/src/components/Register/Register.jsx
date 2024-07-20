@@ -22,7 +22,7 @@ export default function Register(props) {
         isValidPhone: true,
         isValidName: true
     });
-    const [isLoading, setIsLoading] = useState(false); // State cho loading
+    const [isLoading, setIsLoading] = useState(false);
 
     let navigate = useNavigate();
 
@@ -63,16 +63,14 @@ export default function Register(props) {
         let isValid = isValidInputs();
 
         if (isValid) {
-            setIsLoading(true); // Bắt đầu loading
+            setIsLoading(true);
 
             try {
                 const response = await register(username, password, email, phone, name);
 
                 if (response && response.status === 200) {
-                    //navigate("/Login")
                     toast.success(response.data.message);
                     toast.success("Đăng ký thành công, vui lòng kiểm tra email của bạn để xác minh tài khoản.");
-                    // Sau khi gửi email thành công, chuyển hướng hoặc xử lý tiếp theo
                 } else if (response && response.data && response.data.error) {
                     toast.error(response.data.error);
                 } else {
@@ -86,8 +84,23 @@ export default function Register(props) {
                 }
             }
 
-            setIsLoading(false); // Kết thúc loading sau khi xử lý xong
+            setIsLoading(false);
         }
+    };
+
+    const handleReset = () => {
+        setUsername("");
+        setPassword("");
+        setEmail("");
+        setPhone("");
+        setName("");
+        SetCheckInput({
+            isValidUsername: true,
+            isValidPassword: true,
+            isValidEmail: true,
+            isValidPhone: true,
+            isValidName: true
+        });
     };
 
     return (
@@ -148,7 +161,12 @@ export default function Register(props) {
                     <button className="button-register" onClick={() => handleRegister()}>
                         {isLoading ? 'Đang đăng ký...' : 'Đăng ký'}
                     </button>
+
+                    <div className="div-reset">
+                        <button className="button-reset" onClick={handleReset}>Làm mới</button>
+                    </div>
                 </div>
+
                 <div className="shift"></div>
                 <div className="account">
                     <span className='text-gray-600 mr-1'>Đã có tài khoản?</span>

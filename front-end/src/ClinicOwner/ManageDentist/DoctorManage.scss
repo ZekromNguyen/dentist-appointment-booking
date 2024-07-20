@@ -19,7 +19,7 @@ html {
 }
 
 #doctors th {
-    background-color: #04AA6D;
+    background-color: #007bff;
     color: white;
     padding-top: 12px;
     padding-bottom: 12px;
@@ -57,3 +57,15 @@ html {
 */
 
 // Add more specific styles as needed
+
+.dentist-title {
+    display: flex;
+    justify-content: center;
+    font-size: 40px;
+}
+
+.button-edit {
+    width: 72px !important;
+}
+
+.button-delete {}

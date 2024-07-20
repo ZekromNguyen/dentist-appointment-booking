@@ -107,6 +107,7 @@ button {
     &:active {
         background-color: aqua;
     }
+
 }
 
 .button-create-div {
@@ -140,6 +141,8 @@ button {
 .div-login {
     display: flex;
     justify-content: center;
+
+
 }
 
 .shift {
@@ -170,4 +173,16 @@ button {
     right: -200px !important;
     top: 204px;
     cursor: pointer;
+}
+
+.button-reset {
+    cursor: pointer;
+
+    &:hover {
+        background-color: blue !important;
+        color: white;
+        /* or any color you prefer for the text */
+        border: 1px solid blue;
+        /* optional border color change */
+    }
 }

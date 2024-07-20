@@ -72,6 +72,11 @@ export default function Login() {
     const handleRegister = () => {
         navigate("/Register")
     }
+
+    const handleReset = () => {
+        setEmail("");
+        setPassword("");
+    }
     return (
         <div className="body">
             <div className="back-ground col-12 col-sm-4">
@@ -113,6 +118,10 @@ export default function Login() {
                     <div className="div-login">
                         <button className="btn btn-primary" onClick={handleLogin}>
                             Đăng nhập
+                        </button>
+
+                        <button className="button-reset" style={{ backgroundColor: "white", color: "black", border: "1px solid black" }} onClick={handleReset}>
+                            Làm mới
                         </button>
                     </div>
 

@@ -45,7 +45,7 @@ const ClinicManager = () => {
   return (
     <div>
       <h1>Manage Clinics</h1>
-      <Button variant="primary" onClick={handleShow}>
+      <Button className='button-addClinic' variant="primary" onClick={handleShow}>
         Add New Clinic
       </Button>
       <AddClinicModal show={showModal} handleClose={handleClose} onClinicAdded={handleClinicAdded} />

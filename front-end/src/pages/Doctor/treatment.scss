@@ -142,3 +142,12 @@ $treatment-table-font-size: 11px; // Định nghĩa kích thước font chữ ch
         font-size: $treatment-table-font-size; // Đặt font-size cho các ô dữ liệu trong tbody
     }
 }
+
+.treatment-title {
+    margin-top: 5%;
+    margin-bottom: 5%;
+    display: flex;
+    justify-content: center;
+    font-size: 40px;
+    font-weight: 600;
+}

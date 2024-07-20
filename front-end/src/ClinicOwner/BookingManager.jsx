@@ -99,7 +99,7 @@ class BookingManager extends Component {
         const { bookings, showModal, selectedStatus } = this.state;
         return (
             <div className='Manage-booking'>
-                <div className='mt-100'>Manage Bookings</div>
+                <div className='mange-title mt-100'>Manage Bookings</div>
                 <div className='booking-table mt-30 mx-10'>
                     <table>
                         <thead>

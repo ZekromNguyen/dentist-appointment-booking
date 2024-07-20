@@ -105,9 +105,9 @@ class DoctorManage extends Component {
           />
         )}
 
-        <div className='mt-100'>Manage CRUD Doctors</div>
+        <div className='dentist-title'>Manage Dentist</div>
         <button
-          className='btn btn-primary px-3 ml-2'
+          className='btn-add btn-primary px-3 ml-2'
           onClick={this.handleAddNewDentist}
         >
           Add new dentist
@@ -141,8 +141,8 @@ class DoctorManage extends Component {
                   <td>{item.ClinicID}</td>
                   <td>{item.Description}</td>
                   <td>
-                    <button onClick={() => this.handleEditDoctor(item)}>Edit</button>
-                    <button onClick={() => this.handleDeleteDoctor(item)}>Delete</button>
+                    <button className='button-edit' style={{ fontSize: "15px" }} onClick={() => this.handleEditDoctor(item)}>Edit</button>
+                    <button className='button-delete' style={{ fontSize: "15px" }} onClick={() => this.handleDeleteDoctor(item)}>Delete</button>
                   </td>
                 </tr>
               ))}
