@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button, FormGroup, Label, Input } from 'reactstrap';
 import { ToastContainer, toast } from 'react-toastify';
-import _ from 'lodash';
+import axios from 'axios';
+import BASE_URL from '../../ServiceSystem/axios';
 import { handleEditDentist } from '../../Service/userService';
 
 class ModelEditDentist extends Component {
@@ -9,19 +10,41 @@ class ModelEditDentist extends Component {
         super(props);
         this.state = {
             dentistName: '',
-            clinicID: ''
+            clinicID: '',
+            clinics: [], // Array to store clinics fetched from API
         };
     }
 
     componentDidMount() {
         let dentist = this.props.currentDentist;
-        if (dentist && !_.isEmpty(dentist)) {
+        if (dentist) {
             this.setState({
                 dentistName: dentist.DentistName,
                 clinicID: dentist.ClinicID
             });
         }
+        // Fetch clinics data when component mounts
+        this.fetchClinics();
     }
+
+    fetchClinics = async () => {
+        try {
+            const ownerData = JSON.parse(localStorage.getItem('account'));
+            const clinicOwnerId = ownerData.clinicOwnerId;
+            const response = await axios.get(`${BASE_URL}/getAllClinic`, {
+                params: {
+                    ownerId: clinicOwnerId
+                }
+            });
+            if (response.data && response.data.clinics) {
+                this.setState({
+                    clinics: response.data.clinics,
+                });
+            }
+        } catch (error) {
+            console.error('Error fetching clinics:', error);
+        }
+    };
 
     toggle = () => {
         this.props.toggleFromParent();
@@ -60,9 +83,14 @@ class ModelEditDentist extends Component {
         }
     };
 
+    handleInputChange = (event) => {
+        const { name, value } = event.target;
+        this.setState({ [name]: value });
+    };
+
     render() {
         const { isOpen } = this.props;
-        const { dentistName, clinicID } = this.state;
+        const { dentistName, clinicID, clinics } = this.state;
         return (
             <Modal isOpen={isOpen} toggle={this.toggle} className='model' size="lg" centered>
                 <ModalHeader toggle={this.toggle}>Edit Dentist</ModalHeader>
@@ -70,13 +98,27 @@ class ModelEditDentist extends Component {
                     <FormGroup>
                         <Label for="dentistName">Dentist Name</Label>
                         <Input type="text" id="dentistName"
-                            onChange={(event) => this.setState({ dentistName: event.target.value })}
+                            name="dentistName"
+                            onChange={this.handleInputChange}
                             value={dentistName}
                         />
                     </FormGroup>
                     <FormGroup>
-                        <Label for="clinicID">Clinic ID</Label>
-                        <Input type="text" id="clinicID" value={clinicID} onChange={(event) => this.setState({ clinicID: event.target.value })} />
+                        <Label for="clinicID">Clinic Name</Label>
+                        <Input
+                            type="select"
+                            name="clinicID"
+                            id="clinicID"
+                            value={clinicID}
+                            onChange={this.handleInputChange}
+                        >
+                            <option value="">Select clinic</option>
+                            {clinics.map((clinic) => (
+                                <option key={clinic.ClinicID} value={clinic.ClinicID}>
+                                    {clinic.ClinicName}
+                                </option>
+                            ))}
+                        </Input>
                     </FormGroup>
                 </ModalBody>
                 <ModalFooter>

@@ -27,7 +27,7 @@ class ModelAddDentist extends Component {
     fetchClinics = async () => {
         try {
             const ownerData = JSON.parse(localStorage.getItem('account'));
-            const clinicOwnerId  = ownerData.clinicOwnerId;
+            const clinicOwnerId = ownerData.clinicOwnerId;
             const response = await axios.get(`${BASE_URL}/getAllClinic`, {
                 params: {
                     ownerId: clinicOwnerId
@@ -182,7 +182,7 @@ class ModelAddDentist extends Component {
                             />
                         </Form.Group>
                         <Form.Group controlId="formClinicID">
-                            <Form.Label>Clinic ID</Form.Label>
+                            <Form.Label>Clinic Name</Form.Label>
                             <Form.Control
                                 as="select"
                                 name="clinicID"
