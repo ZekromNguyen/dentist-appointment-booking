@@ -112,7 +112,8 @@ export default function ResetPassword() {
         }
     };
     return (
-        <div className="reset-password-container"> {/* Match class name with CSS */}
+        <div className="reset-password-container">
+            <div className='reset-tile'>Xác nhận lại mật khẩu</div>
             <input
                 type="password"
                 placeholder="Nhập mật khẩu mới"

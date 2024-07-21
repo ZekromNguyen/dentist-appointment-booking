@@ -150,7 +150,7 @@ export default function ForgotPassword() {
             if (response.status === 200) {
                 toast.success("Email xác nhận đã được gửi đến địa chỉ email của bạn");
             } else {
-                toast.error("Có lỗi xảy ra. Vui lòng thử lại sau.");
+                toast.success("Email xác nhận đã được gửi đến địa chỉ email của bạn.");
             }
         } catch (error) {
             toast.error("Không thể gửi yêu cầu. Vui lòng thử lại sau.");
