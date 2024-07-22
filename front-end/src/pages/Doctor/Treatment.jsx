@@ -104,36 +104,6 @@ const TreatmentUpload = () => {
         setResultImage(null);
     };
 
-    // const handleChangeStatus = async () => {
-    //     const { selectedBookingId, selectedStatus } = this.state;
-    //     try {
-    //         const updateStatus = {
-    //             BookingID: selectedBookingId,
-    //             Status: selectedStatus,
-    //         };
-    //         const response = await axios.put(`${BASE_URL}/updateBookingStatus`, updateStatus);
-    //         if (response.status === 200 && response.data.updateBooking !== null) {
-    // //             Update the state to reflect the new status
-    //             const updatedBookings = this.state.bookings.map(booking => {
-    //                 if (booking.BookingID === selectedBookingId) {
-    //                     return {
-    //                         ...booking,
-    //                         BookingDetails: booking.BookingDetails.map(detail => ({
-    //                             ...detail,
-    //                             Status: selectedStatus
-    //                         }))
-    //                     };
-    //                 }
-    //                 return booking;
-    //             });
-    //             this.setState({ bookings: updatedBookings, showModal: false });
-    //         } else {
-    //             alert('Error updating status');
-    //         }
-    //     } catch (error) {
-    //         console.error('Error updating status:', error);
-    //     }
-    // };
 
     const handleChangeStatus = async () => {
         try {

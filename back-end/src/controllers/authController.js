@@ -70,7 +70,7 @@ class AccountController {
         case 3:
           const clinicOwner = await AccountService.getClinicOwnerByAccountId(account.AccountID);
           userData = {
-            user: clinicOwner.ClinicOWnerName,
+            user: clinicOwner.ClinicOwnerName,
             id: account.AccountID,
             clinicOwnerId: clinicOwner.ClinicOwnerID,
             RoleID: account.RoleID,

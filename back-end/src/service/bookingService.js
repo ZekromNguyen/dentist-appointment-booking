@@ -34,12 +34,9 @@ class BookingService {
         const availableScheduleS = await DentistSchedule.findAll({
           where: {
             DentistID: dentistId,
-            ScheduleID: {
-              [Sequelize.Op.notIn]: bookedScheduleIDs,
-            },
             Date: date,
             Status: {
-              [Sequelize.Op.in]: ["Expired", "Available"],
+              [Sequelize.Op.in]: ["Expired", "Available","Booked"],
             },
           },
           include: {
@@ -133,7 +130,7 @@ class BookingService {
   ) {
     try {
       const transaction = await sequelize.transaction();
-
+  
       if (recurringType === "None" || !recurringEndDate) {
         // Create firstBookingDetail
         const firstBookingDetail = await BookingDetail.create(
@@ -166,52 +163,53 @@ class BookingService {
           },
           { transaction }
         );
+  
         // Logic to handle recurring bookings
         const recurringDetails = [];
         const dentistSchedules = [];
         let nextDate = new Date(medicalDay);
-        const Schedule = await DentistService.getDetailDentistSchedule(
-          scheduleId
-        );
-        while (nextDate < new Date(recurringEndDate)) {
+        const Schedule = await DentistService.getDetailDentistSchedule(scheduleId);
+        const maxRecurrences = recurringType === "Weekly" ? 3 : 11;
+        let recurrenceCount = 0;
+  
+        while (nextDate < new Date(recurringEndDate) && recurrenceCount < maxRecurrences) {
           if (recurringType === "Weekly") {
             nextDate.setDate(nextDate.getDate() + 7);
-          }
-          if (recurringType === "Monthly") {
+          } else if (recurringType === "Monthly") {
             nextDate.setMonth(nextDate.getMonth() + 1);
           }
-
-          if (nextDate <= new Date(recurringEndDate)) {
+  
+          if (nextDate < new Date(recurringEndDate) && recurrenceCount < maxRecurrences) {
             dentistSchedules.push({
               DentistID: Schedule.DentistID,
               SlotID: Schedule.SlotID,
               Date: nextDate,
               Status: "Available",
             });
-            if (dentistSchedules.length > 0) {
-              const createdSchedules = await DentistSchedule.bulkCreate(
-                dentistSchedules,
-                { transaction }
-              );
-              // Get the ScheduleIDs from the created schedules
-              createdSchedules.forEach((schedule) => {
-                recurringDetails.push({
-                  DateBook: dateBook,
-                  TypeBook: typeBook,
-                  Status: "Pending",
-                  PriceBooking: priceBooking,
-                  MedicalDay: schedule.Date,
-                  BookingID: bookingId,
-                  ScheduleID: schedule.ScheduleID, // Use the ScheduleID from created schedules
-                  RecurringType: recurringType,
-                  RecurringEndDate: recurringEndDate,
-                });
+            recurrenceCount++;
+          }
+  
+          if (dentistSchedules.length > 0) {
+            const createdSchedules = await DentistSchedule.bulkCreate(dentistSchedules, { transaction });
+            // Get the ScheduleIDs from the created schedules
+            createdSchedules.forEach((schedule) => {
+              recurringDetails.push({
+                DateBook: dateBook,
+                TypeBook: typeBook,
+                Status: "Pending",
+                PriceBooking: priceBooking,
+                MedicalDay: schedule.Date,
+                BookingID: bookingId,
+                ScheduleID: schedule.ScheduleID, // Use the ScheduleID from created schedules
+                RecurringType: recurringType,
+                RecurringEndDate: recurringEndDate,
               });
-              // Clear dentistSchedules after creating them to avoid duplication
-              dentistSchedules.length = 0;
-            }
+            });
+            // Clear dentistSchedules after creating them to avoid duplication
+            dentistSchedules.length = 0;
           }
         }
+  
         if (recurringDetails.length > 0) {
           await BookingDetail.bulkCreate(recurringDetails, { transaction });
         }
