@@ -68,30 +68,30 @@ export default function Banner() {
                     <div className='banner-container' style={{ ...style, height: '500px', backgroundRepeat: 'no-repeat', backgroundSize: 'cover', backgroundPosition: 'center', display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', width: '100%', maxWidth: '1190px', margin: '0 auto', boxSizing: 'border-box', borderRadius: '10px' }}>
                         <div className='header-banner'>
                             <div className='header-Information'>
-                                <div className="header-title">Chào mừng đến với đặt lịch phòng khám</div>
-                                <div className="header-title-content">TOÀN DIỆN NHANH CHÓNG</div>
+                                <div className="header-title">Welcome to Clinic Appointment Booking</div>
+                                <div className="header-title-content">COMPREHENSIVE & FAST</div>
                                 <div className="search">
                                     <i className='div-search'><GoSearch className='icon-search' /></i>
-                                    <input className="search-text" type='text' placeholder='Tìm kiếm địa điểm gần nhất' />
+                                    <input className="search-text" type='text' placeholder='Search for the nearest location' />
                                 </div>
                             </div>
                             <div className="header-detail">
                                 <div className="option-clinic">
                                     <div className="option-child">
                                         <div className='icon-child' style={{ fontSize: '60px', color: 'red' }}><RiServiceFill /></div>
-                                        <div className='text-child'>Dịch vụ toàn diện</div>
+                                        <div className='text-child'>Comprehensive Services</div>
                                     </div>
                                     <div className="option-child">
                                         <div className='icon-child'><LiaTeethOpenSolid className='icon-chuyenkhoa' /></div>
-                                        <div className='text-child'>Chuyên khoa</div>
+                                        <div className='text-child'>Specialty</div>
                                     </div>
                                     <div className="option-child">
                                         <div className='icon-child'><FaRegHospital className='icon-yte' /></div>
-                                        <div className='text-child'>Cơ sở y tế</div>
+                                        <div className='text-child'>Medical Facility</div>
                                     </div>
                                     <div className="option-child">
                                         <div className='icon-child'><FaUserDoctor className='icon-doctor' /></div>
-                                        <div className='text-child'>Bác sĩ</div>
+                                        <div className='text-child'>Doctor</div>
                                     </div>
                                 </div>
                             </div>

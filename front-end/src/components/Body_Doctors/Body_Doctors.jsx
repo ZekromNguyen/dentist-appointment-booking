@@ -166,8 +166,8 @@ export default function Body_Doctors() {
     return (
         <div className='slider-doctors'>
             <div className='header-doctor'>
-                <span className='header-title'>Bác sĩ nổi bật</span>
-                <button className='btn-doctors'>Xem thêm</button>
+                <span className='header-title'>Dentist Information</span>
+                <button className='btn-doctors'>See More</button>
             </div>
             <Slider {...settings}>
                 {dentists.map((dentist, index) => (

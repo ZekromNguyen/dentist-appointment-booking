@@ -144,9 +144,9 @@ const BookingDetails = ({
                   <td>{details.date}</td>
                   <td>{details.slotTime}</td>
                   <td>
-                    {details.RecurringType === "None" && "Đơn lẻ"}
-                    {details.RecurringType === "Weekly" && "Hằng tuần"}
-                    {details.RecurringType === "Monthly" && "Hằng tháng"}
+                    {details.RecurringType === "None" && "Slot"}
+                    {details.RecurringType === "Weekly" && "Weekly"}
+                    {details.RecurringType === "Monthly" && "Monthly"}
                   </td>
                   <td>{details.price.toLocaleString("vi-VN")} VNĐ</td>
                   <td>

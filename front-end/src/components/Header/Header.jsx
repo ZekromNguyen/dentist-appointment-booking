@@ -68,10 +68,10 @@ export default function Header() {
                     <Navbar.Toggle aria-controls="responsive-navbar-nav" />
                     <Navbar.Collapse id="responsive-navbar-nav">
                         <Nav className="me-auto">
-                            <Nav.Link className='nav-header' as={Link} to="/">Trang chủ</Nav.Link>
-                            <Nav.Link className='nav-header' as={Link} to="/booking">Đặt lịch</Nav.Link>
-                            <Nav.Link className='nav-header' as={Link} to="/booking">Lịch hẹn</Nav.Link>
-                            <Nav.Link className='nav-header' as={Link} to="/booking">Hỗ trợ</Nav.Link>
+                            <Nav.Link className='nav-header' as={Link} to="/">Home</Nav.Link>
+                            <Nav.Link className='nav-header' as={Link} to="/booking">Book Appointment</Nav.Link>
+                            <Nav.Link className='nav-header' as={Link} to="/booking">Appointments</Nav.Link>
+                            <Nav.Link className='nav-header' as={Link} to="/booking">Support</Nav.Link>
                             <NavDropdown title="Dropdown" id="collapsible-nav-dropdown">
                                 <NavDropdown.Item as={Link} to="/somewhere">Somewhere</NavDropdown.Item>
                                 <NavDropdown.Item as={Link} to="/else">Else</NavDropdown.Item>
@@ -81,7 +81,7 @@ export default function Header() {
                         </Nav>
                         <Nav>
                             {account ? (
-                                <NavDropdown title={`Xin chào, ${account.user}`} id="account-nav-dropdown">
+                                <NavDropdown title={`Hello, ${account.user}`} id="account-nav-dropdown">
                                     <NavDropdown.Item as={Link} to={`/profile/${account.id}`}>
                                         <FaUser /> Profile
                                     </NavDropdown.Item>

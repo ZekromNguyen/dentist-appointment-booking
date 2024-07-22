@@ -9,52 +9,51 @@ import { PiToothFill } from "react-icons/pi";
 import { LiaToothSolid } from "react-icons/lia";
 import { LiaTeethSolid } from "react-icons/lia";
 
-
 export default function Body_Service() {
     return (
         <div className='body_service'>
-            <div className='service-header'>Dịch vụ toàn diện</div>
+            <div className='service-header'>Comprehensive Services</div>
             <div className='service-detail-1'>
                 <div className='service-detail-left'>
                     <FaTooth className='icon' />
-                    <div className='text'>Khám răng</div>
+                    <div className='text'>Dental Examination</div>
                 </div>
                 <div className='service-detail-right'>
                     <CiMedicalCase className='icon' />
-                    <div className='text'>Khám nhanh</div>
+                    <div className='text'>Quick Check-up</div>
                 </div>
             </div>
 
             <div className='service-detail-2'>
                 <div className='service-detail-left'>
                     <FaHandHoldingMedical className='icon' />
-                    <div className='text'>Khám tổng quát</div>
+                    <div className='text'>General Check-up</div>
                 </div>
                 <div className='service-detail-right'>
                     <GiMedicalDrip className='icon' />
-                    <div className='text'>Khám xét nghiệm</div>
+                    <div className='text'>Lab Testing</div>
                 </div>
             </div>
 
             <div className='service-detail-3'>
                 <div className='service-detail-left'>
                     <LiaNotesMedicalSolid className='icon' />
-                    <div className='text'>Khám định kì</div>
+                    <div className='text'>Periodic Check-up</div>
                 </div>
                 <div className='service-detail-right'>
                     <PiToothFill className='icon' />
-                    <div className='text'>Khám chuyên khoa</div>
+                    <div className='text'>Specialized Check-up</div>
                 </div>
             </div>
 
             <div className='service-detail-4'>
                 <div className='service-detail-left'>
                     <LiaToothSolid className='icon' />
-                    <div className='text'>Khám sâu răng</div>
+                    <div className='text'>Cavity Examination</div>
                 </div>
                 <div className='service-detail-right'>
                     <LiaTeethSolid className='icon' />
-                    <div className='text'>Khám làm răng</div>
+                    <div className='text'>Dental Treatment</div>
                 </div>
             </div>
         </div>

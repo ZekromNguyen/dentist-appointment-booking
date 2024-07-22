@@ -28,32 +28,32 @@ export default function Register(props) {
 
     const isValidInputs = () => {
         if (!username) {
-            toast.error("Tên người dùng bắt buộc");
+            toast.error("Username is required");
             return false;
         }
         if (!password) {
             SetCheckInput({ ...checkinput, isValidPassword: false });
-            toast.error("Mật khẩu bắt buộc");
+            toast.error("Password is required");
             return false;
         }
         let reg = /\S+@\S+\.\S+/;
         if (!reg.test(email)) {
             SetCheckInput({ ...checkinput, isValidEmail: false });
-            toast.error("Vui lòng nhập đúng định dạng địa chỉ email");
+            toast.error("Please enter a valid email address");
             return false;
         }
         if (!email) {
             SetCheckInput({ ...checkinput, isValidEmail: false });
-            toast.error("Email bắt buộc");
+            toast.error("Email is required");
             return false;
         }
         if (!phone) {
             SetCheckInput({ ...checkinput, isValidPhone: false });
-            toast.error("Số điện thoại bắt buộc");
+            toast.error("Phone number is required");
             return false;
         }
         if (!name) {
-            toast.error("Tên người dùng bắt buộc");
+            toast.error("Name is required");
             return false;
         }
         return true;
@@ -70,17 +70,17 @@ export default function Register(props) {
 
                 if (response && response.status === 200) {
                     toast.success(response.data.message);
-                    toast.success("Đăng ký thành công, vui lòng kiểm tra email của bạn để xác minh tài khoản.");
+                    toast.success("Registration successful, please check your email to verify your account.");
                 } else if (response && response.data && response.data.error) {
                     toast.error(response.data.error);
                 } else {
-                    toast.error("Đã xảy ra lỗi, vui lòng thử lại.");
+                    toast.error("An error occurred, please try again.");
                 }
             } catch (error) {
                 if (error.response && error.response.data && error.response.data.error) {
                     toast.error(error.response.data.error);
                 } else {
-                    toast.error("Đã xảy ra lỗi, vui lòng thử lại.");
+                    toast.error("An error occurred, please try again.");
                 }
             }
 
@@ -107,11 +107,11 @@ export default function Register(props) {
         <div className="back-ground col-12 col-sm-4">
             <ToastContainer />
             <div className="all-register">
-                <div><h3 className="title">Trang đăng ký</h3></div>
+                <div><h3 className="title">Register Page</h3></div>
 
                 {/* username */}
                 <div className="div-sdt">
-                    <input type="text" className={checkinput.isValidUsername ? "username form-control" : "username form-control is-invalid"} placeholder="Nhập tên tài khoản của bạn..."
+                    <input type="text" className={checkinput.isValidUsername ? "username form-control" : "username form-control is-invalid"} placeholder="Enter your username..."
                         value={username}
                         onChange={(event) => setUsername(event.target.value)}
                     />
@@ -120,7 +120,7 @@ export default function Register(props) {
                 {/* password */}
                 <div className="div-password">
                     <input type={isShowPassword ? 'text' : 'password'}
-                        className={checkinput.isValidPassword ? "password form-control" : "password form-control is-invalid"} placeholder="Nhập mật khẩu của bạn..."
+                        className={checkinput.isValidPassword ? "password form-control" : "password form-control is-invalid"} placeholder="Enter your password..."
                         value={password}
                         onChange={(event) => setPassword(event.target.value)} />
                     <div onClick={() => setIsShowPassword(!isShowPassword)} className="icon-container">
@@ -135,7 +135,7 @@ export default function Register(props) {
                 {/* email */}
                 <div className="div-email">
                     <input type="email"
-                        className={checkinput.isValidEmail ? "email form-control" : "email form-control is-invalid"} placeholder="Nhập địa chỉ email của bạn..."
+                        className={checkinput.isValidEmail ? "email form-control" : "email form-control is-invalid"} placeholder="Enter your email address..."
                         value={email}
                         onChange={(event) => setEmail(event.target.value)} />
                 </div>
@@ -143,7 +143,7 @@ export default function Register(props) {
                 {/* phone */}
                 <div className="div-phone">
                     <input type="phone"
-                        className={checkinput.isValidPhone ? "phone form-control" : "phone form-control is-invalid"} placeholder="Nhập số điện thoại của bạn..."
+                        className={checkinput.isValidPhone ? "phone form-control" : "phone form-control is-invalid"} placeholder="Enter your phone number..."
                         value={phone}
                         onChange={(event) => setPhone(event.target.value)} />
                 </div>
@@ -151,7 +151,7 @@ export default function Register(props) {
                 {/* name */}
                 <div className="div-name">
                     <input type="text"
-                        className={checkinput.isValidName ? "name form-control" : "name form-control is-invalid"} placeholder="Nhập tên của bạn..."
+                        className={checkinput.isValidName ? "name form-control" : "name form-control is-invalid"} placeholder="Enter your name..."
                         value={name}
                         onChange={(event) => setName(event.target.value)}
                     />
@@ -159,19 +159,19 @@ export default function Register(props) {
 
                 <div className="div-sign-up">
                     <button className="button-register" onClick={() => handleRegister()}>
-                        {isLoading ? 'Đang đăng ký...' : 'Đăng ký'}
+                        {isLoading ? 'Registering...' : 'Register'}
                     </button>
 
                     <div className="div-reset">
-                        <button className="button-reset" onClick={handleReset}>Làm mới</button>
+                        <button className="button-reset" onClick={handleReset}>Reset</button>
                     </div>
                 </div>
 
                 <div className="shift"></div>
                 <div className="account">
-                    <span className='text-gray-600 mr-1'>Đã có tài khoản?</span>
+                    <span className='text-gray-600 mr-1'>Already have an account?</span>
                     <Link className='text-gray-500 underline hover:text-red-500' to='/Login'>
-                        Đăng nhập
+                        Login
                     </Link>
                 </div>
             </div>

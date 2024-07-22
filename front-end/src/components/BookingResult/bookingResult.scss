@@ -118,10 +118,44 @@ $treatment-table-width: 100%; // Định nghĩa chiều rộng của bảng
 $treatment-table-font-size: 16px; // Định nghĩa kích thước font chữ cho bảng
 
 .treatment-table {
-    width: $treatment-table-width !important;
+    //  width: $treatment-table-width !important;
 
     thead th {
-        width: $treatment-table-width !important;
+        //width: $treatment-table-width !important;
         font-size: $treatment-table-font-size !important;
+    }
+}
+
+.treatment-title {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+    font-weight: 600;
+    font-size: 40px;
+}
+
+
+// treatment-image.scss
+
+.treatment-image {
+    cursor: pointer;
+    /* Hiển thị con trỏ khi di chuột qua ảnh */
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.modal-image {
+    .modal-dialog {
+        max-width: 200% !important;
+        /* Điều chỉnh kích thước tối đa của modal */
+    }
+
+    .modal-content {
+        img {
+            width: 200% !important;
+            /* Ảnh chiếm toàn bộ chiều rộng của modal */
+            height: auto;
+            /* Giữ tỉ lệ khung hình của ảnh */
+        }
     }
 }

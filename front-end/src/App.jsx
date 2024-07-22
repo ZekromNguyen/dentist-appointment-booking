@@ -76,6 +76,7 @@ import EditProfile from './components/Profile/EditProfile';
 import ClinicLoad from './components/Clinic/ClinicLoad';
 import Chat from './components/chatbox/chat';
 import Body_Youtube from './components/Body_Youtube/Body_Youtube';
+import BodySlider from './components/Body_Slider/Body_Slider';
 
 function App() {
 
@@ -85,6 +86,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/Info" element={<Body_Youtube />} />
+          <Route path="/Clinic" element={<BodySlider />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/loginDentist" element={<LoginDentist />} />

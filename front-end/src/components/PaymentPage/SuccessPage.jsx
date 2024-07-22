@@ -3,28 +3,26 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import BASE_URL from "../../ServiceSystem/axios";
 import { toast } from "react-toastify";
+import './success.scss'; // Import SCSS file
 
 const SuccessPage = () => {
-  const [bill, setBill] = useState(null); // State để lưu thông tin hóa đơn
-  const [hasFetched, setHasFetched] = useState(false); // Cờ để kiểm tra xem useEffect đã chạy hay chưa
+  const [bill, setBill] = useState(null);
+  const [hasFetched, setHasFetched] = useState(false);
 
   useEffect(() => {
     const UpdateStatusBooking = async () => {
       try {
-        // Lấy thông tin từ localStorage
         const BookingID = localStorage.getItem("bookingID");
         const updateStatus = {
           BookingID: BookingID,
           Status: "Confirmed",
         };
 
-        // Gửi yêu cầu cập nhật trạng thái booking
         const response = await axios.put(
           `${BASE_URL}/booking/updateStatus`,
           updateStatus
         );
 
-        // Kiểm tra phản hồi từ server
         if (response.status === 200) {
           const Booking = response.data.updateBooking;
           setBill(Booking);
@@ -54,7 +52,6 @@ const SuccessPage = () => {
       }
     };
 
-    // Chỉ chạy UpdateStatusBooking nếu hasFetched là false
     if (!hasFetched) {
       UpdateStatusBooking();
       setHasFetched(true);
@@ -62,15 +59,17 @@ const SuccessPage = () => {
   }, [hasFetched]);
 
   return (
-    <div>
-      <h2>Payment Successful!</h2>
+    <div className="success-container">
+      <div className="invoice-header">
+        <h2>Payment Successful!</h2>
+      </div>
 
       {bill && (
-        <div>
+        <div className="invoice-details">
           <h3>Booking Details</h3>
           <p>Booking ID: {bill.BookingID}</p>
-          <p>CustomerID: {bill.CustomerID} </p>
-          <p>Status: {bill.Status} </p>
+          <p>Customer ID: {bill.CustomerID}</p>
+          <p>Status: {bill.Status}</p>
           <p>Total Money: {bill.TotalPrice}</p>
         </div>
       )}

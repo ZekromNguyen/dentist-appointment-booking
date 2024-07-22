@@ -373,8 +373,8 @@ const Booking = () => {
                 className={`hour-slot ${selectedTimes.find(
                   (time) => time.SlotId === availableslot.SlotID
                 )
-                    ? "selected"
-                    : ""
+                  ? "selected"
+                  : ""
                   }`}
                 onClick={() =>
                   handleTimeClick(
@@ -399,9 +399,9 @@ const Booking = () => {
                 onChange={handleTypeChange}
               >
                 <option value="">Select a type</option>
-                <option value="None">Đơn lẻ</option>
-                <option value="Weekly">Hàng tuần</option>
-                <option value="Monthly">Hàng tháng</option>
+                <option value="None">Slot</option>
+                <option value="Weekly">Weekly</option>
+                <option value="Monthly">Monthly</option>
               </select>
             </div>
           )}

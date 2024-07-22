@@ -1,79 +1,8 @@
-// import React, { useState, useEffect } from 'react';
-// import { useLocation, useNavigate } from 'react-router-dom';
-// import { resetPassword, getIdFromToken } from '../../Service/userService';
-// import { toast } from 'react-toastify';
-// import './ResetPassword.scss';
-
-// export default function ResetPassword() {
-//     const navigate = useNavigate();
-//     const location = useLocation();
-//     const queryParams = new URLSearchParams(location.search);
-//     const token = queryParams.get('token');
-//     const [password, setPassword] = useState('');
-//     const [confirmPassword, setConfirmPassword] = useState('');
-
-//     ugitseEffect(() => {
-//         const fetchIdFromToken = async () => {
-//             try {
-//                 if (!token) return;
-//                 const id = await getIdFromToken(token);
-//                 // You can perform additional actions with the ID if necessary
-//             } catch (error) {
-//                 toast.error(error.message || 'Error getting id from token');
-//             }
-//         };
-//         fetchIdFromToken();
-//     }, [token]);
-
-//     const handleResetPassword = async () => {
-//         if (password !== confirmPassword) {
-//             toast.error('Password and Confirm Password do not match');
-//             return;
-//         }
-
-//         try {
-//             const id = await getIdFromToken(token);
-//             if (!id) {
-//                 toast.error('Invalid token');
-//                 return;
-//             }
-//             const response = await resetPassword(id, password, confirmPassword);
-//             if (response.status === 200) {
-//                 toast.success('Password reset successfully');
-//                 navigate('/login');
-//             } else {
-//                 toast.error(response.data.message || 'Error resetting password');
-//             }
-//         } catch (error) {
-//             toast.error(error.message || 'Error resetting password');
-//         }
-//     };
-
-//     return (
-//         <div className="reset-password-container">
-//             <h2>Reset Password</h2>
-//             <input
-//                 type="password"
-//                 placeholder="Enter new password"
-//                 value={password}
-//                 onChange={(e) => setPassword(e.target.value)}
-//             />
-//             <input
-//                 type="password"
-//                 placeholder="Confirm new password"
-//                 value={confirmPassword}
-//                 onChange={(e) => setConfirmPassword(e.target.value)}
-//             />
-//             <button onClick={handleResetPassword}>Submit</button>
-//         </div
-//     );
-// }
-
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { resetPassword, } from '../../Service/userService';
-import "./ResetPassword.scss"
+import { resetPassword } from '../../Service/userService';
+import "./ResetPassword.scss";
 
 export default function ResetPassword() {
     const location = useLocation();
@@ -95,39 +24,39 @@ export default function ResetPassword() {
 
     const handleResetPassword = async () => {
         if (password !== confirmPassword) {
-            toast.error('Mật khẩu và xác nhận mật khẩu không trùng khớp');
+            toast.error('Password and Confirm Password do not match');
             return;
         }
 
         try {
             const response = await resetPassword(token, password, confirmPassword);
             if (response && response.status === 200) {
-                toast.success('Mật khẩu đã được cập nhật thành công');
+                toast.success('Password has been updated successfully');
                 navigate('/login');
             } else {
-                toast.error('Có lỗi xảy ra khi cập nhật mật khẩu. Vui lòng thử lại sau.');
+                toast.error('An error occurred while updating the password. Please try again later.');
             }
         } catch (error) {
-            toast.error('Có lỗi xảy ra khi cập nhật mật khẩu. Vui lòng thử lại sau.');
+            toast.error('An error occurred while updating the password. Please try again later.');
         }
     };
+
     return (
         <div className="reset-password-container">
-            <div className='reset-tile'>Xác nhận lại mật khẩu</div>
+            <div className='reset-title'>Confirm Password</div>
             <input
                 type="password"
-                placeholder="Nhập mật khẩu mới"
+                placeholder="Enter new password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
             />
             <input
                 type="password"
-                placeholder="Xác nhận mật khẩu mới"
+                placeholder="Confirm new password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
             />
-            <button onClick={handleResetPassword}>Xác nhận</button>
+            <button onClick={handleResetPassword}>Confirm</button>
         </div>
     );
 }
-

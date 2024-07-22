@@ -39,9 +39,7 @@ const DoctorLoad = () => {
         const fetchSession = async () => {
             try {
                 const customer = await checkSession();
-                if (!customer) {
-                    navigate('/login');
-                } else {
+                if (customer) {
                     setCustomerId(customer.customerId);
                     setUserAccountId(customer.id); // Set the logged-in user's accountId
                     setLoggedIn(true);
@@ -51,7 +49,7 @@ const DoctorLoad = () => {
             }
         };
         fetchSession();
-    }, [navigate]);
+    }, []);
 
     useEffect(() => {
         if (state && state.dentist) {
@@ -99,7 +97,7 @@ const DoctorLoad = () => {
                     }
                 } catch (error) {
                     console.error('Error fetching schedules:', error);
-                    setError('Không thể tải được lịch khám. Vui lòng thử lại sau.');
+                    setError('Unable to load schedules. Please try again later.');
                 } finally {
                     setLoading(false);
                 }
@@ -146,7 +144,7 @@ const DoctorLoad = () => {
     const handleConfirmBooking = async (e) => {
         e.preventDefault();
         if (!loggedIn) {
-            alert('Vui lòng đăng nhập để đặt lịch khám.');
+            alert('Please log in to make a booking.');
             return;
         }
 
@@ -208,7 +206,7 @@ const DoctorLoad = () => {
     const handleChatClick = () => {
         console.log('userAccountId before navigate:', userAccountId); // Log the userAccountId before navigation
         if (!loggedIn) {
-            alert('Vui lòng đăng nhập để trò chuyện.');
+            alert('Please log in to chat with the dentist.');
             return;
         }
 
@@ -223,24 +221,24 @@ const DoctorLoad = () => {
                     <div className='doctor-img' style={{ backgroundImage: `url(${BASE_URL}/${dentist.ImagePath})` }}></div>
                     <div className='doctor-detail'>
                         <h2 className='doctor-name'>{dentist.DentistName}</h2>
-                        <div className='doctor-infor'>Thông tin</div>
+                        <div className='doctor-infor'>Information</div>
                         <div className='doctor-description'>{dentist.Description}</div>
-                        <div className='doctor-Clinic'>Phòng khám: {dentist.clinic.ClinicName}</div>
-                        <p className='doctor-Clinic'>Địa chỉ phòng khám: {dentist.clinic.Address}</p>
+                        <div className='doctor-Clinic'>Clinic: {dentist.clinic.ClinicName}</div>
+                        <p className='doctor-Clinic'>Clinic Address: {dentist.clinic.Address}</p>
                     </div>
                 </div>
                 <div className='time-Clinic'>
                     <span className='clinic-icon'>
                         <i className='fas fa-clock'></i>
                     </span>
-                    Giờ mở cửa
+                    Operating-Time
                 </div>
                 <div className='time-Clinic-detail'>
                     {dentist.clinic.OpenTime}-{dentist.clinic.CloseTime}
                 </div>
 
                 <div className='booking-section'>
-                    <label>Chọn ngày khám:</label>
+                    <label>Select Date:</label>
                     <input
                         type='date'
                         value={treatmentDate}
@@ -248,34 +246,34 @@ const DoctorLoad = () => {
                         min={new Date().toISOString().split('T')[0]}
                     />
 
-                    <label>Loại lịch định kỳ:</label>
+                    <label>Recurring Type:</label>
                     <select
                         value={recurringType}
                         onChange={handleTypeChange}
                     >
-                        <option value='None'>Không định kỳ</option>
-                        <option value='Weekly'>Hàng tuần</option>
-                        <option value='Monthly'>Hàng tháng</option>
+                        <option value='None'>None</option>
+                        <option value='Weekly'>Weekly</option>
+                        <option value='Monthly'>Monthly</option>
                     </select>
 
-                    {recurringType !== 'None' && (
+                    {/* {recurringType !== 'None' && (
                         <>
-                            <label>Ngày kết thúc định kỳ:</label>
+                            <label>Recurring End Date:</label>
                             <input
                                 type='date'
                                 value={recurringEndDate}
                                 onChange={handleRecurringEndDateChange}
                             />
                         </>
-                    )}
+                    )} */}
 
-                    {loading && <p>Đang tải lịch khám...</p>}
+                    {loading && <p>Loading schedules...</p>}
 
                     {error && <p>{error}</p>}
                     {schedules.length > 0 && (
                         <>
                             <div className='slot-time'>
-                                <label>Chọn giờ khám:</label>
+                                <label>Select Time:</label>
                                 <div className='time-slots'>
                                     {schedules.map(schedule => (
                                         <div
@@ -290,11 +288,11 @@ const DoctorLoad = () => {
                             </div>
                             <div className='price-section'>
                                 <div className='price-section'>
-                                    <p>Tổng chi phí (Tổng): {price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</p>
+                                    <p>Total Cost (Total): {price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</p>
                                     {/* <p>Chi phí đặt lịch: {priceBooking.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</p> */}
                                 </div>
                             </div>
-                            <button type='submit'>Xác nhận</button>
+                            <button type='submit'>Submit</button>
                         </>
                     )}
                 </div>
@@ -310,7 +308,7 @@ const DoctorLoad = () => {
 
             )}
             <button className="chat-button" onClick={handleChatClick}>
-                Chat với bác sĩ
+                Message with dentist
             </button>
             <Footer />
         </div>

@@ -132,15 +132,15 @@ export default function ForgotPassword() {
 
     const handleForgot = async () => {
         if (!email) {
-            toast.error("Vui lòng nhập email của bạn");
+            toast.error("Please enter your email");
             setIsValidEmail(false);
             return;
         }
 
-        // Kiểm tra tính hợp lệ của địa chỉ email
+        // Check email validity
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailPattern.test(email)) {
-            toast.error("Địa chỉ email không hợp lệ");
+            toast.error("Invalid email address");
             setIsValidEmail(false);
             return;
         }
@@ -148,36 +148,35 @@ export default function ForgotPassword() {
         try {
             const response = await forgotPassword(email);
             if (response.status === 200) {
-                toast.success("Email xác nhận đã được gửi đến địa chỉ email của bạn");
+                toast.success("A confirmation email has been sent to your email address");
             } else {
-                toast.success("Email xác nhận đã được gửi đến địa chỉ email của bạn.");
+                toast.success("A confirmation email has been sent to your email address.");
             }
         } catch (error) {
-            toast.error("Không thể gửi yêu cầu. Vui lòng thử lại sau.");
+            toast.error("Unable to send request. Please try again later.");
         }
     };
 
     return (
         <div className='background-forgot'>
             <div className='box-forgot'>
-                <div className='forgot-title'>Quên mật khẩu</div>
+                <div className='forgot-title'>Forgot Password</div>
                 <div className='forgot-input'>
                     <input
                         type='email'
                         className={`form-control forgot ${!isValidEmail ? 'is-invalid' : ''}`}
-                        placeholder='Nhập email của bạn...'
+                        placeholder='Enter your email...'
                         value={email}
                         onChange={(event) => {
                             setEmail(event.target.value);
-                            setIsValidEmail(true); // Reset trạng thái hợp lệ của email khi người dùng thay đổi nội dung
+                            setIsValidEmail(true); // Reset email validity state when user changes input
                         }}
                     />
                 </div>
                 <div className='btn-forgot'>
-                    <button className='button-forgot' onClick={handleForgot}>Gửi</button>
+                    <button className='button-forgot' onClick={handleForgot}>Send</button>
                 </div>
             </div>
         </div>
     );
 }
-

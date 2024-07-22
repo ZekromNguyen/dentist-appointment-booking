@@ -14,10 +14,10 @@ export default function Footer() {
         <div className='footer'>
             <div className='footer-info'>
                 <div className='footer-contact'>
-                    <div className='contact-header'>Booking clinic</div>
+                    <div className='contact-header'>Booking Clinic</div>
                     <div className='contact-map'>
                         <LuMapPin className='icon-footer' />
-                        <div>Lô E2a-7, Đường D1 Khu Công nghệ cao, Phường Long Thạnh Mỹ, Thủ Đức, TP. Hồ Chí Minh. </div>
+                        <div>Lot E2a-7, D1 Street, High-Tech Park, Long Thanh My Ward, Thu Duc, Ho Chi Minh City.</div>
                     </div>
                     <div className='sdt-footer'>
                         <FaPhone className='icon-footer' />
@@ -29,30 +29,30 @@ export default function Footer() {
                     </div>
                 </div>
                 <div className='footer-policy'>
-                    <div className='policy-header'>Chính sách</div>
-                    <div className='text-footer'>Chính sách bảo mật</div>
-                    <div className='text-footer'>Chính sách khách hàng</div>
-                    <div className='text-footer'>Chính sách liện hệ</div>
-                    <div className='text-footer'>Chính sách người dùng</div>
+                    <div className='policy-header'>Policies</div>
+                    <div className='text-footer'>Privacy Policy</div>
+                    <div className='text-footer'>Customer Policy</div>
+                    <div className='text-footer'>Contact Policy</div>
+                    <div className='text-footer'>User Policy</div>
                 </div>
                 <div className='footer-company'>
-                    <div className='company-header'>Bệnh viện hợp tác</div>
+                    <div className='company-header'>Partner Hospitals</div>
                     <div className='company-detail'>
                         <div className='benhvien'>
                             <CiHospital1 className='icon-footer' />
-                            <div>Bệnh viên Hữa Nghĩa</div>
+                            <div>Huu Nghia Hospital</div>
                         </div>
                         <div className='benhvien'>
                             <CiHospital1 className='icon-footer' />
-                            <div>Bệnh viên Việt Đức</div>
+                            <div>Viet Duc Hospital</div>
                         </div>
                         <div className='benhvien'>
                             <CiHospital1 className='icon-footer' />
-                            <div>Bệnh viên Thủ Đức</div>
+                            <div>Thu Duc Hospital</div>
                         </div>
                         <div className='benhvien'>
                             <CiHospital1 className='icon-footer' />
-                            <div>Bệnh viên Phú Thọ</div>
+                            <div>Phu Tho Hospital</div>
                         </div>
                     </div>
                 </div>

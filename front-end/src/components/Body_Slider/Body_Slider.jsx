@@ -46,8 +46,8 @@ const BodySlider = () => {
     return (
         <div className="body-slider">
             <div className='body-slider-header'>
-                <span className='title'>Cơ sở nổi bật</span>
-                <button className='btn-title'>Xem thêm</button>
+                <span className='title'>Clinic Information</span>
+                <button className='btn-title'>See More</button>
             </div>
             <div className='body-slider-content'>
                 <Swiper

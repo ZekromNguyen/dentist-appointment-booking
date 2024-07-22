@@ -61,7 +61,7 @@ const BookingResult = () => {
 
     return (
         <div className="booking-result">
-            <h2>Treatment Results</h2>
+            <h2 className='treatment-title'>Treatment Results</h2>
             <div className="treatment-table-container">
                 <table className="treatment-table">
                     <thead>
@@ -85,6 +85,7 @@ const BookingResult = () => {
                                         small={`${BASE_URL}${treatment.Result}`}
                                         large={`${BASE_URL}${treatment.Result}`}
                                         alt={`${treatment.TreatmentID}'s result`}
+                                        className="treatment-image"
                                     />
                                 </td>
                             </tr>

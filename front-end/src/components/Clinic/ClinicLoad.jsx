@@ -32,8 +32,8 @@ const ClinicLoad = () => {
                 <div className='clinic-detail'>
                     <div className='Clinic-img' style={{ backgroundImage: `url(${BASE_URL}/${clinic.ImagePath})` }}></div>
                     <div>
-                        <p><strong>Địa chỉ:</strong> {clinic.Address}</p>
-                        <p><strong>Giờ mở cửa:</strong> {clinic.OpenTime} - {clinic.CloseTime}</p>
+                        <p><strong>Address:</strong> {clinic.Address}</p>
+                        <p><strong>Operating-Time:</strong> {clinic.OpenTime} - {clinic.CloseTime}</p>
                         {clinic.location && clinic.location.LocationName && ( // Check if location and LocationName exist
                             <p><strong>Vị trí:</strong> {clinic.location.LocationName}</p>
                         )}

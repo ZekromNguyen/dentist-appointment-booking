@@ -4,7 +4,7 @@ import './body_youtube.scss';
 export default function Body_Youtube() {
     return (
         <div className='body_youtube'>
-            <div className='youtube-header'>Thông tin về Booking Clinic</div>
+            <div className='youtube-header'>Information about Booking Clinic</div>
             <div className='youtube-body'>
                 <div className='body-left'>
                     <iframe width="630" height="1000"
@@ -16,13 +16,12 @@ export default function Body_Youtube() {
                 </div>
 
                 <div className='body-right'>
-                    <div className='right-title'>Đặt lịch dễ dàng</div>
+                    <div className='right-title'>Easy Booking</div>
                     <div className='right-content'>
-                        Bằng cách sử dụng các dịch vụ đặt lịch trực tuyến, bạn có thể quản lý thời gian hiệu quả hơn, đồng thời tạo sự tiện lợi và chuyên nghiệp cho những người liên hệ với bạn. Hãy thử nghiệm và tìm ra cách thức phù hợp nhất với nhu cầu của bạn
+                        By using online booking services, you can manage your time more efficiently while providing convenience and professionalism to those who contact you. Experiment and find the method that best suits your needs.
                     </div>
                 </div>
             </div>
         </div>
-
     )
 }

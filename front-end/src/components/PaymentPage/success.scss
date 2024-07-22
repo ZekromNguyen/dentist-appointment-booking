@@ -1,0 +1,61 @@
+/* success.scss */
+.success-container {
+    padding: 20px;
+    max-width: 700px;
+    margin: auto;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.invoice-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.invoice-header h2 {
+    color: #28a745;
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.invoice-details {
+    margin-bottom: 20px;
+}
+
+.invoice-details h3 {
+    color: #343a40;
+    margin-bottom: 15px;
+    font-size: 1.5rem;
+    border-bottom: 2px solid #343a40;
+    padding-bottom: 10px;
+}
+
+.invoice-details p {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+    line-height: 1.5;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: #fff;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+    display: inline-block;
+    text-align: center;
+    font-size: 1.1rem;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #004080;
+}
+
+.btn-primary:focus {
+    box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.5);
+}

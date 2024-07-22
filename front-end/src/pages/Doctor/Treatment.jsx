@@ -143,11 +143,15 @@ const TreatmentUpload = () => {
             };
             const response = await axios.put(`${BASE_URL}/updateBookingStatus`, updateStatus);
             if (response.status === 200 && response.data.updateBooking !== null) {
+                // Cập nhật trạng thái bookings trong state
                 const updatedBookings = bookings.map(booking =>
                     booking.BookingID === selectedBookingId ? { ...booking, Status: selectedStatus } : booking
                 );
                 setBookings(updatedBookings);
                 setShowModal(false);
+
+                // Gọi lại hàm getAllBookings sau khi cập nhật trạng thái thành công
+                handleGetAllBookings(dentistId);
             } else {
                 alert('Error updating status');
             }
@@ -347,7 +351,7 @@ const TreatmentUpload = () => {
                             <option value="Pending">Pending</option>
                             <option value="Confirmed">Confirmed</option>
                             <option value="Cancelled">Cancelled</option>
-                            <option value="Cancelled">Completed</option>
+                            <option value="Completed">Completed</option>
                         </Form.Control>
                     </Form.Group>
                 </Modal.Body>
