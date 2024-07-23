@@ -5,6 +5,8 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './ScheduleManage.scss';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import BASE_URL from '../ServiceSystem/axios';
 
 export default function ScheduleManage(props) {
@@ -25,8 +27,10 @@ export default function ScheduleManage(props) {
   const [isDentistLoggedIn, setIsDentistLoggedIn] = useState(false);
   const [loggedInDentistID, setLoggedInDentistID] = useState(null);
   const currentDate = new Date().toISOString().split('T')[0];
+
   const [OwnerID, setOwnerID] = useState(null);
   // Fetch logged-in dentist information
+
   useEffect(() => {
     const dentistData = JSON.parse(localStorage.getItem('account'));
     if (dentistData && dentistData.dentistId) {
@@ -39,6 +43,7 @@ export default function ScheduleManage(props) {
 useEffect(() => {
   const fetchOwnerID = async () => {
     if (isDentistLoggedIn) {
+
       try {
         const response = await axios.get(`${BASE_URL}/getOwnerIdByClinicId`, {
           params: { DentistId: loggedInDentistID },
@@ -78,7 +83,6 @@ useEffect(() => {
   fetchDentists();
 }, [OwnerID, isDentistLoggedIn]);
 
-  // Get API All Slots
   const fetchSlots = async () => {
     try {
       const response = await axios.get(`${BASE_URL}/scheduleSlot`);
@@ -115,7 +119,7 @@ useEffect(() => {
     };
     fetchAvailableSlots();
   }, [selectedDentist, selectedDate, isDentistLoggedIn, loggedInDentistID]);
-  
+
   // Get API All Dentist Schedules
   useEffect(() => {
     const fetchSchedules = async () => {
@@ -131,7 +135,6 @@ useEffect(() => {
         const response = await axios.get(`${BASE_URL}/scheduleDentist?OwnerId=${OwnerId}`);
         const allSchedules = Array.isArray(response.data) ? response.data : [];
         setSchedules(allSchedules);
-        // Filter and set booked schedules
         const booked = allSchedules.filter(schedule => schedule.Status === 'Booked');
         setBookedSchedules(booked);
         const expired = allSchedules.filter(schedule => schedule.Status === 'Expired');
@@ -148,18 +151,15 @@ useEffect(() => {
   const updateRemainingSlots = () => {
     if (slots.length > 0) {
       if (availableSlots.length > 0) {
-        // Extract slotIDs from availableSlots
         const availableSlotIDs = availableSlots.map(slot => slot.SlotID);
         console.log(availableSlotIDs);
         const dentistID = isDentistLoggedIn ? loggedInDentistID : selectedDentist;
-        // Filter out slots that are already booked for the selected date
         const bookedSlotIDs = bookedSchedules
           .filter(schedule =>
             schedule.DentistID === dentistID &&
             schedule.Date === selectedDate
           )
           .map(schedule => schedule.SlotID);
-        // Find remaining slots by filtering out availableSlotIDs and bookedSlotIDs from slots
         const remainingSlots = slots.filter(slot =>
           !availableSlotIDs.includes(slot.SlotID) &&
           !bookedSlotIDs.includes(slot.SlotID)
@@ -168,14 +168,12 @@ useEffect(() => {
         console.log(remainingSlots);
       } else {
         const dentistID = isDentistLoggedIn ? loggedInDentistID : selectedDentist;
-        // If no available slots found, show all slots except booked ones
         const bookedSlotIDs = schedules
           .filter(schedule =>
             schedule.DentistID === dentistID &&
             schedule.Date === selectedDate
           )
           .map(schedule => schedule.SlotID);
-          console.log(bookedSlotIDs);
         const remainingSlots = slots.filter(slot =>
           !bookedSlotIDs.includes(slot.SlotID)
         );
@@ -183,6 +181,7 @@ useEffect(() => {
       }
     }
   };
+
   useEffect(() => {
     updateRemainingSlots();
   }, [slots, availableSlots, schedules, selectedDate, loggedInDentistID,selectedDentist,isDentistLoggedIn]);
@@ -224,7 +223,6 @@ useEffect(() => {
       return;
     }
 
-    // Check if the dentist already has a schedule on the selected date and time slot
     const existingSchedule = schedules.find(schedule =>
       schedule.DentistID === dentistIDToUse &&
       schedule.Date === selectedDate &&
@@ -248,7 +246,6 @@ useEffect(() => {
 
       const updatedSchedules = [...schedules, ...newSchedules];
 
-      // Sort the updated schedules by date and slotID
       updatedSchedules.sort((a, b) => {
         const dateA = new Date(a.Date);
         const dateB = new Date(b.Date);
@@ -273,6 +270,43 @@ useEffect(() => {
     }
   };
 
+
+  const confirmDelete = (callback) => {
+    toast.warn(
+      <div>
+        <p>Are you sure you want to delete this schedule?</p>
+        <button onClick={callback} className="btn btn-danger">Yes</button>
+        <button onClick={() => toast.dismiss()} className="btn btn-secondary">No</button>
+      </div>,
+      {
+        position: "top-right",
+        autoClose: false,
+        closeOnClick: false,
+        draggable: false,
+        closeButton: false,
+        toastId: "confirm-toast",
+        autoClose: 2000,
+      }
+    );
+  };
+
+  const handleDeleteSchedule = async (scheduleId) => {
+    confirmDelete(async () => {
+      try {
+        const response = await axios.delete(`${BASE_URL}/schedule/${scheduleId}`);
+        if (response.status === 200) {
+          setSchedules(schedules.filter(schedule => schedule.ScheduleID !== scheduleId));
+          toast.success("Schedule deleted successfully");
+        } else {
+          setError('Failed to delete schedule');
+        }
+      } catch (error) {
+        console.error('Error deleting schedule:', error);
+        setError('Error deleting schedule');
+      }
+    });
+  };
+
   const filteredSchedules = isDentistLoggedIn
     ? schedules.filter(schedule => schedule.DentistID === loggedInDentistID &&
       schedule.Date === (selectedDate || currentDate)
@@ -289,6 +323,7 @@ useEffect(() => {
   const uniqueFilteredBookedSchedules = filteredBookedSchedules.filter(
     (schedule, index, self) => index === self.findIndex(s => s.ScheduleID === schedule.ScheduleID)
   );  
+
 
 
   return (
@@ -343,7 +378,7 @@ useEffect(() => {
           <div className="col-md-4">
             <div className="form-group">
               <label>&nbsp;</label>
-              <button className="btn btn-primary" onClick={handleSave}>
+              <button className="btn btnn-primary" onClick={handleSave}>
                 Save
               </button>
             </div>
@@ -401,6 +436,7 @@ useEffect(() => {
                         <th scope="col">Date</th>
                         <th scope="col">Slot Time</th>
                         <th scope="col">Status</th>
+                        <th scope="col">Action</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -412,6 +448,14 @@ useEffect(() => {
                             <td>{new Date(schedule.Date).toLocaleDateString('vi-VN')}</td>
                             <td>{slots.find(availableslot => availableslot.SlotID === schedule.SlotID)?.Time}</td>
                             <td>{schedule.Status}</td>
+                            <td>
+                                <button
+                                  className="btn btn-danger"
+                                  onClick={() => handleDeleteSchedule(schedule.ScheduleID)}
+                                >
+                                  Delete
+                                </button>
+                              </td> {/* Added Delete button */}
                           </tr>
                         )
                       ))}
@@ -423,44 +467,49 @@ useEffect(() => {
           </div>
 
           <div className="col-md-6">
-  {selectedOption === 'booked-schedule' && (
-    <div className="booked-schedule-container">
-      <button className="btn btn-toggle" onClick={toggleBookedScheduleVisibility}>
-        {isBookedScheduleVisible ? 'Hide Booked Schedules' : 'Show Booked Schedules'}
-      </button>
-      <div className={`schedule-table ${isBookedScheduleVisible ? 'visible' : 'hidden'}`}>
-        <table className="table">
-          <thead>
-            <tr>
-              <th scope="col">ScheduleID</th>
-              <th scope="col">Dentist Name</th>
-              <th scope="col">Date</th>
-              <th scope="col">Slot Time</th>
-              <th scope="col">Customer Name</th>
-              <th scope="col">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {uniqueFilteredBookedSchedules.map((schedule) => (
-              schedule.Status === 'Booked' && (
-                <tr key={schedule.ScheduleID}>
-                  <td>{schedule.ScheduleID}</td>
-                  <td>{dentists.find(dentist => dentist.DentistID === schedule.DentistID)?.DentistName}</td>
-                  <td>{new Date(schedule.Date).toLocaleDateString('vi-VN')}</td>
-                  <td>{slots.find(availableslot => availableslot.SlotID === schedule.SlotID)?.Time}</td>
-                  <td>{schedule.BookingDetail?.Booking?.Customer?.CustomerName || 'N/A'}</td>
-                  <td>{schedule.Status}</td>
-                </tr>
-              )
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  )}
-</div>
+            {selectedOption === 'booked-schedule' && (
+              <div className="booked-schedule-container">
+                <button className="btn btn-toggle" onClick={toggleBookedScheduleVisibility}>
+                  {isBookedScheduleVisible ? 'Hide Booked Schedules' : 'Show Booked Schedules'}
+                </button>
+                <div className={`schedule-table ${isBookedScheduleVisible ? 'visible' : 'hidden'}`}>
+                  <table className="table">
+                    <thead>
+                      <tr>
+                        <th scope="col">ScheduleID</th>
+                        <th scope="col">Dentist Name</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Slot Time</th>
+                        <th scope="col">Customer Name</th>
+                        <th scope="col">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {uniqueFilteredBookedSchedules.map((schedule) => (
+                        schedule.Status === 'Booked' && (
+                          <tr key={schedule.ScheduleID}>
+                            <td>{schedule.ScheduleID}</td>
+                            <td>{dentists.find(dentist => dentist.DentistID === schedule.DentistID)?.DentistName}</td>
+                            <td>{new Date(schedule.Date).toLocaleDateString('vi-VN')}</td>
+                            <td>{slots.find(availableslot => availableslot.SlotID === schedule.SlotID)?.Time}</td>
+                            <td>{schedule.BookingDetail?.Booking?.Customer?.CustomerName || 'N/A'}</td>
+                            <td>{schedule.Status}</td>
+                          </tr>
+                        )
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
   );
 }
+
+
+
+
+
