@@ -25,7 +25,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                 </li>
                 <li className='sidebar-list-item'>
                     <Link to="/admin/manage-account">
-                        <BsPeopleFill className='icon' /> Customers
+                        <BsPeopleFill className='icon' /> Manange Account
                     </Link>
                 </li>
                 <li className='sidebar-list-item'>

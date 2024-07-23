@@ -1,26 +1,35 @@
-// Import necessary modules/components
 import React, { Component } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import axios from 'axios';
 import BASE_URL from '../../ServiceSystem/axios';
+
 class ModelAddDentist extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            clinics: [], // Array to store clinics fetched from API
+            clinics: [],
             username: '',
             password: '',
             email: '',
             phone: '',
             dentistName: '',
-            clinicID: '', // State to store selected clinic ID
-            image: null, // State to store the selected image file
-            description: '' // State for description field
+            clinicID: '',
+            image: null,
+            description: '',
+            errors: {
+                username: '',
+                password: '',
+                email: '',
+                phone: '',
+                dentistName: '',
+                clinicID: '',
+                image: '',
+                description: ''
+            }
         };
     }
 
     componentDidMount() {
-        // Fetch clinics data when component mounts
         this.fetchClinics();
     }
 
@@ -29,29 +38,24 @@ class ModelAddDentist extends Component {
             const ownerData = JSON.parse(localStorage.getItem('account'));
             const clinicOwnerId = ownerData.clinicOwnerId;
             const response = await axios.get(`${BASE_URL}/getAllClinic`, {
-                params: {
-                    ownerId: clinicOwnerId
-                }
+                params: { ownerId: clinicOwnerId }
             });
             if (response.data && response.data.clinics) {
-                this.setState({
-                    clinics: response.data.clinics,
-                });
+                this.setState({ clinics: response.data.clinics });
             }
         } catch (error) {
             console.error('Error fetching clinics:', error);
-            // Handle error as needed
         }
     };
 
     handleInputChange = (event) => {
         const { name, value } = event.target;
-        this.setState({ [name]: value });
+        this.setState({ [name]: value }, () => this.validateField(name, value));
     };
 
     handleImageChange = (event) => {
         this.setState({
-            image: event.target.files[0] // Store the selected file in state
+            image: event.target.files[0]
         });
     };
 
@@ -59,19 +63,59 @@ class ModelAddDentist extends Component {
         this.setState({ description: event.target.value });
     };
 
+    validateField = (name, value) => {
+        let errors = this.state.errors;
+
+        switch (name) {
+            case 'username':
+                errors.username = value ? '' : 'Username is required';
+                break;
+            case 'password':
+                errors.password = value.length >= 8 ? '' : 'Password must be at least 8 characters';
+                break;
+            case 'email':
+                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                errors.email = emailPattern.test(value) ? '' : 'Invalid email address';
+                break;
+            case 'phone':
+                const phonePattern = /^(\+84|0)[1-9]\d{8}$/;
+                errors.phone = phonePattern.test(value) ? '' : 'Phone number must be a 10-digit Vietnamese number';
+                break;
+            case 'dentistName':
+                errors.dentistName = /\d/.test(value) ? 'Dentist name should not contain numbers' : '';
+                break;
+            case 'clinicID':
+                errors.clinicID = value ? '' : 'Clinic selection is required';
+                break;
+            case 'description':
+                errors.description = value ? '' : 'Description is required';
+                break;
+            default:
+                break;
+        }
+
+        this.setState({ errors });
+    };
+
     handleSubmit = async (event) => {
         event.preventDefault();
 
-        const { username, password, email, phone, dentistName, clinicID, image, description } = this.state;
+        const { username, password, email, phone, dentistName, clinicID, image, description, errors } = this.state;
 
-        // Validate input fields and image selection
+        // Check if there are any validation errors
+        const hasErrors = Object.values(errors).some(error => error);
+        if (hasErrors) {
+            alert('Please correct the errors in the form before submitting.');
+            return;
+        }
+
+        // Check if any fields are missing
         if (!username || !password || !email || !phone || !dentistName || !clinicID || !image || !description) {
             alert('Please fill in all fields and select an image.');
             return;
         }
 
         try {
-            // Create FormData and append fields
             const formData = new FormData();
             formData.append('username', username);
             formData.append('password', password);
@@ -79,37 +123,24 @@ class ModelAddDentist extends Component {
             formData.append('phone', phone);
             formData.append('dentistName', dentistName);
             formData.append('clinicID', clinicID);
-            formData.append('image', image); // Append image file to FormData
-            formData.append('description', description); // Append description to FormData
+            formData.append('image', image);
+            formData.append('description', description);
 
-            // Send POST request to backend
             const response = await axios.post(`${BASE_URL}/registerDentist`, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data' // Set content type for uploading files
-                }
+                headers: { 'Content-Type': 'multipart/form-data' }
             });
 
             console.log('Response:', response.data);
             alert('Dentist registration successful.');
-            this.props.onDentistAdded(); // Trigger parent component callback on success
+            this.props.onDentistAdded();
         } catch (error) {
             console.error('Error adding dentist:', error);
-
             if (error.response) {
-                // Server returned an error
-                console.error('Server response:', error.response.status);
-                console.error('Response data:', error.response.data);
-
-                // Check if error.response.data.message is defined
                 const errorMessage = error.response.data.message || 'An undefined error occurred';
                 alert(`Failed to register dentist: ${errorMessage}`);
             } else if (error.request) {
-                // Request was sent but no response was received
-                console.error('No response received:', error.request);
                 alert('Failed to register dentist: No response from server');
             } else {
-                // Error occurred during request setup
-                console.error('Request setup error:', error.message);
                 alert('Failed to register dentist: Request setup error');
             }
         }
@@ -117,7 +148,7 @@ class ModelAddDentist extends Component {
 
     render() {
         const { isOpen, toggleFromParent } = this.props;
-        const { username, password, email, phone, dentistName, clinicID, description, clinics } = this.state;
+        const { username, password, email, phone, dentistName, clinicID, description, clinics, errors } = this.state;
 
         return (
             <Modal show={isOpen} onHide={toggleFromParent}>
@@ -134,8 +165,11 @@ class ModelAddDentist extends Component {
                                 name="username"
                                 value={username}
                                 onChange={this.handleInputChange}
-                                required
+                                isInvalid={!!errors.username}
                             />
+                            <Form.Control.Feedback type="invalid">
+                                {errors.username}
+                            </Form.Control.Feedback>
                         </Form.Group>
                         <Form.Group controlId="formPassword">
                             <Form.Label>Password</Form.Label>
@@ -145,8 +179,11 @@ class ModelAddDentist extends Component {
                                 name="password"
                                 value={password}
                                 onChange={this.handleInputChange}
-                                required
+                                isInvalid={!!errors.password}
                             />
+                            <Form.Control.Feedback type="invalid">
+                                {errors.password}
+                            </Form.Control.Feedback>
                         </Form.Group>
                         <Form.Group controlId="formEmail">
                             <Form.Label>Email</Form.Label>
@@ -156,8 +193,11 @@ class ModelAddDentist extends Component {
                                 name="email"
                                 value={email}
                                 onChange={this.handleInputChange}
-                                required
+                                isInvalid={!!errors.email}
                             />
+                            <Form.Control.Feedback type="invalid">
+                                {errors.email}
+                            </Form.Control.Feedback>
                         </Form.Group>
                         <Form.Group controlId="formPhone">
                             <Form.Label>Phone</Form.Label>
@@ -167,8 +207,11 @@ class ModelAddDentist extends Component {
                                 name="phone"
                                 value={phone}
                                 onChange={this.handleInputChange}
-                                required
+                                isInvalid={!!errors.phone}
                             />
+                            <Form.Control.Feedback type="invalid">
+                                {errors.phone}
+                            </Form.Control.Feedback>
                         </Form.Group>
                         <Form.Group controlId="formDentistName">
                             <Form.Label>Dentist Name</Form.Label>
@@ -178,8 +221,11 @@ class ModelAddDentist extends Component {
                                 name="dentistName"
                                 value={dentistName}
                                 onChange={this.handleInputChange}
-                                required
+                                isInvalid={!!errors.dentistName}
                             />
+                            <Form.Control.Feedback type="invalid">
+                                {errors.dentistName}
+                            </Form.Control.Feedback>
                         </Form.Group>
                         <Form.Group controlId="formClinicID">
                             <Form.Label>Clinic Name</Form.Label>
@@ -188,15 +234,18 @@ class ModelAddDentist extends Component {
                                 name="clinicID"
                                 value={clinicID}
                                 onChange={this.handleInputChange}
-                                required
+                                isInvalid={!!errors.clinicID}
                             >
                                 <option value="">Select clinic</option>
                                 {clinics.map((clinic) => (
                                     <option key={clinic.ClinicID} value={clinic.ClinicID}>
-                                        {clinic.ClinicName} {/* Make sure the property name matches */}
+                                        {clinic.ClinicName}
                                     </option>
                                 ))}
                             </Form.Control>
+                            <Form.Control.Feedback type="invalid">
+                                {errors.clinicID}
+                            </Form.Control.Feedback>
                         </Form.Group>
                         <Form.Group controlId="formDescription">
                             <Form.Label>Description</Form.Label>
@@ -207,8 +256,11 @@ class ModelAddDentist extends Component {
                                 name="description"
                                 value={description}
                                 onChange={this.handleDescriptionChange}
-                                required
+                                isInvalid={!!errors.description}
                             />
+                            <Form.Control.Feedback type="invalid">
+                                {errors.description}
+                            </Form.Control.Feedback>
                         </Form.Group>
                         <Form.Group controlId="formImage">
                             <Form.Label>Profile Image</Form.Label>
@@ -216,8 +268,11 @@ class ModelAddDentist extends Component {
                                 type="file"
                                 name="image"
                                 onChange={this.handleImageChange}
-                                required
+                                isInvalid={!!errors.image}
                             />
+                            <Form.Control.Feedback type="invalid">
+                                {errors.image}
+                            </Form.Control.Feedback>
                         </Form.Group>
                         <Button variant="secondary" onClick={toggleFromParent}>
                             Close

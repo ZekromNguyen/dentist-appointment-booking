@@ -15,22 +15,74 @@ export default function Login() {
         isValidEmail: true,
         isValidPassword: true
     });
+    const [touched, setTouched] = useState({
+        email: false,
+        password: false
+    });
+
+    const validateEmail = (value) => {
+        return !!value.trim();
+    };
+
+    const validatePassword = (value) => {
+        return !!value.trim();
+    };
+
+    const handleBlur = (field) => {
+        setTouched(prev => ({ ...prev, [field]: true }));
+        switch (field) {
+            case 'email':
+                const emailValid = validateEmail(email);
+                setCheckInputLogin(prev => ({
+                    ...prev,
+                    isValidEmail: emailValid
+                }));
+                if (!emailValid) {
+                    toast.error("Please enter a valid email.");
+                }
+                break;
+            case 'password':
+                const passwordValid = validatePassword(password);
+                setCheckInputLogin(prev => ({
+                    ...prev,
+                    isValidPassword: passwordValid
+                }));
+                if (!passwordValid) {
+                    toast.error("Please enter a valid password.");
+                }
+                break;
+            default:
+                break;
+        }
+    };
+
+    const isFormFilled = () => {
+        return email && password;
+    };
 
     const handleLogin = async () => {
+        if (!isFormFilled()) {
+            toast.error("Please fill in all required fields");
+            return;
+        }
         const trimmedEmail = email.trim();
         const trimmedPassword = password.trim();
 
+        const isValidEmail = validateEmail(trimmedEmail);
+        const isValidPassword = validatePassword(trimmedPassword);
+
         setCheckInputLogin({
-            isValidEmail: !!trimmedEmail,
-            isValidPassword: !!trimmedPassword
+            isValidEmail,
+            isValidPassword
         });
 
-        if (!trimmedEmail) {
-            toast.error("Please enter your email");
-            return;
-        }
-        if (!trimmedPassword) {
-            toast.error("Please enter your password");
+        if (!isValidEmail || !isValidPassword) {
+            if (!isValidEmail) {
+                toast.error("Please enter your email.");
+            }
+            if (!isValidPassword) {
+                toast.error("Please enter your password.");
+            }
             return;
         }
 
@@ -63,7 +115,15 @@ export default function Login() {
     const handleReset = () => {
         setEmail("");
         setPassword("");
-    }
+        setCheckInputLogin({
+            isValidEmail: true,
+            isValidPassword: true
+        });
+        setTouched({
+            email: false,
+            password: false
+        });
+    };
 
     return (
         <div className="body">
@@ -74,10 +134,11 @@ export default function Login() {
                     <div className="div-email">
                         <input
                             type="text"
-                            className={checkInputLogin.isValidEmail ? 'email form-control' : 'is-invalid email form-control'}
+                            className={checkInputLogin.isValidEmail || !touched.email ? 'email form-control' : 'is-invalid email form-control'}
                             placeholder="Enter your account..."
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
+                            onBlur={() => handleBlur('email')}
                             onKeyPress={handleKeyPress}
                         />
                     </div>
@@ -85,10 +146,11 @@ export default function Login() {
                     <div className="div-password">
                         <input
                             type={isShowPassword ? 'text' : 'password'}
-                            className={checkInputLogin.isValidPassword ? 'password form-control' : 'is-invalid password form-control'}
+                            className={checkInputLogin.isValidPassword || !touched.password ? 'password form-control' : 'is-invalid password form-control'}
                             placeholder="Enter your password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
+                            onBlur={() => handleBlur('password')}
                             onKeyPress={handleKeyPress}
                         />
                         <div onClick={() => setIsShowPassword(!isShowPassword)} className="icon-container">

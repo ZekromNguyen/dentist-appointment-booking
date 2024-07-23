@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
-import { FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import './model.scss';
-import { ToastContainer, toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { handelAddUser } from '../../Service/userService';
 
@@ -16,15 +14,15 @@ const ModelUser = (props) => {
     const [name, setName] = useState('');
     const [clinicID, setClinicID] = useState('');
     const [dentistName, setDentistName] = useState('');
-    const [description, setDescription] = useState(''); // State for storing description
+    const [description, setDescription] = useState('');
     const [clinicOwnerName, setClinicOwnerName] = useState('');
-    const [checkInput, setCheckInput] = useState({
-        isValidUsername: true,
-        isValidPassword: true,
-        isValidEmail: true,
-        isValidPhone: true,
-        isValidRoleID: true,
-        isValidName: true
+    const [errors, setErrors] = useState({
+        username: '',
+        password: '',
+        email: '',
+        phone: '',
+        roleID: '',
+        name: ''
     });
 
     let navigate = useNavigate();
@@ -33,66 +31,115 @@ const ModelUser = (props) => {
         props.toggleFromParent();
     };
 
+    const validateField = (name, value) => {
+        let error = '';
+
+        switch (name) {
+            case 'username':
+                error = value ? '' : 'Username is required';
+                break;
+            case 'password':
+                error = value.length >= 8 ? '' : 'Password must be at least 8 characters';
+                break;
+            case 'email':
+                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                error = emailPattern.test(value) ? '' : 'Invalid email address';
+                break;
+            case 'phone':
+                const phonePattern = /^(\+84|0)[1-9]\d{8}$/;
+                error = phonePattern.test(value) ? '' : 'Phone number must be a 10-digit Vietnamese number';
+                break;
+            case 'name':
+                error = /\d/.test(value) ? 'Name should not contain numbers' : '';
+                break;
+            case 'roleID':
+                error = value ? '' : 'Role selection is required';
+                break;
+            default:
+                break;
+        }
+
+        setErrors(prevErrors => ({
+            ...prevErrors,
+            [name]: error
+        }));
+    };
+
     const isValidInputs = () => {
         let isValid = true;
-        let newCheckInput = { ...checkInput };
+        let newErrors = { ...errors };
 
         if (!username) {
-            newCheckInput.isValidUsername = false;
-            toast.error("Tên người dùng bắt buộc");
+            newErrors.username = 'Username is required';
             isValid = false;
         } else {
-            newCheckInput.isValidUsername = true;
+            newErrors.username = '';
         }
 
         if (!password) {
-            newCheckInput.isValidPassword = false;
-            toast.error("Mật khẩu bắt buộc");
+            newErrors.password = 'Password is required';
+            isValid = false;
+        } else if (password.length < 8) {
+            newErrors.password = 'Password must be at least 8 characters';
             isValid = false;
         } else {
-            newCheckInput.isValidPassword = true;
+            newErrors.password = '';
         }
 
-        let reg = /\S+@\S+\.\S+/;
-        if (!email || !reg.test(email)) {
-            newCheckInput.isValidEmail = false;
-            toast.error("Vui lòng nhập đúng giá trị địa chỉ email");
+        if (!email) {
+            newErrors.email = 'Email is required';
             isValid = false;
         } else {
-            newCheckInput.isValidEmail = true;
+            const emailReg = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailReg.test(email)) {
+                newErrors.email = 'Invalid email address';
+                isValid = false;
+            } else {
+                newErrors.email = '';
+            }
         }
 
         if (!phone) {
-            newCheckInput.isValidPhone = false;
-            toast.error("Số điện thoại bắt buộc");
+            newErrors.phone = 'Phone number is required';
             isValid = false;
         } else {
-            newCheckInput.isValidPhone = true;
+            const phoneReg = /^(\+84|0)[1-9]\d{8}$/;
+            if (!phoneReg.test(phone)) {
+                newErrors.phone = 'Phone number must be a 10-digit Vietnamese number';
+                isValid = false;
+            } else {
+                newErrors.phone = '';
+            }
         }
 
         if (!roleID) {
-            newCheckInput.isValidRoleID = false;
-            toast.error("RoleID bắt buộc");
+            newErrors.roleID = 'Role selection is required';
             isValid = false;
         } else {
-            newCheckInput.isValidRoleID = true;
+            newErrors.roleID = '';
         }
 
-        if (roleID === "1" && !name) {
-            newCheckInput.isValidName = false;
-            toast.error("Tên khách hàng bắt buộc");
-            isValid = false;
-        } else if (roleID !== "2") {
-            newCheckInput.isValidName = true;
+        if (roleID === "1") {
+            if (!name) {
+                newErrors.name = 'Name is required';
+                isValid = false;
+            } else if (/\d/.test(name)) {
+                newErrors.name = 'Name should not contain numbers';
+                isValid = false;
+            } else {
+                newErrors.name = '';
+            }
+        } else {
+            newErrors.name = '';
         }
 
-        setCheckInput(newCheckInput);
+        setErrors(newErrors);
         return isValid;
     };
 
     const handleAddNewUser = async () => {
-        let check = isValidInputs();
-        if (check === true) {
+        const check = isValidInputs();
+        if (check) {
             try {
                 const response = await handelAddUser({
                     username,
@@ -103,11 +150,10 @@ const ModelUser = (props) => {
                     name,
                     clinicID,
                     dentistName,
-                    description, // Pass description to backend
+                    description,
                     clinicOwnerName
                 });
                 if (response && response.message === "Account created successfully") {
-                    toast.success("Đăng ký thành công");
                     setUsername('');
                     setPassword('');
                     setEmail('');
@@ -116,21 +162,21 @@ const ModelUser = (props) => {
                     setName('');
                     setClinicID('');
                     setDentistName('');
-                    setDescription(''); // Reset description state
+                    setDescription('');
                     setClinicOwnerName('');
-                    setCheckInput({
-                        isValidUsername: true,
-                        isValidPassword: true,
-                        isValidEmail: true,
-                        isValidPhone: true,
-                        isValidRoleID: true,
-                        isValidName: true
+                    setErrors({
+                        username: '',
+                        password: '',
+                        email: '',
+                        phone: '',
+                        roleID: '',
+                        name: ''
                     });
                 } else {
-                    toast.error(response.error || "Đã xảy ra lỗi, vui lòng thử lại.");
+                    setErrors({ ...errors, general: response.error || "An error occurred, please try again." });
                 }
             } catch (error) {
-                toast.error(error.response?.data?.message || "Đã xảy ra lỗi, vui lòng thử lại.");
+                setErrors({ ...errors, general: error.response?.data?.message || "An error occurred, please try again." });
             }
         }
     };
@@ -143,44 +189,59 @@ const ModelUser = (props) => {
                     <div className="container">
                         <div className="row">
                             <div className="col-6">
-                                <label><FormattedMessage id="manager-user.username" /></label>
-                                <input className={checkInput.isValidUsername ? "form-control" : "is-invalid form-control"}
+                                <label>Username</label>
+                                <input className={errors.username ? "form-control is-invalid" : "form-control"}
                                     type="text"
-                                    onChange={(event) => setUsername(event.target.value)}
+                                    onChange={(event) => { setUsername(event.target.value); validateField('username', event.target.value); }}
                                     value={username} />
+                                {errors.username && <div className="invalid-feedback">{errors.username}</div>}
                             </div>
                             <div className="col-6">
-                                <label><FormattedMessage id="manager-user.password" /></label>
-                                <input className={checkInput.isValidPassword ? "form-control" : "is-invalid form-control"}
+                                <label>Password</label>
+                                <input className={errors.password ? "form-control is-invalid" : "form-control"}
                                     type="password"
-                                    onChange={(event) => setPassword(event.target.value)}
+                                    onChange={(event) => { setPassword(event.target.value); validateField('password', event.target.value); }}
                                     value={password} />
+                                {errors.password && <div className="invalid-feedback">{errors.password}</div>}
                             </div>
                             <div className="col-6">
-                                <label><FormattedMessage id="manager-user.email" /></label>
-                                <input className={checkInput.isValidEmail ? "form-control" : "is-invalid form-control"}
+                                <label>Email</label>
+                                <input className={errors.email ? "form-control is-invalid" : "form-control"}
                                     type="email"
-                                    onChange={(event) => setEmail(event.target.value)}
+                                    onChange={(event) => { setEmail(event.target.value); validateField('email', event.target.value); }}
                                     value={email} />
+                                {errors.email && <div className="invalid-feedback">{errors.email}</div>}
                             </div>
                             <div className="col-6">
-                                <label><FormattedMessage id="manager-user.phone-number" /></label>
-                                <input className={checkInput.isValidPhone ? "form-control" : "is-invalid form-control"}
+                                <label>Phone Number</label>
+                                <input className={errors.phone ? "form-control is-invalid" : "form-control"}
                                     type="text"
-                                    onChange={(event) => setPhone(event.target.value)}
+                                    onChange={(event) => { setPhone(event.target.value); validateField('phone', event.target.value); }}
                                     value={phone} />
+                                {errors.phone && <div className="invalid-feedback">{errors.phone}</div>}
                             </div>
                             <div className="col-6">
                                 <label>Role</label>
-                                <select className={checkInput.isValidRoleID ? "form-control" : "is-invalid form-control"}
-                                    onChange={(event) => setRoleID(event.target.value)}
+                                <select className={errors.roleID ? "form-control is-invalid" : "form-control"}
+                                    onChange={(event) => { setRoleID(event.target.value); validateField('roleID', event.target.value); }}
                                     value={roleID}>
                                     <option value="">Choose role...</option>
                                     <option value="1">Customer</option>
                                     <option value="2">Dentist</option>
                                     <option value="3">Clinic Owner</option>
-                                </select >
+                                </select>
+                                {errors.roleID && <div className="invalid-feedback">{errors.roleID}</div>}
                             </div>
+                            {roleID === "1" && (
+                                <div className="col-6">
+                                    <label>Name</label>
+                                    <input className={errors.name ? "form-control is-invalid" : "form-control"}
+                                        type="text"
+                                        onChange={(event) => { setName(event.target.value); validateField('name', event.target.value); }}
+                                        value={name} />
+                                    {errors.name && <div className="invalid-feedback">{errors.name}</div>}
+                                </div>
+                            )}
                             {roleID === "2" && (
                                 <>
                                     <div className="col-6">
@@ -191,13 +252,6 @@ const ModelUser = (props) => {
                                             value={dentistName} />
                                     </div>
                                     <div className="col-6">
-                                        <label>Clinic ID</label>
-                                        <input className="form-control"
-                                            type="text"
-                                            onChange={(event) => setClinicID(event.target.value)}
-                                            value={clinicID} />
-                                    </div>
-                                    <div className="col-12">
                                         <label>Description</label>
                                         <textarea className="form-control"
                                             onChange={(event) => setDescription(event.target.value)}
@@ -208,29 +262,20 @@ const ModelUser = (props) => {
                             {roleID === "3" && (
                                 <>
                                     <div className="col-6">
-                                        <label>Clinic ID</label>
-                                        <input className="form-control"
-                                            type="text"
-                                            onChange={(event) => setClinicID(event.target.value)}
-                                            value={clinicID} />
-                                    </div>
-                                    <div className="col-6">
                                         <label>Clinic Owner Name</label>
                                         <input className="form-control"
                                             type="text"
                                             onChange={(event) => setClinicOwnerName(event.target.value)}
                                             value={clinicOwnerName} />
                                     </div>
+                                    <div className="col-6">
+                                        <label>Clinic ID</label>
+                                        <input className="form-control"
+                                            type="text"
+                                            onChange={(event) => setClinicID(event.target.value)}
+                                            value={clinicID} />
+                                    </div>
                                 </>
-                            )}
-                            {roleID === "1" && (
-                                <div className="col-6">
-                                    <label>CustomerName</label>
-                                    <input className={checkInput.isValidName ? "form-control" : "is-invalid form-control"}
-                                        type="text"
-                                        onChange={(event) => setName(event.target.value)}
-                                        value={name} />
-                                </div>
                             )}
                         </div>
                     </div>
@@ -238,19 +283,20 @@ const ModelUser = (props) => {
             </ModalBody>
             <ModalFooter>
                 <Button color="primary" onClick={handleAddNewUser}>
-                    Thêm mới
-                </Button>
+                    Save Changes
+                </Button>{' '}
                 <Button color="secondary" onClick={toggle}>
-                    Đóng
+                    Cancel
                 </Button>
             </ModalFooter>
-            <ToastContainer />
         </Modal>
     );
 };
 
 const mapStateToProps = state => {
-    return {};
+    return {
+        language: state.app.language,
+    };
 };
 
 const mapDispatchToProps = dispatch => {
