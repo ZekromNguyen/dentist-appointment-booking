@@ -234,14 +234,14 @@ export default function ScheduleManage(props) {
 
   const filteredSchedules = isDentistLoggedIn
     ? schedules.filter(schedule => schedule.DentistID === loggedInDentistID &&
-      schedule.Date === currentDate
+      schedule.Date === (selectedDate || currentDate)
     )
     : schedules;
 
   
     const filteredBookedSchedules = isDentistLoggedIn
     ? bookedSchedules.filter(schedule => 
-        schedule.DentistID === loggedInDentistID && schedule.Date === currentDate)
+        schedule.DentistID === loggedInDentistID && schedule.Date === (selectedDate || currentDate))
     : bookedSchedules;
   
   // Kiểm tra và loại bỏ các bản ghi trùng lặp dựa trên ScheduleID
