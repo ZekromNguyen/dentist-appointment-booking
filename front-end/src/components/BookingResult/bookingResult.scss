@@ -115,43 +115,43 @@ button {
 }
 
 .treatment-table-container {
-    max-height: 500px;
-    /* Set the max height for the container */
-    overflow-y: auto;
-    /* Add vertical scrollbar */
-    border: 1px solid $border-color;
-    /* Add border to the container */
-    padding: 10px;
-    /* Add padding to the container */
-    border-radius: 8px;
-    /* Optional: Add border radius to the container */
+    border: 1px solid #d11212; // Add a border around the container
+    padding: 5px; // Optional: Add padding inside the container
+    overflow-x: auto; // Enable horizontal scrolling
+    overflow-y: auto; // Enable vertical scrolling
+    max-height: 500px; // Set a maximum height for the container
 }
 
 .treatment-table {
-    width: 100%;
-    border-collapse: collapse;
-    border: 1px solid $border-color;
-    /* Add border to the table */
+    width: 100%; // Make the table take the full width of the container
+    border-collapse: collapse; // Ensure borders don't overlap
+
+    th, td {
+        border: 1px solid #e0caca; // Add borders to table cells
+        padding: 8px; // Add padding to table cells
+        text-align: center; // Align text to the left
+        color: black;
+        font-size: small;
+    }
+
+    th {
+        background-color: #f2f2f2; // Add background color to table headers
+    }
+
+    tbody {
+        tr {
+            &:nth-child(even), &:nth-child(odd) {
+                background-color: #ffffff; // Set the background color for even and odd rows
+            }
+        }
+    }
 }
 
-.treatment-table th,
-.treatment-table td {
-    border: 1px solid $border-color;
-    /* Add border to the table cells */
-    padding: 10px;
-    text-align: left;
-}
 
-.treatment-table th {
-    background-color: blue;
-    /* Optional: Add background color to the table header */
-    position: sticky;
-    top: 0;
-}
 
 .treatment-title {
     margin-top: 5%;
-    margin-bottom: 5%;
+    margin-bottom: 2%;
     display: flex;
     justify-content: center;
     font-size: 40px;
@@ -176,7 +176,7 @@ $treatment-table-font-size: 16px; // Định nghĩa kích thước font chữ ch
     justify-content: center;
     margin-top: 10px;
     font-weight: 600;
-    font-size: 40px;
+    font-size: 60px;
 }
 
 

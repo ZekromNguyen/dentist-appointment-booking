@@ -93,6 +93,7 @@ const BookingResult = () => {
                     </tbody>
                 </table>
             </div>
+
         </div>
     );
 };
