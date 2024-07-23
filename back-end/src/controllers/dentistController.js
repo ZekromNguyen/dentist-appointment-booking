@@ -1,5 +1,5 @@
 import DentistService from "../service/dentistService";
-
+import DentistSchedule from "../model/dentistSchedule";
 class DentistController {
   //Hàm lấy các slot ở phòng khám cho dentist tạo lịch
   async getAvailableSlot(req, res) {
@@ -103,24 +103,6 @@ class DentistController {
     }
   }
 
-  //////////////////////////////////////
-  // async handleGetAllDentist(req, res) {
-  //   let DentistID = req.query.DentistID;
-  //   if (!DentistID) {
-  //     return res.status(200).json({
-  //       errCode: 1,
-  //       errMessage: "Missing required parameter",
-  //       account: [],
-  //     });
-  //   }
-  //   let account = await DentistService.getAllDentist(DentistID);
-  //   return res.status(200).json({
-  //     errCode: 0,
-  //     errMessage: "OK",
-  //     account,
-  //   });
-  // }
-
 
   async handleGetAllDentist(req, res) {
     let DentistID = req.query.DentistID;
@@ -187,6 +169,33 @@ class DentistController {
       return res
         .status(500)
         .json({ errCode: 1, errMessage: "Error updating dentist" });
+    }
+  }
+
+  async deleteScheduleById(req, res) {
+    try {
+      const { id } = req.params;
+
+      const schedule = await DentistSchedule.findByPk(id);
+
+      if (!schedule) {
+        return res.status(404).json({ error: 'Schedule not found.' });
+      }
+
+      const currentDate = new Date();
+      const scheduleDate = new Date(schedule.Date);
+
+      // Check if the schedule date is today or in the future
+      if (scheduleDate <= currentDate) {
+        return res.status(400).json({ error: 'Cannot delete past or current schedules.' });
+      }
+
+      await schedule.destroy();
+
+      return res.status(200).json({ message: 'Schedule deleted successfully.' });
+    } catch (error) {
+      console.error('Error deleting schedule:', error);
+      return res.status(500).json({ error: 'Failed to delete schedule.' });
     }
   }
 }

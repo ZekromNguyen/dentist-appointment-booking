@@ -83,7 +83,7 @@ export default function ScheduleManage(props) {
     };
     fetchAvailableSlots();
   }, [selectedDentist, selectedDate, isDentistLoggedIn, loggedInDentistID]);
-  
+
   // Get API All Dentist Schedules
   useEffect(() => {
     const fetchSchedules = async () => {
@@ -109,7 +109,6 @@ export default function ScheduleManage(props) {
       if (availableSlots.length > 0) {
         // Extract slotIDs from availableSlots
         const availableSlotIDs = availableSlots.map(slot => slot.SlotID);
-        console.log(availableSlotIDs);
         const dentistID = isDentistLoggedIn ? loggedInDentistID : selectedDentist;
         // Filter out slots that are already booked for the selected date
         const bookedSlotIDs = bookedSchedules
@@ -124,7 +123,6 @@ export default function ScheduleManage(props) {
           !bookedSlotIDs.includes(slot.SlotID)
         );
         setRemainingSlots(remainingSlots);
-        console.log(remainingSlots);
       } else {
         const dentistID = isDentistLoggedIn ? loggedInDentistID : selectedDentist;
         // If no available slots found, show all slots except booked ones
@@ -134,7 +132,6 @@ export default function ScheduleManage(props) {
             schedule.Date === selectedDate
           )
           .map(schedule => schedule.SlotID);
-          console.log(bookedSlotIDs);
         const remainingSlots = slots.filter(slot =>
           !bookedSlotIDs.includes(slot.SlotID)
         );
@@ -144,7 +141,7 @@ export default function ScheduleManage(props) {
   };
   useEffect(() => {
     updateRemainingSlots();
-  }, [slots, availableSlots, schedules, selectedDate, loggedInDentistID,selectedDentist,isDentistLoggedIn]);
+  }, [slots, availableSlots, schedules, selectedDate, loggedInDentistID, selectedDentist, isDentistLoggedIn]);
 
   const toggleScheduleVisibility = () => {
     setIsScheduleVisible(!isScheduleVisible);
@@ -232,193 +229,199 @@ export default function ScheduleManage(props) {
     }
   };
 
+  const handleDeleteSchedule = async (scheduleID) => {
+    if (window.confirm('Are you sure you want to delete this schedule?')) {
+      try {
+        const response = await axios.delete(`${BASE_URL}/schedule/${scheduleID}`);
+        if (response.status === 200) {
+          setSchedules(prevSchedules => prevSchedules.filter(schedule => schedule.ScheduleID !== scheduleID));
+          setBookedSchedules(prevBookedSchedules => prevBookedSchedules.filter(schedule => schedule.ScheduleID !== scheduleID));
+          setAvailableSlots(prevAvailableSlots => prevAvailableSlots.filter(slot => slot.ScheduleID !== scheduleID));
+          alert('Schedule deleted successfully!');
+        } else {
+          alert('Failed to delete schedule. Please try again.');
+        }
+      } catch (error) {
+        console.error('Error deleting schedule:', error);
+        alert('Error deleting schedule');
+      }
+    }
+  };
+
+
   const filteredSchedules = isDentistLoggedIn
-    ? schedules.filter(schedule => schedule.DentistID === loggedInDentistID &&
-      schedule.Date === (selectedDate || currentDate)
-    )
-    : schedules;
+    ? schedules.filter(schedule => schedule.DentistID === loggedInDentistID)
+    : schedules.filter(schedule => schedule.DentistID === selectedDentist);
 
-  
-    const filteredBookedSchedules = isDentistLoggedIn
-    ? bookedSchedules.filter(schedule => 
-        schedule.DentistID === loggedInDentistID && schedule.Date === (selectedDate || currentDate))
-    : bookedSchedules;
-  
-  // Kiểm tra và loại bỏ các bản ghi trùng lặp dựa trên ScheduleID
-  const uniqueFilteredBookedSchedules = filteredBookedSchedules.filter(
-    (schedule, index, self) => index === self.findIndex(s => s.ScheduleID === schedule.ScheduleID)
-  );  
-
+  const uniqueFilteredBookedSchedules = bookedSchedules
+    .filter(schedule => schedule.Status === 'Booked')
+    .filter((schedule, index, self) =>
+      index === self.findIndex(s => s.ScheduleID === schedule.ScheduleID)
+    );
 
   return (
     <div>
       <div className="container manage-schedule-container">
-        <div className="m-s-title">Manage Schedule</div>
+        <div className="row mb-4">
+          <div className="col-md-12">
+            <select
+              className="form-select"
+              onChange={handleOptionChange}
+              value={selectedOption}
+            >
+              <option value="dentist-schedule">Dentist Schedule</option>
+              <option value="booked-schedule">Booked Schedule</option>
+            </select>
+          </div>
+        </div>
 
-        <div className="row">
-          <div className="col-md-4">
-            <div className="form-group">
-              <label htmlFor="dentistSelect">Select Dentist</label>
-              {isDentistLoggedIn ? (
-                <input
-                  id="dentistSelect"
-                  type="text"
-                  className="form-control"
-                  value={dentists.find(dentist => dentist.DentistID === loggedInDentistID)?.DentistName || ''}
-                  readOnly
-                />
-              ) : (
+        {selectedOption === 'dentist-schedule' && (
+          <div className="row">
+            <div className="col-md-6">
+              <div className="form-group">
+                <label htmlFor="select-dentist">Select Dentist</label>
                 <select
-                  id="dentistSelect"
-                  className="form-control"
-                  value={selectedDentist}
+                  id="select-dentist"
+                  className="form-select"
+                  value={isDentistLoggedIn ? loggedInDentistID : selectedDentist}
                   onChange={(e) => setSelectedDentist(e.target.value)}
+                  disabled={isDentistLoggedIn}
                 >
                   <option value="">Select Dentist</option>
-                  {dentists.map((dentist) => (
+                  {dentists.map(dentist => (
                     <option key={dentist.DentistID} value={dentist.DentistID}>
                       {dentist.DentistName}
                     </option>
                   ))}
                 </select>
+              </div>
+
+              <div className="form-group mt-3">
+                <label htmlFor="select-date">Select Date</label>
+                <input
+                  type="date"
+                  id="select-date"
+                  className="form-control"
+                  value={selectedDate}
+                  onChange={handleDateChange}
+                />
+              </div>
+
+              {selectedDate && (
+                <div className="form-group mt-3">
+                  <label>Available Slots</label>
+                  <div className="slot-buttons">
+                    {remainingSlots.map(slot => (
+                      <button
+                        key={slot.SlotID}
+                        className={`btn ${selectedSlots.includes(slot.SlotID) ? 'btn-primary' : 'btn-outline-primary'} m-1`}
+                        onClick={() => handleTimeClick(slot.SlotID)}
+                      >
+                        {slot.Time}
+                      </button>
+                    ))}
+                  </div>
+                </div>
               )}
-            </div>
-          </div>
 
-          <div className="col-md-4">
-            <div className="form-group">
-              <label htmlFor="dateSelect">Select Date</label>
-              <input
-                id="dateSelect"
-                type="date"
-                className="form-control"
-                value={selectedDate}
-                min={currentDate}
-                onChange={handleDateChange}
-              />
-            </div>
-          </div>
-
-          <div className="col-md-4">
-            <div className="form-group">
-              <label>&nbsp;</label>
-              <button className="btn btn-primary" onClick={handleSave}>
-                Save
+              <button className="btn btn-primary mt-3" onClick={handleSave}>
+                Save Schedule
               </button>
             </div>
-          </div>
-        </div>
 
-        <div className="row">
-          <div className="col-md-12 pick-hour-container">
-            <div className="Time-slot-container">
-              {remainingSlots.length > 0 ? (
-                remainingSlots.map((remainingSlot) => (
-                  <div
-                    key={remainingSlot.SlotID}
-                    className={`hour-slot ${selectedSlots.includes(remainingSlot.SlotID) ? 'selected' : ''}`}
-                    onClick={() => handleTimeClick(remainingSlot.SlotID)}
-                  >
-                    {remainingSlot.Time}
+            <div className="col-md-6">
+              {selectedOption === 'dentist-schedule' && (
+                <div className="dentist-schedule-container">
+                  <button className="btn btn-toggle" onClick={toggleScheduleVisibility}>
+                    {isScheduleVisible ? 'Hide Schedule' : 'Show Schedule'}
+                  </button>
+                  <div className={`schedule-table ${isScheduleVisible ? 'visible' : 'hidden'}`}>
+                    <table className="table">
+                      <thead>
+                        <tr>
+                          <th scope="col">ScheduleID</th>
+                          <th scope="col">Dentist Name</th>
+                          <th scope="col">Date</th>
+                          <th scope="col">Slot Time</th>
+                          <th scope="col">Status</th>
+                          <th scope="col">Actions</th> {/* Added Actions column */}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {filteredSchedules.map((schedule) => (
+                          schedule.Status === 'Available' && (
+                            <tr key={schedule.ScheduleID}>
+                              <td>{schedule.ScheduleID}</td>
+                              <td>{dentists.find(dentist => dentist.DentistID === schedule.DentistID)?.DentistName}</td>
+                              <td>{new Date(schedule.Date).toLocaleDateString('vi-VN')}</td>
+                              <td>{slots.find(availableslot => availableslot.SlotID === schedule.SlotID)?.Time}</td>
+                              <td>{schedule.Status}</td>
+                              <td>
+                                <button
+                                  className="btn btn-danger"
+                                  onClick={() => handleDeleteSchedule(schedule.ScheduleID)}
+                                >
+                                  Delete
+                                </button>
+                              </td> {/* Added Delete button */}
+                            </tr>
+                          )
+                        ))}
+                      </tbody>
+                    </table>
                   </div>
-                ))
-              ) : (
-                <p>No slots available.</p>
+                </div>
               )}
             </div>
           </div>
-        </div>
+        )}
 
-        {error && <div className="alert alert-danger">{error}</div>}
-
-        <div className="row">
-          <div className="col-md-6">
-            <div className="option-selector">
-              <select onChange={handleOptionChange} value={selectedOption} className="form-control">
-                <option value="dentist-schedule">Dentist Schedule</option>
-                <option value="booked-schedule">Booked Schedule</option>
-              </select>
+        {selectedOption === 'booked-schedule' && (
+          <div className="row">
+            <div className="col-md-12">
+              <button className="btn btn-toggle" onClick={toggleBookedScheduleVisibility}>
+                {isBookedScheduleVisible ? 'Hide Booked Schedules' : 'Show Booked Schedules'}
+              </button>
+              <div className={`schedule-table ${isBookedScheduleVisible ? 'visible' : 'hidden'}`}>
+                <table className="table">
+                  <thead>
+                    <tr>
+                      <th scope="col">ScheduleID</th>
+                      <th scope="col">Dentist Name</th>
+                      <th scope="col">Date</th>
+                      <th scope="col">Slot Time</th>
+                      <th scope="col">Customer Name</th>
+                      <th scope="col">Status</th>
+                      <th scope="col">Actions</th> {/* Added Actions column */}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {uniqueFilteredBookedSchedules.map((schedule) => (
+                      schedule.Status === 'Booked' && (
+                        <tr key={schedule.ScheduleID}>
+                          <td>{schedule.ScheduleID}</td>
+                          <td>{dentists.find(dentist => dentist.DentistID === schedule.DentistID)?.DentistName}</td>
+                          <td>{new Date(schedule.Date).toLocaleDateString('vi-VN')}</td>
+                          <td>{slots.find(availableslot => availableslot.SlotID === schedule.SlotID)?.Time}</td>
+                          <td>{schedule.BookingDetail?.Booking?.Customer?.CustomerName || 'N/A'}</td>
+                          <td>{schedule.Status}</td>
+                          <td>
+                            <button
+                              className="btn btn-danger"
+                              onClick={() => handleDeleteSchedule(schedule.ScheduleID)}
+                            >
+                              Delete
+                            </button>
+                          </td> {/* Added Delete button */}
+                        </tr>
+                      )
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
-
-      <div className="container">
-        <div className="row">
-          <div className="col-md-6">
-            {selectedOption === 'dentist-schedule' && (
-              <div className="dentist-schedule-container">
-                <button className="btn btn-toggle" onClick={toggleScheduleVisibility}>
-                  {isScheduleVisible ? 'Hide Schedule' : 'Show Schedule'}
-                </button>
-                <div className={`schedule-table ${isScheduleVisible ? 'visible' : 'hidden'}`}>
-                  <table className="table">
-                    <thead>
-                      <tr>
-                        <th scope="col">ScheduleID</th>
-                        <th scope="col">Dentist Name</th>
-                        <th scope="col">Date</th>
-                        <th scope="col">Slot Time</th>
-                        <th scope="col">Status</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {filteredSchedules.map((schedule) => (
-                        schedule.Status === 'Available' && (
-                          <tr key={schedule.ScheduleID}>
-                            <td>{schedule.ScheduleID}</td>
-                            <td>{dentists.find(dentist => dentist.DentistID === schedule.DentistID)?.DentistName}</td>
-                            <td>{new Date(schedule.Date).toLocaleDateString('vi-VN')}</td>
-                            <td>{slots.find(availableslot => availableslot.SlotID === schedule.SlotID)?.Time}</td>
-                            <td>{schedule.Status}</td>
-                          </tr>
-                        )
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            )}
-          </div>
-
-          <div className="col-md-6">
-  {selectedOption === 'booked-schedule' && (
-    <div className="booked-schedule-container">
-      <button className="btn btn-toggle" onClick={toggleBookedScheduleVisibility}>
-        {isBookedScheduleVisible ? 'Hide Booked Schedules' : 'Show Booked Schedules'}
-      </button>
-      <div className={`schedule-table ${isBookedScheduleVisible ? 'visible' : 'hidden'}`}>
-        <table className="table">
-          <thead>
-            <tr>
-              <th scope="col">ScheduleID</th>
-              <th scope="col">Dentist Name</th>
-              <th scope="col">Date</th>
-              <th scope="col">Slot Time</th>
-              <th scope="col">Customer Name</th>
-              <th scope="col">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {uniqueFilteredBookedSchedules.map((schedule) => (
-              schedule.Status === 'Booked' && (
-                <tr key={schedule.ScheduleID}>
-                  <td>{schedule.ScheduleID}</td>
-                  <td>{dentists.find(dentist => dentist.DentistID === schedule.DentistID)?.DentistName}</td>
-                  <td>{new Date(schedule.Date).toLocaleDateString('vi-VN')}</td>
-                  <td>{slots.find(availableslot => availableslot.SlotID === schedule.SlotID)?.Time}</td>
-                  <td>{schedule.BookingDetail?.Booking?.Customer?.CustomerName || 'N/A'}</td>
-                  <td>{schedule.Status}</td>
-                </tr>
-              )
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  )}
-</div>
-        </div>
+        )}
       </div>
     </div>
   );

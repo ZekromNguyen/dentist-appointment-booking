@@ -1,6 +1,7 @@
 import { Sequelize } from "sequelize";
 import Clinic from "../model/clinic"; // Điều chỉnh đường dẫn và tên file nếu cần thiết
 import moment from "moment";
+import { Op } from 'sequelize';
 
 import {
   AvailableSlot,
@@ -23,6 +24,7 @@ class DentistService {
     }
   }
   //Hàm lấy các slot có sẵn của phòng khám
+
   async getAvailableSlot() {
     try {
       const slots = await AvailableSlot.findAll();
@@ -33,6 +35,7 @@ class DentistService {
       throw error;
     }
   }
+
   //Hàm dentist tạo lịch làm việc cho họ
   async createScheduleForDentist(DentistID, date, SlotId) {
     try {
@@ -47,6 +50,7 @@ class DentistService {
       throw error;
     }
   }
+
   //Hàm lấy các lịch mà dentist đã tạo
   async getDentistSchedules() {
     try {
@@ -85,6 +89,23 @@ class DentistService {
       throw error;
     }
   }
+
+  async deleteUnbookedSchedules() {
+    try {
+      const now = new Date();
+      const result = await DentistSchedule.destroy({
+        where: {
+          Status: 'Available',
+          Date: { [Op.gt]: now },
+        },
+      });
+      return result;
+    } catch (error) {
+      console.error('Error deleting unbooked schedules:', error);
+      throw error;
+    }
+  }
+
   async updateStatusDentistSchedule(id) {
     try {
       const result = await DentistSchedule.update(
@@ -138,57 +159,6 @@ class DentistService {
       throw error;
     }
   }
-
-  ///////////////////////////////////////////////////
-  // async getAllDentist(DentistID) {
-  //   try {
-  //     let options = {
-  //       attributes: [
-  //         "AccountID",
-  //         "DentistID",
-  //         "DentistName",
-  //         "Description",
-  //         "ImagePath",
-  //       ],
-  //       include: [
-  //         {
-  //           model: Clinic,
-  //           attributes: ["ClinicID", "ClinicName", "Address", "OpenTime", "CloseTime"],
-  //           as: 'clinic',
-  //         },
-  //         {
-  //           model: DentistSchedule,
-  //           attributes: ["ScheduleID", "Date", "DayOfWeek", "Status", "SlotID"],
-  //           as: 'DentistSchedules',
-  //           include: [
-  //             {
-  //               model: AvailableSlot,
-  //               attributes: ["SlotID", "Time"],
-  //               as: 'AvailableSlot'
-  //             }
-  //           ]
-  //         }
-  //       ],
-  //     };
-
-  //     let account;
-  //     if (DentistID === "ALL") {
-  //       account = await Dentist.findAll(options);
-  //     } else if (DentistID) {
-  //       options.where = { DentistID: DentistID };
-  //       account = await Dentist.findOne(options);
-  //     }
-
-  //     if (!account) {
-  //       console.log(`Dentist with ID ${DentistID} not found`);
-  //     }
-
-  //     return account;
-  //   } catch (e) {
-  //     console.error("Error in getAllDentist:", e);
-  //     throw e;
-  //   }
-  // }
 
   async getAllDentist(DentistID, date) {
     try {

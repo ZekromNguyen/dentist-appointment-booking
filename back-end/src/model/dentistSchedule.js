@@ -1,7 +1,9 @@
+// models/DentistSchedule.js
 import { Model, DataTypes } from "sequelize";
 import sequelize from "../config/database";
 
 class DentistSchedule extends Model { }
+
 DentistSchedule.init(
   {
     ScheduleID: {
@@ -43,8 +45,8 @@ DentistSchedule.init(
       ],
     },
     Status: {
-      type: DataTypes.ENUM("Available", "Booked", "Cancelled","Expired"),
-      defaultValue: "Available", // Giá trị mặc định khi tạo mới
+      type: DataTypes.ENUM("Available", "Booked", "Cancelled", "Expired"),
+      defaultValue: "Available",
       allowNull: false,
     },
   },
@@ -58,7 +60,7 @@ DentistSchedule.init(
 
 DentistSchedule.associate = function (models) {
   DentistSchedule.belongsTo(models.Dentist, { foreignKey: 'DentistID', as: 'Dentist' });
-  DentistSchedule.hasMany(models.AvailableSlot, { foreignKey: 'ScheduleID', as: 'AvailableSlot' });
+  DentistSchedule.belongsTo(models.AvailableSlot, { foreignKey: 'SlotID', as: 'AvailableSlot' });
 };
 
 export default DentistSchedule;
