@@ -302,7 +302,7 @@ export default function ScheduleManage(props) {
           <div className="col-md-4">
             <div className="form-group">
               <label>&nbsp;</label>
-              <button className="btn btn-primary" onClick={handleSave}>
+              <button className="btn btnn-primary" onClick={handleSave}>
                 Save
               </button>
             </div>

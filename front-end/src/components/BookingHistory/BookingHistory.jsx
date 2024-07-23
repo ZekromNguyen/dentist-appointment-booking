@@ -85,9 +85,6 @@ const BookingHistory = () => {
         <Col>
           <h2>Booking History</h2>
         </Col>
-        <Col className="d-flex justify-content-end align-items-center">
-          <Form.Control type="text" placeholder="Search..." style={{ width: '200px' }} />
-        </Col>
       </Row>
 
       {/* Display Current Date and Time */}
