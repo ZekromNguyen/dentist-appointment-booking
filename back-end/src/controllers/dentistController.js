@@ -79,6 +79,16 @@ class DentistController {
     }
   }
 
+  async getDentistSchedulesForCustomer(req, res) {
+    try {
+      const schedules = await DentistService.getDentistSchedulesForCustomer();
+      res.json(schedules); 
+    } catch (err) {
+      console.error("Error fetching dentist schedules:", err);
+      res.status(500).send("Internal server error");
+    }
+  }
+
   async getDentistSchedules(req, res) {
     const { OwnerId } = req.query;
     if(!OwnerId){
@@ -92,6 +102,21 @@ class DentistController {
       res.status(500).send("Internal server error");
     }
   }
+  async getAllDentistForCustomer(req, res) {
+    try {
+      const dentists = await DentistService.getAllDentist1();
+      console.log(dentists);
+      if (!dentists || dentists.length === 0) {
+        return res.status(404).json({ message: "No dentists found" });
+      }
+
+      res.status(200).json({ message: "Success", dentists });
+    } catch (error) {
+      console.error("Error in handleGetAllDentists:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  }
+
   async getAllDentist(req, res) {
     const { OwnerId } = req.query;
     if(!OwnerId){

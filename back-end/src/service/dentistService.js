@@ -97,6 +97,44 @@ class DentistService {
     }
   }
 
+  async getDentistSchedulesForCustomer() {
+    try {
+      const schedules = await DentistSchedule.findAll({
+        include: [
+          {
+            model: Dentist,
+            attributes: ["DentistName"],
+          },
+          {
+            model: AvailableSlot,
+            attributes: ["Time"],
+          },
+          {
+            model: BookingDetail,
+            attributes: ["BookingDetailID", "BookingID"],
+            include: {
+              model: Booking,
+              attributes: ["CustomerID"],
+              include: {
+                model: Customer,
+                attributes: ["CustomerName"],
+              },
+            },
+          },
+        ],
+        order: [
+          ["Date", "DESC"],
+          ["SlotID", "ASC"],
+        ],
+      });
+      const plainSchedules = schedules.map((schedule) => schedule.toJSON());
+      return plainSchedules;
+    } catch (error) {
+      console.error("Error in createSchedule method: ", error);
+      throw error;
+    }
+  }
+
   async getAllDentistByOwner(OwnerId) {
     try {
       // Fetch all clinics owned by the specified owner

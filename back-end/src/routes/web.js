@@ -69,6 +69,8 @@ let initAllWebRoutes = (app) => {
   // Customer routes
   router.put("/editCustomer", AccountController.handleUpdateCustomer);
   router.put("/editUser", AccountController.handleEditUser);
+  router.get("/scheduleDentistForCustomer", DentistController.getDentistSchedulesForCustomer);
+  router.get("/getAllDentistsForCustomer", DentistController.getAllDentistForCustomer);
 
   // Dentist routes
   router.get("/getAllDentistByOwner",dentistController.getAllDentistByClinicByOwner);
