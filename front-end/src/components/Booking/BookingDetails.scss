@@ -53,18 +53,42 @@
   gap: 10px;
   /* Khoảng cách giữa các nút trong bảng */
 }
-.small-button {
-  max-width: 50%;
-  height: a;
-  padding: 5px 10px; /* Giảm kích thước của button */
-  font-size: 20px; /* Giảm kích thước chữ */
-  margin-right: 10px; /* Tạo khoảng cách giữa các button */
-  border-radius: 10px;
-  
-  &:last-child {
-    margin-right: 0; /* Loại bỏ khoảng cách bên phải của button cuối cùng */
-  }
+.button-container {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
 }
+
+.custom-button {
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 16px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.primary-button {
+  background-color: #007bff;
+  border: none;
+  color: white;
+}
+
+.primary-button:hover {
+  background-color: #0056b3;
+  color: white;
+}
+
+.secondary-button {
+  background-color: #6c757d;
+  border: none;
+  color: white;
+}
+
+.secondary-button:hover {
+  background-color: #5a6268;
+  color: white;
+}
+
+
 .justify-content-between{
   font-weight: bolder;
 }

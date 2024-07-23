@@ -171,18 +171,18 @@ const BookingDetails = ({
               .toLocaleString("vi-VN")}{" "}
             VNĐ
           </div>
-          <div>
+          <div className="button-container">
             <Button
               variant="primary"
               onClick={handlePayment}
-              className="small-button"
+              className="custom-button primary-button"
             >
               Payment
             </Button>
             <Button
               variant="secondary"
               onClick={handleModalClose}
-              className="small-button"
+              className="custom-button secondary-button"
             >
               Close
             </Button>
