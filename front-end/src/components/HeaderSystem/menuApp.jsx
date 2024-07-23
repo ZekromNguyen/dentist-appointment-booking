@@ -30,24 +30,7 @@ export const adminMenu = [
             },
         ]
     },
-    {
-        name: 'menu.admin.handbook',
-        menus: [
-            {
-                name: 'menu.admin.manage-handbook',
-                link: '/ClinicOwner/system/manage-handbook'
-            },
-        ]
-    },
-    {
-        name: 'menu.admin.specialty',
-        menus: [
-            {
-                name: 'menu.admin.manage-specialty',
-                link: '/ClinicOwner/system/manage-specialty'
-            },
-        ]
-    },
+
 ];
 
 // doctorMenu không cần chứa mục quản lý lịch khám bệnh, vì đã được bao gồm trong adminMenu

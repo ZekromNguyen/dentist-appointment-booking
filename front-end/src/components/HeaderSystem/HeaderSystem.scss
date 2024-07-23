@@ -1,14 +1,13 @@
-
 $primary-color: #6200ea;
 $secondary-color: #03dac6;
-$text-color: #ffffff;
+$text-color: black;
 $background-color: #121212;
 $hover-background-color: blue;
 $border-color: #1a0d2a;
 $border-radius: 10px;
 $transition-time: 0.3s;
 $gradient: linear-gradient(135deg, $primary-color 0%, $secondary-color 100%);
-$highlight-color: blue; 
+$highlight-color: blue;
 
 .header-container {
     display: flex;
@@ -20,7 +19,6 @@ $highlight-color: blue;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     font-family: 'Roboto', sans-serif;
     height: 65px;
-    
 
     .header-tabs-container {
         flex-grow: 1;
@@ -47,34 +45,34 @@ $highlight-color: blue;
         }
     }
 
-    
-    .btn-logout {
-        background-color: rgb(178, 189, 194);
-        color: #242424;
+    .btnn-logout {
+        display: flex;
+        align-items: center;
+        background-color: rgb(255, 255, 255);
+        color: red;
         border: none;
         padding: 10px 20px;
         font-size: 18px;
-        border-radius: $border-radius;
+        border-radius: 10px;
         cursor: pointer;
         transition: background-color 0.3s, transform 0.3s, color 0.3s;
         font-weight: bold;
-        border: 1px solid $border-color;
-    
+        border: 1px solid #1a0d2a;
+        text-decoration: none;
+
         &:hover {
             background-color: #1e0a66;
             transform: translateY(-3px);
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             color: white;
         }
-      
-    
-        svg {
+
+        i {
             margin-right: 10px;
         }
-    
+
         span {
             font-weight: 600;
         }
     }
-    
 }
