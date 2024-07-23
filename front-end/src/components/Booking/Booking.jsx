@@ -47,7 +47,7 @@ const Booking = () => {
   useEffect(() => {
     const fetchDentists = async () => {
       try {
-        const response = await axios.get(`${BASE_URL}/getAllDentists`);
+        const response = await axios.get(`${BASE_URL}/getAllDentistsForCustomer`);
         setDentists(
           Array.isArray(response.data.dentists) ? response.data.dentists : []
         );
@@ -108,7 +108,7 @@ const Booking = () => {
   useEffect(() => {
     const fetchSchedules = async () => {
       try {
-        const response = await axios.get(`${BASE_URL}/scheduleDentist`);
+        const response = await axios.get(`${BASE_URL}/scheduleDentistForCustomer`);
         setSchedules(Array.isArray(response.data) ? response.data : []);
       } catch (error) {
         console.error("Error fetching schedules:", error);

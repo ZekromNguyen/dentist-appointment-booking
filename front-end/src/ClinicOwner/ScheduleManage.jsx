@@ -1,3 +1,6 @@
+
+
+
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './ScheduleManage.scss';
@@ -25,6 +28,9 @@ export default function ScheduleManage(props) {
   const [loggedInDentistID, setLoggedInDentistID] = useState(null);
   const currentDate = new Date().toISOString().split('T')[0];
 
+  const [OwnerID, setOwnerID] = useState(null);
+  // Fetch logged-in dentist information
+
   useEffect(() => {
     const dentistData = JSON.parse(localStorage.getItem('account'));
     if (dentistData && dentistData.dentistId) {
@@ -33,18 +39,49 @@ export default function ScheduleManage(props) {
     }
   }, []);
 
-  useEffect(() => {
-    const fetchDentists = async () => {
-      try {
-        const response = await axios.get(`${BASE_URL}/getAllDentists`);
-        setDentists(Array.isArray(response.data.dentists) ? response.data.dentists : []);
-      } catch (error) {
-        console.error('Error fetching dentists:', error);
-      }
-    };
+// Fetch OwnerID based on ClinicID
+useEffect(() => {
+  const fetchOwnerID = async () => {
+    if (isDentistLoggedIn) {
 
-    fetchDentists();
-  }, []);
+      try {
+        const response = await axios.get(`${BASE_URL}/getOwnerIdByClinicId`, {
+          params: { DentistId: loggedInDentistID },
+        });
+        const ownerID = response.data.OwnerID.ClinicOwnerID;
+        setOwnerID(ownerID);
+        //fetchDentists(ownerID);
+      } catch (error) {
+        console.error('Error fetching OwnerID:', error);
+      }
+    }
+  };
+
+  fetchOwnerID();
+}, [isDentistLoggedIn, loggedInDentistID]);
+
+// Get API All Dentists
+useEffect(() => {
+  const fetchDentists = async () => {
+    try {
+      let OwnerId;
+      if (isDentistLoggedIn) {
+        OwnerId = OwnerID; // Lấy OwnerID từ state
+      } else {
+        const data = JSON.parse(localStorage.getItem('account'));
+        OwnerId = data.clinicOwnerId;
+      }
+      if (OwnerId) {
+        const response = await axios.get(`${BASE_URL}/getAllDentists?OwnerId=${OwnerId}`);
+        setDentists(Array.isArray(response.data.dentists) ? response.data.dentists : []);
+      }
+    } catch (error) {
+      console.error('Error fetching dentists:', error);
+    }
+  };
+
+  fetchDentists();
+}, [OwnerID, isDentistLoggedIn]);
 
   const fetchSlots = async () => {
     try {
@@ -83,28 +120,39 @@ export default function ScheduleManage(props) {
     fetchAvailableSlots();
   }, [selectedDentist, selectedDate, isDentistLoggedIn, loggedInDentistID]);
 
+  // Get API All Dentist Schedules
   useEffect(() => {
     const fetchSchedules = async () => {
       try {
-        const response = await axios.get(`${BASE_URL}/scheduleDentist`);
+        let OwnerId;
+      if (isDentistLoggedIn) {
+        OwnerId = OwnerID; // Lấy OwnerID từ state
+      } else {
+        const data = JSON.parse(localStorage.getItem('account'));
+        OwnerId = data.clinicOwnerId;
+      }
+      if(OwnerId){
+        const response = await axios.get(`${BASE_URL}/scheduleDentist?OwnerId=${OwnerId}`);
         const allSchedules = Array.isArray(response.data) ? response.data : [];
         setSchedules(allSchedules);
         const booked = allSchedules.filter(schedule => schedule.Status === 'Booked');
         setBookedSchedules(booked);
         const expired = allSchedules.filter(schedule => schedule.Status === 'Expired');
         setExpiredSlots(expired);
+      }
       } catch (error) {
         console.error('Error fetching schedules:', error);
       }
     };
 
     fetchSchedules();
-  }, []);
+  }, [isDentistLoggedIn, OwnerID]);
 
   const updateRemainingSlots = () => {
     if (slots.length > 0) {
       if (availableSlots.length > 0) {
         const availableSlotIDs = availableSlots.map(slot => slot.SlotID);
+        console.log(availableSlotIDs);
         const dentistID = isDentistLoggedIn ? loggedInDentistID : selectedDentist;
         const bookedSlotIDs = bookedSchedules
           .filter(schedule =>
@@ -126,7 +174,6 @@ export default function ScheduleManage(props) {
             schedule.Date === selectedDate
           )
           .map(schedule => schedule.SlotID);
-        console.log(bookedSlotIDs);
         const remainingSlots = slots.filter(slot =>
           !bookedSlotIDs.includes(slot.SlotID)
         );
@@ -137,7 +184,7 @@ export default function ScheduleManage(props) {
 
   useEffect(() => {
     updateRemainingSlots();
-  }, [slots, availableSlots, schedules, selectedDate, loggedInDentistID, selectedDentist, isDentistLoggedIn]);
+  }, [slots, availableSlots, schedules, selectedDate, loggedInDentistID,selectedDentist,isDentistLoggedIn]);
 
   const toggleScheduleVisibility = () => {
     setIsScheduleVisible(!isScheduleVisible);
@@ -223,6 +270,7 @@ export default function ScheduleManage(props) {
     }
   };
 
+
   const confirmDelete = (callback) => {
     toast.warn(
       <div>
@@ -265,16 +313,17 @@ export default function ScheduleManage(props) {
     )
     : schedules;
 
-
-  const filteredBookedSchedules = isDentistLoggedIn
-    ? bookedSchedules.filter(schedule =>
-      schedule.DentistID === loggedInDentistID && schedule.Date === (selectedDate || currentDate))
+  
+    const filteredBookedSchedules = isDentistLoggedIn
+    ? bookedSchedules.filter(schedule => 
+        schedule.DentistID === loggedInDentistID && schedule.Date === (selectedDate || currentDate))
     : bookedSchedules;
-
+  
   // Kiểm tra và loại bỏ các bản ghi trùng lặp dựa trên ScheduleID
   const uniqueFilteredBookedSchedules = filteredBookedSchedules.filter(
     (schedule, index, self) => index === self.findIndex(s => s.ScheduleID === schedule.ScheduleID)
-  );
+  );  
+
 
 
   return (

@@ -110,42 +110,6 @@ class BookingController {
     }
   }
 
-  // async createBooking(req, res) {
-  //   try {
-  //     const { customerId, price, status, typeBook, date, scheduleId } =
-  //       req.body;
-  //     const currentDateTime = new Date(); // Lấy thời gian hiện tại
-  //     const currentDateTimeGMT7 = new Date(
-  //       currentDateTime.getTime() + 7 * 60 * 60 * 1000
-  //     );
-  //     console.log(req.body);
-
-  //     const newBooking = await BookingService.createBooking(
-  //       customerId,
-  //       status,
-  //       price
-  //     );
-  //     if (!newBooking) {
-  //       res.status(400).json({ message: "No create Booking" });
-  //     }
-  //     const newBookingDetail = await BookingService.createBookingDetail(
-  //       currentDateTimeGMT7,
-  //       typeBook,
-  //       status,
-  //       price,
-  //       date,
-  //       newBooking.BookingID,
-  //       scheduleId
-  //     );
-  //     if (!newBookingDetail) {
-  //       res.status(400).json({ message: "No create BookingDetail" });
-  //     }
-  //     res.status(200).json({ message: "Create booking successfully" });
-  //   } catch (error) {
-  //     console.error("Error creating booking in controller:", error);
-  //     res.status(500).send("Internal Server Error");
-  //   }
-  // }
   //Hàm get dentistName với Slot time của bookingDetail
   async getDentistNameByBookingDetail(req, res) {
     const { BookingDetailID } = req.query;
@@ -172,14 +136,34 @@ class BookingController {
   }
 
   async getAllBooking(req, res) {
+    const { OwnerId } = req.query;
+    if(!OwnerId){
+      return res.status(400).json({message:"Parameter required"});
+    }
     try {
-      const bookings = await BookingService.getAllBooking();
+      const bookings = await BookingService.getAllBooking(OwnerId);
       if (!bookings || bookings.length === 0) {
         res.status(404).json({ message: "Success, Not found" });
       }
       res.status(200).json({ message: "Success", bookings });
     } catch (error) {
       console.error("Error get all booking in controller:", error);
+      res.status(500).json({ message: "Internal Server Error" });
+    }
+  }
+  async getAllBookingByDentist(req,res){
+    const { DentistId } = req.query;
+    if(!DentistId){
+      return res.status(400).json({message:"Parameter required"});
+    }
+    try {
+      const bookings = await BookingService.getAllBookingByDentist(DentistId);
+      if (!bookings || bookings.length === 0) {
+        res.status(404).json({ message: "Success, Not found" });
+      }
+      res.status(200).json({ message: "Success", bookings });
+    } catch (error) {
+      console.error("Error get all booking by dentistId in controller:", error);
       res.status(500).json({ message: "Internal Server Error" });
     }
   }
@@ -220,8 +204,8 @@ class BookingController {
     try {
       const updateStatus = req.body;
       console.log(updateStatus);
-      const { BookingID, Status } = updateStatus;
-      const updateBooking = await BookingService.updateBookingStatusFromOwner(BookingID, Status);
+      const { DetailID, Status } = updateStatus;
+      const updateBooking = await BookingService.updateBookingStatusFromOwner(DetailID, Status);
       if (!updateBooking) {
         res.status(400).json({ message: "Failed" })
       }
