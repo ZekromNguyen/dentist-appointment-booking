@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import './model.scss';
 import { useNavigate } from 'react-router-dom';
 import { handelAddUser } from '../../Service/userService';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { getAllClinic } from '../../Service/clinicService'; // Ensure this import is correct
 
 const ModelUser = (props) => {
     const [username, setUsername] = useState('');
@@ -22,10 +25,37 @@ const ModelUser = (props) => {
         email: '',
         phone: '',
         roleID: '',
-        name: ''
+        name: '',
+        dentistName: '',
+        clinicOwnerName: '',
+        clinicID: ''
     });
+    const [clinics, setClinics] = useState([]); // Initialize as an empty array
 
-    let navigate = useNavigate();
+    const navigate = useNavigate();
+
+    const handleGetAllClinic = async () => {
+        try {
+            let response = await getAllClinic('ALL');
+
+            // Log response for debugging
+            console.log('Clinic response:', response);
+
+            if (response && response.errCode === 0) {
+                console.log('Clinics data:', response.account); // Log data from the correct property
+                setClinics(response.account || []); // Ensure clinics is always an array
+            } else {
+                console.error('Error fetching clinics:', response);
+            }
+        } catch (error) {
+            console.error('Error occurred while fetching clinics:', error);
+        }
+    };
+
+
+    useEffect(() => {
+        handleGetAllClinic();
+    }, []);
 
     const toggle = () => {
         props.toggleFromParent();
@@ -54,6 +84,15 @@ const ModelUser = (props) => {
                 break;
             case 'roleID':
                 error = value ? '' : 'Role selection is required';
+                break;
+            case 'dentistName':
+                error = value ? '' : 'Dentist name is required';
+                break;
+            case 'clinicOwnerName':
+                error = value ? '' : 'Clinic owner name is required';
+                break;
+            case 'clinicID':
+                error = value ? '' : 'Clinic selection is required';
                 break;
             default:
                 break;
@@ -133,6 +172,31 @@ const ModelUser = (props) => {
             newErrors.name = '';
         }
 
+        if (roleID === "2") {
+            if (!dentistName) {
+                newErrors.dentistName = 'Dentist name is required';
+                isValid = false;
+            } else {
+                newErrors.dentistName = '';
+            }
+
+            if (!clinicID) {
+                newErrors.clinicID = 'Clinic selection is required';
+                isValid = false;
+            } else {
+                newErrors.clinicID = '';
+            }
+        }
+
+        if (roleID === "3") {
+            if (!clinicOwnerName) {
+                newErrors.clinicOwnerName = 'Clinic owner name is required';
+                isValid = false;
+            } else {
+                newErrors.clinicOwnerName = '';
+            }
+        }
+
         setErrors(newErrors);
         return isValid;
     };
@@ -170,8 +234,12 @@ const ModelUser = (props) => {
                         email: '',
                         phone: '',
                         roleID: '',
-                        name: ''
+                        name: '',
+                        dentistName: '',
+                        clinicOwnerName: '',
+                        clinicID: ''
                     });
+                    toast.success("Account created successfully");
                 } else {
                     setErrors({ ...errors, general: response.error || "An error occurred, please try again." });
                 }
@@ -190,124 +258,94 @@ const ModelUser = (props) => {
                         <div className="row">
                             <div className="col-6">
                                 <label>Username</label>
-                                <input className={errors.username ? "form-control is-invalid" : "form-control"}
-                                    type="text"
-                                    onChange={(event) => { setUsername(event.target.value); validateField('username', event.target.value); }}
-                                    value={username} />
-                                {errors.username && <div className="invalid-feedback">{errors.username}</div>}
+                                <input className="form-control" type="text" value={username} onChange={(e) => { setUsername(e.target.value); validateField('username', e.target.value); }} />
+                                {errors.username && <p className="text-danger">{errors.username}</p>}
                             </div>
                             <div className="col-6">
                                 <label>Password</label>
-                                <input className={errors.password ? "form-control is-invalid" : "form-control"}
-                                    type="password"
-                                    onChange={(event) => { setPassword(event.target.value); validateField('password', event.target.value); }}
-                                    value={password} />
-                                {errors.password && <div className="invalid-feedback">{errors.password}</div>}
+                                <input className="form-control" type="password" value={password} onChange={(e) => { setPassword(e.target.value); validateField('password', e.target.value); }} />
+                                {errors.password && <p className="text-danger">{errors.password}</p>}
                             </div>
+                        </div>
+                        <div className="row">
                             <div className="col-6">
                                 <label>Email</label>
-                                <input className={errors.email ? "form-control is-invalid" : "form-control"}
-                                    type="email"
-                                    onChange={(event) => { setEmail(event.target.value); validateField('email', event.target.value); }}
-                                    value={email} />
-                                {errors.email && <div className="invalid-feedback">{errors.email}</div>}
+                                <input className="form-control" type="text" value={email} onChange={(e) => { setEmail(e.target.value); validateField('email', e.target.value); }} />
+                                {errors.email && <p className="text-danger">{errors.email}</p>}
                             </div>
                             <div className="col-6">
-                                <label>Phone Number</label>
-                                <input className={errors.phone ? "form-control is-invalid" : "form-control"}
-                                    type="text"
-                                    onChange={(event) => { setPhone(event.target.value); validateField('phone', event.target.value); }}
-                                    value={phone} />
-                                {errors.phone && <div className="invalid-feedback">{errors.phone}</div>}
+                                <label>Phone</label>
+                                <input className="form-control" type="text" value={phone} onChange={(e) => { setPhone(e.target.value); validateField('phone', e.target.value); }} />
+                                {errors.phone && <p className="text-danger">{errors.phone}</p>}
                             </div>
+                        </div>
+                        <div className="row">
                             <div className="col-6">
                                 <label>Role</label>
-                                <select className={errors.roleID ? "form-control is-invalid" : "form-control"}
-                                    onChange={(event) => { setRoleID(event.target.value); validateField('roleID', event.target.value); }}
-                                    value={roleID}>
-                                    <option value="">Choose role...</option>
+                                <select className="form-control" value={roleID} onChange={(e) => { setRoleID(e.target.value); validateField('roleID', e.target.value); }}>
+                                    <option value="">Select Role</option>
                                     <option value="1">Customer</option>
                                     <option value="2">Dentist</option>
                                     <option value="3">Clinic Owner</option>
                                 </select>
-                                {errors.roleID && <div className="invalid-feedback">{errors.roleID}</div>}
+                                {errors.roleID && <p className="text-danger">{errors.roleID}</p>}
                             </div>
-                            {roleID === "1" && (
-                                <div className="col-6">
-                                    <label>Name</label>
-                                    <input className={errors.name ? "form-control is-invalid" : "form-control"}
-                                        type="text"
-                                        onChange={(event) => { setName(event.target.value); validateField('name', event.target.value); }}
-                                        value={name} />
-                                    {errors.name && <div className="invalid-feedback">{errors.name}</div>}
-                                </div>
-                            )}
-                            {roleID === "2" && (
-                                <>
-                                    <div className="col-6">
-                                        <label>Dentist Name</label>
-                                        <input className="form-control"
-                                            type="text"
-                                            onChange={(event) => setDentistName(event.target.value)}
-                                            value={dentistName} />
+                            <div className="col-6">
+                                {roleID === '1' && (
+                                    <div>
+                                        <label>Name</label>
+                                        <input className="form-control" type="text" value={name} onChange={(e) => { setName(e.target.value); validateField('name', e.target.value); }} />
+                                        {errors.name && <p className="text-danger">{errors.name}</p>}
                                     </div>
-                                    <div className="col-6">
-                                        <label>Description</label>
-                                        <textarea className="form-control"
-                                            onChange={(event) => setDescription(event.target.value)}
-                                            value={description}></textarea>
-                                    </div>
-                                    <div className="col-6">
-                                        <label>Clinic ID</label>
-                                        <input className="form-control"
-                                            type="text"
-                                            onChange={(event) => setClinicID(event.target.value)}
-                                            value={clinicID} />
-                                    </div>
-                                </>
-                            )}
-                            {roleID === "3" && (
-                                <>
-                                    <div className="col-6">
+                                )}
+                                {roleID === '2' && (
+                                    <>
+                                        <div>
+                                            <label>Dentist Name</label>
+                                            <input className="form-control" type="text" value={dentistName} onChange={(e) => { setDentistName(e.target.value); validateField('dentistName', e.target.value); }} />
+                                            {errors.dentistName && <p className="text-danger">{errors.dentistName}</p>}
+                                            <label>Clinic</label>
+                                            <select className="form-control" value={clinicID} onChange={(e) => { setClinicID(e.target.value); validateField('clinicID', e.target.value); }}>
+                                                <option value="">Select Clinic</option>
+                                                {clinics.map((clinic) => (
+                                                    <option key={clinic.ClinicID} value={clinic.ClinicID}>{clinic.ClinicName}</option>
+                                                ))}
+                                            </select>
+                                            {errors.clinicID && <p className="text-danger">{errors.clinicID}</p>}
+                                        </div>
+                                        <div className="col-12">
+                                            <label>Description</label>
+                                            <textarea className="form-control"
+                                                onChange={(event) => setDescription(event.target.value)}
+                                                value={description}></textarea>
+                                        </div>
+                                    </>
+                                )}
+                                {roleID === '3' && (
+                                    <div>
                                         <label>Clinic Owner Name</label>
-                                        <input className="form-control"
-                                            type="text"
-                                            onChange={(event) => setClinicOwnerName(event.target.value)}
-                                            value={clinicOwnerName} />
+                                        <input className="form-control" type="text" value={clinicOwnerName} onChange={(e) => { setClinicOwnerName(e.target.value); validateField('clinicOwnerName', e.target.value); }} />
+                                        {errors.clinicOwnerName && <p className="text-danger">{errors.clinicOwnerName}</p>}
                                     </div>
-                                    {/* <div className="col-6">
-                                        <label>Clinic ID</label>
-                                        <input className="form-control"
-                                            type="text"
-                                            onChange={(event) => setClinicID(event.target.value)}
-                                            value={clinicID} />
-                                    </div> */}
-                                </>
-                            )}
+                                )}
+                            </div>
                         </div>
+                        {errors.general && <p className="text-danger">{errors.general}</p>}
                     </div>
                 </div>
             </ModalBody>
             <ModalFooter>
-                <Button color="primary" onClick={handleAddNewUser}>
-                    Save Changes
-                </Button>{' '}
-                <Button color="secondary" onClick={toggle}>
-                    Cancel
-                </Button>
+                <Button color="primary" onClick={handleAddNewUser}>Add New User</Button>
+                <Button color="secondary" onClick={toggle}>Cancel</Button>
             </ModalFooter>
         </Modal>
     );
 };
 
-const mapStateToProps = state => {
-    return {
-        language: state.app.language,
-    };
-};
+const mapStateToProps = (state) => ({
+    language: state.app.language
+});
 
-const mapDispatchToProps = dispatch => {
-    return {};
-};
+const mapDispatchToProps = (dispatch) => ({});
 
 export default connect(mapStateToProps, mapDispatchToProps)(ModelUser);

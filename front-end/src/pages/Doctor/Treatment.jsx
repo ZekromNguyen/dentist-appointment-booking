@@ -6,6 +6,8 @@ import './treatment.scss';
 
 const TreatmentUpload = () => {
     const [bookings, setBookings] = useState([]);
+    const [filteredBookings, setFilteredBookings] = useState([]);
+    const [searchTerm, setSearchTerm] = useState('');
     const [showModal, setShowModal] = useState(false);
     const [selectedBookingId, setSelectedBookingId] = useState(null);
     const [selectedStatus, setSelectedStatus] = useState('');
@@ -19,7 +21,7 @@ const TreatmentUpload = () => {
     const [treatments, setTreatments] = useState([]);
     const [hasUploaded, setHasUploaded] = useState(false);
     const [dentistId, setDentistId] = useState(null);
-   
+
     useEffect(() => {
         const accountData = localStorage.getItem('account');
         if (accountData) {
@@ -30,7 +32,6 @@ const TreatmentUpload = () => {
             }
         }
     }, []);
-    
 
     useEffect(() => {
         if (dentistId) {
@@ -39,25 +40,68 @@ const TreatmentUpload = () => {
         }
     }, [dentistId]);
 
+    useEffect(() => {
+        filterBookings(searchTerm);
+    }, [searchTerm, bookings]);
+
     const handleGetAllBookings = async (dentistId) => {
         try {
             const response = await axios.get(`${BASE_URL}/getAllBookingByDentist?DentistId=${dentistId}`);
             if (response.data && response.data.bookings) {
-                const filteredBookings = response.data.bookings.filter(booking =>
-                    booking.BookingDetails.some(detail => detail.DentistSchedule.DentistID === dentistId)
-                );
+                const filteredBookings = response.data.bookings
+                    .filter(booking =>
+                        booking.BookingDetails.some(detail =>
+                            detail.DentistSchedule.DentistID === dentistId &&
+                            detail.Status === 'Confirmed'
+                        )
+                    );
                 setBookings(filteredBookings);
-                console.log("check filter", filteredBookings)
+                setFilteredBookings(filteredBookings);
             }
         } catch (error) {
             console.error('Error fetching bookings:', error);
         }
     };
+
+    const filterBookings = (term) => {
+        if (term) {
+            const lowercasedTerm = term.toLowerCase();
+            const filtered = bookings.filter(booking =>
+                booking.Customer.CustomerName.toLowerCase().includes(lowercasedTerm)
+            );
+            setFilteredBookings(filtered);
+        } else {
+            setFilteredBookings(bookings);
+        }
+    };
+
+    const handleChangeStatus = async () => {
+        try {
+            const updateStatus = {
+                BookingID: selectedBookingId,
+                Status: selectedStatus,
+            };
+            const response = await axios.put(`${BASE_URL}/updateBookingStatus`, updateStatus);
+            if (response.status === 200 && response.data.updateBooking !== null) {
+                const updatedBookings = bookings.map(booking =>
+                    booking.BookingID === selectedBookingId ? { ...booking, Status: selectedStatus } : booking
+                );
+                setBookings(updatedBookings);
+                setShowModal(false);
+                handleGetAllBookings(dentistId);
+            } else {
+                alert('Error updating status');
+            }
+        } catch (error) {
+            console.error('Error updating status:', error);
+        }
+    };
+
     const fetchTreatments = async () => {
         try {
             const response = await axios.get(`${BASE_URL}/treatment`);
             setTreatments(Array.isArray(response.data.treatments) ? response.data.treatments : []);
-            setHasUploaded(true); // Đánh dấu là đã upload
+            setHasUploaded(true);
         } catch (error) {
             console.error('Error fetching treatments:', error);
         }
@@ -86,7 +130,7 @@ const TreatmentUpload = () => {
         setNote('');
         setTreatmentDate('');
         setResultImage(null);
-        setHasUploaded(false); // Đặt lại trạng thái upload khi đóng modal
+        setHasUploaded(false);
     };
 
     const handleOpenEditModal = (treatment) => {
@@ -105,35 +149,8 @@ const TreatmentUpload = () => {
         setResultImage(null);
     };
 
-
-    const handleChangeStatus = async () => {
-        try {
-            const updateStatus = {
-                BookingID: selectedBookingId,
-                Status: selectedStatus,
-            };
-            const response = await axios.put(`${BASE_URL}/updateBookingDetailStatus`, updateStatus);
-            if (response.status === 200 && response.data.updateBooking !== null) {
-                // Cập nhật trạng thái bookings trong state
-                const updatedBookings = bookings.map(booking =>
-                    booking.BookingID === selectedBookingId ? { ...booking, Status: selectedStatus } : booking
-                );
-                setBookings(updatedBookings);
-                setShowModal(false);
-
-                // Gọi lại hàm getAllBookings sau khi cập nhật trạng thái thành công
-                handleGetAllBookings(dentistId);
-            } else {
-                alert('Error updating status');
-            }
-        } catch (error) {
-            console.error('Error updating status:', error);
-        }
-    };
-
     const handleSubmitUpload = async (event) => {
         event.preventDefault();
-
         const hasTreatment = await checkIfTreatmentExists(bookingDetailId);
         if (hasTreatment) {
             alert('This booking already has a treatment result.');
@@ -177,7 +194,7 @@ const TreatmentUpload = () => {
         }
 
         try {
-            await axios.patch(`${BASE_URL}/treatments/${editingTreatmentId}`, formData); // Chỉnh lại endpoint PATCH thành '/treatments/:id'
+            await axios.patch(`${BASE_URL}/treatments/${editingTreatmentId}`, formData);
             alert('Treatment updated successfully');
             handleCloseEditModal();
             fetchTreatments();
@@ -195,201 +212,188 @@ const TreatmentUpload = () => {
             console.error('Error deleting treatment:', error);
         }
     };
-    const toVietnamTime = (dateString) => {
-        const date = new Date(dateString);
-        date.setHours(date.getHours() - 7); // Cộng thêm 7 giờ để đúng với giờ Việt Nam
-        return date;
-    };
 
     return (
         <div className='treatment-booking'>
             <div className='treatment-title mt-100'>Treatment Patients</div>
+            <div className='search-bar mt-30 mx-10'>
+                <Form.Control
+                    type="text"
+                    placeholder="Search by Customer Name"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                />
+                <Button className='btn-search mt-2' onClick={() => filterBookings(searchTerm)}>Search</Button>
+            </div>
             <div className='treatment-table-as mt-30 mx-10'>
                 <table>
                     <thead>
                         <tr>
-                            <th>BookingID</th>
-                            <th>CustomerName</th>
-                            <th>BookingDate</th>
-                            <th>TypeBook</th>
-                            <th>TreatmentDate</th>
-                            <th>Time</th>
-                            <th>DentistName</th>
+                            <th>Customer Name</th>
+                            <th>Booking Date</th>
                             <th>Status</th>
-                            <th>Price</th>
-                            <th>TreatmentID</th>
-                            <th>Result Day</th>
+                            <th>Treatment Date</th>
+                            <th>Time</th>
                             <th>Note</th>
                             <th>Result Image</th>
                             <th>Action</th>
                             <th>Upload Result</th>
                         </tr>
                     </thead>
-                    <tbody id='font-body'>
-                        {bookings.map((booking) => (
-                            <React.Fragment key={booking.BookingID}>
-                                {booking.BookingDetails.map((detail, index) => {
-                                    const relatedTreatments = treatments.filter(treatment => treatment.BookingDetailID === detail.BookingDetailID);
-                                    return (
-                                        <tr key={`${booking.BookingID}-${index}`}>
-                                            {relatedTreatments.length > 0 ? relatedTreatments.map((treatment) => (
-                                                <React.Fragment key={treatment.TreatmentID}>
-                                                    {index === 0 && (
-                                                        <>
-                                                            <td rowSpan={booking.BookingDetails.length}>{booking.BookingID}</td>
-                                                            <td rowSpan={booking.BookingDetails.length}>{booking.Customer.CustomerName}</td>
-                                                        </>
-                                                    )}
-                                                    <td>{(detail.DateBook).toLocaleString('vi-VN')}</td>
-                                                    <td>{detail.TypeBook}</td>
-                                                    <td>{new Date(detail.MedicalDay).toLocaleDateString('vi-VN')}</td>
-                                                    <td>{detail.DentistSchedule?.AvailableSlot?.Time}</td>
-                                                    <td>{detail.DentistSchedule?.Dentist?.DentistName}</td>
-                                                    <td>{detail.Status}</td>
-                                                    <td>{parseFloat(detail.PriceBooking).toLocaleString('vi-VN')} VND</td>
-                                                    <td>{treatment.TreatmentID}</td>
-                                                    <td>{new Date(treatment.TreatmentDate).toLocaleDateString('vi-VN')}</td>
-                                                    <td>{treatment.Note}</td>
-                                                    <td>
-                                                        <img
-                                                            src={`${BASE_URL}${treatment.Result}`}
-                                                            alt={`${treatment.TreatmentID}'s result`}
-                                                            style={{ width: '100px', height: '100px', objectFit: 'cover' }}
-                                                        />
-                                                    </td>
-                                                    <td>
-                                                        <Button className='button-change' onClick={() => handleOpenModal(booking.BookingID, booking.Status)}>
-                                                            Change Status
-                                                        </Button>
-                                                        <Button variant="warning" onClick={() => handleOpenEditModal(treatment)}>Edit Treatment</Button>
-                                                        <Button variant="danger" onClick={() => handleDelete(treatment.TreatmentID)}>Delete Treatment</Button>
-                                                    </td>
-                                                    {index === 0 && (
-                                                        <td rowSpan={booking.BookingDetails.length}>
-                                                            <Button className='button-upload' onClick={() => handleOpenUploadModal(detail.BookingDetailID)}>Upload</Button>
-                                                        </td>
-                                                    )}
-                                                </React.Fragment>
-                                            )) : (
-                                                <>
-                                                    {index === 0 && (
-                                                        <>
-                                                            <td rowSpan={booking.BookingDetails.length}>{booking.BookingID}</td>
-                                                            <td rowSpan={booking.BookingDetails.length}>{booking.Customer.CustomerName}</td>
-                                                        </>
-                                                    )}
-                                                    <td>{new Date(detail.DateBook).toLocaleString()}</td>
-                                                    <td>{detail.TypeBook}</td>
-                                                    <td>{new Date(detail.MedicalDay).toLocaleDateString()}</td>
-                                                    <td>{detail.DentistSchedule?.AvailableSlot?.Time}</td>
-                                                    <td>{detail.DentistSchedule?.Dentist?.DentistName}</td>
-                                                    <td>{detail.Status}</td>
-                                                    <td>{detail.PriceBooking}</td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td>
-                                                        <Button className='button-change' onClick={() => handleOpenModal(booking.BookingID, booking.Status)}>
-                                                            Change Status
-                                                        </Button>
-                                                    </td>
-                                                    {index === 0 && (
-                                                        <td rowSpan={booking.BookingDetails.length}>
-                                                            <Button className='button-upload' onClick={() => handleOpenUploadModal(detail.BookingDetailID)}>Upload</Button>
-                                                        </td>
-                                                    )}
-                                                </>
-                                            )}
-                                        </tr>
-                                    );
-                                })}
-                            </React.Fragment>
-                        ))}
+                    <tbody>
+                        {filteredBookings.map((booking) =>
+                            booking.BookingDetails.map((detail) => {
+                                const treatment = treatments.find(t => t.BookingDetailID === detail.BookingDetailID);
+                                return (
+                                    <tr key={detail.BookingDetailID}>
+                                        <td>{booking.Customer.CustomerName}</td>
+                                        <td>{new Date(detail.DateBook).toLocaleString('vi-VN')}</td>
+                                        <td>{detail.Status}</td>
+                                        <td>{treatment ? new Date(treatment.TreatmentDate).toLocaleDateString('vi-VN') : '-'}</td>
+                                        <td>{new Date(detail.DateBook).toLocaleTimeString('vi-VN')}</td>
+                                        <td>{treatment ? treatment.Note : '-'}</td>
+                                        <td>
+                                            {treatment && treatment.Result ? (
+                                                <img
+                                                    src={`${BASE_URL}${treatment.Result}`}
+                                                    alt={`${treatment.TreatmentID}'s result`}
+                                                    style={{ width: '100px', height: '100px', objectFit: 'cover' }}
+                                                />) : '-'}
+                                        </td>
+                                        <td>
+                                            <Button variant='primary' onClick={() => handleOpenModal(detail.BookingID, detail.Status)}>Change Status</Button>
+                                            <Button variant="primary" onClick={() => handleOpenEditModal(treatment)}>Edit</Button>
+                                            <Button variant="danger" onClick={() => handleDelete(treatment.TreatmentID)}>Delete</Button>
+                                        </td>
+                                        <td>
+                                            <Button variant='secondary' onClick={() => handleOpenUploadModal(detail.BookingDetailID)}>Upload Result</Button>
+                                        </td>
+                                    </tr>
+                                );
+                            })
+                        )}
                     </tbody>
                 </table>
             </div>
 
-            {/* Modal for changing booking status */}
             <Modal show={showModal} onHide={handleCloseModal}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Change Booking Status</Modal.Title>
+                    <Modal.Title>Change Status</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <Form.Group controlId="statusSelect">
-                        <Form.Label>Status</Form.Label>
-                        <Form.Control as="select" value={selectedStatus} onChange={(e) => setSelectedStatus(e.target.value)}>
-                            <option value="Pending">Pending</option>
-                            <option value="Confirmed">Confirmed</option>
-                            <option value="Cancelled">Cancelled</option>
-                            <option value="Completed">Completed</option>
-                        </Form.Control>
-                    </Form.Group>
+                    <Form>
+                        <Form.Group controlId="formStatus">
+                            <Form.Label>Select Status</Form.Label>
+                            <Form.Control as="select" value={selectedStatus} onChange={(e) => setSelectedStatus(e.target.value)}>
+                                <option value="">Select...</option>
+                                <option value="Confirmed">Confirmed</option>
+                                <option value="Pending">Pending</option>
+                                <option value="Cancelled">Cancelled</option>
+                            </Form.Control>
+                        </Form.Group>
+                        <Button variant="primary" onClick={handleChangeStatus}>
+                            Save Changes
+                        </Button>
+                    </Form>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={handleCloseModal}>
                         Close
                     </Button>
-                    <Button variant="primary" onClick={handleChangeStatus}>
-                        Save Changes
-                    </Button>
                 </Modal.Footer>
             </Modal>
 
-            {/* Modal for uploading treatment result */}
             <Modal show={showUploadModal} onHide={handleCloseUploadModal}>
                 <Modal.Header closeButton>
                     <Modal.Title>Upload Treatment Result</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Form onSubmit={handleSubmitUpload}>
-                        <Form.Group controlId="note">
+                        <Form.Group controlId="formNote">
                             <Form.Label>Note</Form.Label>
-                            <Form.Control type="text" value={note} onChange={(e) => setNote(e.target.value)} />
+                            <Form.Control
+                                type="text"
+                                placeholder="Enter note"
+                                value={note}
+                                onChange={(e) => setNote(e.target.value)}
+                                required
+                            />
                         </Form.Group>
-                        <Form.Group controlId="treatmentDate">
+                        <Form.Group controlId="formTreatmentDate">
                             <Form.Label>Treatment Date</Form.Label>
-                            <Form.Control type="date" value={treatmentDate} onChange={(e) => setTreatmentDate(e.target.value)} />
+                            <Form.Control
+                                type="date"
+                                value={treatmentDate}
+                                onChange={(e) => setTreatmentDate(e.target.value)}
+                                required
+                            />
                         </Form.Group>
-                        <Form.Group controlId="resultImage">
+                        <Form.Group controlId="formResultImage">
                             <Form.Label>Result Image</Form.Label>
-                            <Form.Control type="file" onChange={(e) => setResultImage(e.target.files[0])} />
+                            <Form.Control
+                                type="file"
+                                accept="image/*"
+                                onChange={(e) => setResultImage(e.target.files[0])}
+                            />
                         </Form.Group>
                         <Button variant="primary" type="submit">
                             Upload
                         </Button>
                     </Form>
                 </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleCloseUploadModal}>
+                        Close
+                    </Button>
+                </Modal.Footer>
             </Modal>
 
-            {/* Modal for editing treatment result */}
             <Modal show={showEditModal} onHide={handleCloseEditModal}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Edit Treatment Result</Modal.Title>
+                    <Modal.Title>Edit Treatment</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Form onSubmit={handleSubmitEdit}>
-                        <Form.Group controlId="note">
+                        <Form.Group controlId="formNote">
                             <Form.Label>Note</Form.Label>
-                            <Form.Control type="text" value={note} onChange={(e) => setNote(e.target.value)} />
+                            <Form.Control
+                                type="text"
+                                placeholder="Enter note"
+                                value={note}
+                                onChange={(e) => setNote(e.target.value)}
+                                required
+                            />
                         </Form.Group>
-                        <Form.Group controlId="treatmentDate">
+                        <Form.Group controlId="formTreatmentDate">
                             <Form.Label>Treatment Date</Form.Label>
-                            <Form.Control type="date" value={treatmentDate} onChange={(e) => setTreatmentDate(e.target.value)} />
+                            <Form.Control
+                                type="date"
+                                value={treatmentDate}
+                                onChange={(e) => setTreatmentDate(e.target.value)}
+                                required
+                            />
                         </Form.Group>
-                        <Form.Group controlId="resultImage">
+                        <Form.Group controlId="formResultImage">
                             <Form.Label>Result Image</Form.Label>
-                            <Form.Control type="file" onChange={(e) => setResultImage(e.target.files[0])} />
+                            <Form.Control
+                                type="file"
+                                accept="image/*"
+                                onChange={(e) => setResultImage(e.target.files[0])}
+                            />
                         </Form.Group>
                         <Button variant="primary" type="submit">
                             Save Changes
                         </Button>
                     </Form>
                 </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleCloseEditModal}>
+                        Close
+                    </Button>
+                </Modal.Footer>
             </Modal>
         </div>
     );
 };
 
 export default TreatmentUpload;
-
