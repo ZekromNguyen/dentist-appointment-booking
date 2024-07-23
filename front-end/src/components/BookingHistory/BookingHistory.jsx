@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Form, Table, Button, Modal } from 'react-bootstrap';
+import { Container, Row, Col, Table, Button, Modal } from 'react-bootstrap';
 import axios from 'axios';
 import './BookingHistory.scss'; // Import SCSS file
 import BASE_URL from '../../ServiceSystem/axios';
@@ -26,8 +25,9 @@ const BookingHistory = () => {
             params: { customerId }
           });
           if (response.data.message === 'Success') {
-            // Sort booking data by DateBook in descending order
-            const sortedBookings = response.data.bookings.sort((a, b) => 
+            // Filter and sort booking data by DateBook in descending order
+            const filteredBookings = response.data.bookings.filter(booking => booking.Status === 'Confirmed');
+            const sortedBookings = filteredBookings.sort((a, b) =>
               new Date(b.BookingDetails[0]?.DateBook) - new Date(a.BookingDetails[0]?.DateBook)
             );
             setBookingData(sortedBookings); // Save sorted booking data to state
@@ -125,8 +125,8 @@ const BookingHistory = () => {
                       <td style={{ textAlign: 'center' }}>{booking.Status}</td>
                       <td style={{ textAlign: 'center' }}>{formatPrice(booking.TotalPrice)}</td>
                       <td style={{ textAlign: 'center' }}>
-                        <Button 
-                          variant="info" 
+                        <Button
+                          variant="info"
                           onClick={() => handleShowModal(booking)}
                         >
                           View Details
@@ -183,4 +183,3 @@ const BookingHistory = () => {
 };
 
 export default BookingHistory;
-
