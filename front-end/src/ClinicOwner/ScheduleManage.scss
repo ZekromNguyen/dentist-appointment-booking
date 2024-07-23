@@ -133,11 +133,12 @@ $highlight-color: blue;
     }
   }
 
-  button.btn-primary {
+  button.btnn-primary {
     background-color: white;
     color: #242424;
     border: none;
-    padding: 16px 70px;
+    padding: 10px 20px;
+    margin-top:21px ;
     font-size: 18px;
     border-radius: 5px;
     cursor: pointer;
@@ -157,11 +158,18 @@ $highlight-color: blue;
     padding-top: 20px;
     margin-top: 20px;
     font-weight: bold;
-
     .Time-slot-container {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
+      p {
+        border: 2px solid #ccc; // Gray border for the text
+        padding: 10px; // Space between the border and text
+        font-size: 1rem; // Larger font size
+        font-weight: bold; // Bold text
+        color: red; // Darker text color for better readability
+        border-radius: 5px; // Rounded corners
+        background-color: #f5c2c7; // Light background color for contrast
+        text-align: center; // Center the text inside the border
+        margin-top: 10px; // Space above the paragraph
+      }
     }
 
     .hour-slot {
@@ -204,19 +212,35 @@ $highlight-color: blue;
 
 
   .schedule-table {
-    height: 0;
-    overflow: hidden;
-    transition: height 0.5s ease;
-    // max-height: 0;
-    // overflow: hidden;
-    // transition: max-height 0.5s ease;
-
-
-    &.visible {
-      height: auto;
-      // max-height: 1000px; // Hoặc một giá trị lớn hơn chiều cao thực tế của bảng
+    border: 1px solid #ddd; // Light gray border around the table container
+    border-radius: 5px; // Optional: rounded corners for the border
+    overflow: auto; // Enable scrolling if content overflows
+    max-width: 100%; // Ensure the table container does not exceed the parent width
+    max-height: 400px; // Set a max height for vertical scrolling (adjust as needed)
+  
+    .table {
+      border-collapse: collapse; // Ensure borders collapse into a single border
+      width: 100%; // Make sure the table takes the full width of the container
+  
+      th, td {
+        border: 1px solid #ddd; // Light gray border for table cells
+        padding: 8px; // Space inside each cell
+        text-align: center; // Align text to the left
+        color: #000203;
+      }
+  
+      th {
+        background-color: #f8f9fa; // Light gray background for table headers
+      }
+  
+      tbody {
+        tr:nth-child(even) {
+          background-color: #f2f2f2; // Zebra striping for rows
+        }
+      }
     }
   }
+  
 
   .btn-toggle {
     margin-bottom: 15px;
@@ -276,22 +300,36 @@ $highlight-color: blue;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 
-
   .schedule-table {
-    height: 0;
-    overflow: hidden;
-    transition: height 0.5s ease;
-    // max-height: 0;
-    // overflow: hidden;
-    // transition: max-height 0.5s ease;
-
-
-    &.visible {
-      height: auto;
-      // max-height: 1000px; // Hoặc một giá trị lớn hơn chiều cao thực tế của bảng
+    border: 1px solid #ddd; // Light gray border around the table container
+    border-radius: 5px; // Optional: rounded corners for the border
+    overflow: auto; // Enable scrolling if content overflows
+    max-width: 100%; // Ensure the table container does not exceed the parent width
+    max-height: 400px; // Set a max height for vertical scrolling (adjust as needed)
+  
+    .table {
+      border-collapse: collapse; // Ensure borders collapse into a single border
+      width: 100%; // Make sure the table takes the full width of the container
+  
+      th, td {
+        border: 1px solid #ddd; // Light gray border for table cells
+        padding: 8px; // Space inside each cell
+        text-align: center; // Align text to the left
+        color: #000203;
+      }
+  
+      th {
+        background-color: #f8f9fa; // Light gray background for table headers
+      }
+  
+      tbody {
+        tr:nth-child(even) {
+          background-color: #f2f2f2; // Zebra striping for rows
+        }
+      }
     }
   }
-
+  
   .btn-toggle {
     margin-bottom: 15px;
     background-color: #007bff;
@@ -384,4 +422,15 @@ $highlight-color: blue;
 .hour-slot.booked {
   background-color: #ff0000;
   color: white;
+}
+
+.alert{
+  font-size: small;
+  color: red;
+  font-weight: bold;
+}
+.btnn-danger{
+font-size: small;
+background-color: red;
+color: white;
 }
