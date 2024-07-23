@@ -96,4 +96,55 @@
   }
 }
 
-  
+.homepage {
+  .custom-row {
+    display: flex;
+    flex-wrap: wrap; // Ensure flex items wrap
+  }
+
+  .sidebar {
+    @media (min-width: 768px) {
+      width: 25%; // 3 out of 12 columns for md and larger screens
+    }
+    @media (max-width: 767.98px) {
+      width: 100%; // Full width for small screens
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+
+      .icon {
+        margin-right: 10px;
+      }
+    }
+  }
+
+  .content {
+    @media (min-width: 768px) {
+      width: 75%; // 9 out of 12 columns for md and larger screens
+    }
+    @media (max-width: 767.98px) {
+      width: 100%; // Full width for small screens
+    }
+
+    .header-section {
+      h1 {
+        margin: 20px 0;
+        text-align: center;
+      }
+    }
+
+    .body-section {
+      padding: 20px;
+
+      .booking-image {
+        display: block;
+        max-width: 100%;
+        height: auto;
+        margin: 0 auto;
+      }
+    }
+  }
+}
