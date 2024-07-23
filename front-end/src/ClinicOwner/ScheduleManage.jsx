@@ -234,9 +234,15 @@ export default function ScheduleManage(props) {
       try {
         const response = await axios.delete(`${BASE_URL}/schedule/${scheduleID}`);
         if (response.status === 200) {
-          setSchedules(prevSchedules => prevSchedules.filter(schedule => schedule.ScheduleID !== scheduleID));
-          setBookedSchedules(prevBookedSchedules => prevBookedSchedules.filter(schedule => schedule.ScheduleID !== scheduleID));
-          setAvailableSlots(prevAvailableSlots => prevAvailableSlots.filter(slot => slot.ScheduleID !== scheduleID));
+          setSchedules(prevSchedules =>
+            prevSchedules.filter(schedule => schedule.ScheduleID !== scheduleID)
+          );
+          setBookedSchedules(prevBookedSchedules =>
+            prevBookedSchedules.filter(schedule => schedule.ScheduleID !== scheduleID)
+          );
+          setAvailableSlots(prevAvailableSlots =>
+            prevAvailableSlots.filter(slot => slot.ScheduleID !== scheduleID)
+          );
           alert('Schedule deleted successfully!');
         } else {
           alert('Failed to delete schedule. Please try again.');
@@ -247,8 +253,6 @@ export default function ScheduleManage(props) {
       }
     }
   };
-
-
   const filteredSchedules = isDentistLoggedIn
     ? schedules.filter(schedule => schedule.DentistID === loggedInDentistID)
     : schedules.filter(schedule => schedule.DentistID === selectedDentist);
@@ -307,27 +311,19 @@ export default function ScheduleManage(props) {
                 />
               </div>
 
-          <div className="col-md-4">
-            <div className="form-group">
-              <label>&nbsp;</label>
-              <button className="btn btn-primary" onClick={handleSave}>
-                Save
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div className="row">
-          <div className="col-md-12 pick-hour-container">
-            <div className="Time-slot-container">
-              {remainingSlots.length > 0 ? (
-                remainingSlots.map((remainingSlot) => (
-                  <div
-                    key={remainingSlot.SlotID}
-                    className={`hour-slot ${selectedSlots.includes(remainingSlot.SlotID) ? 'selected' : ''}`}
-                    onClick={() => handleTimeClick(remainingSlot.SlotID)}
-                  >
-                    {remainingSlot.Time}
+              {selectedDate && (
+                <div className="form-group mt-3">
+                  <label>Available Slots</label>
+                  <div className="slot-buttons">
+                    {remainingSlots.map(slot => (
+                      <button
+                        key={slot.SlotID}
+                        className={`btn ${selectedSlots.includes(slot.SlotID) ? 'btn-primary' : 'btn-outline-primary'} m-1`}
+                        onClick={() => handleTimeClick(slot.SlotID)}
+                      >
+                        {slot.Time}
+                      </button>
+                    ))}
                   </div>
                 </div>
               )}
