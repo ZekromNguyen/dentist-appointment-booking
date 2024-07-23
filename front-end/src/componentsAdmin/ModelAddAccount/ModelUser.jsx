@@ -257,6 +257,13 @@ const ModelUser = (props) => {
                                             onChange={(event) => setDescription(event.target.value)}
                                             value={description}></textarea>
                                     </div>
+                                    <div className="col-6">
+                                        <label>Clinic ID</label>
+                                        <input className="form-control"
+                                            type="text"
+                                            onChange={(event) => setClinicID(event.target.value)}
+                                            value={clinicID} />
+                                    </div>
                                 </>
                             )}
                             {roleID === "3" && (
@@ -268,13 +275,13 @@ const ModelUser = (props) => {
                                             onChange={(event) => setClinicOwnerName(event.target.value)}
                                             value={clinicOwnerName} />
                                     </div>
-                                    <div className="col-6">
+                                    {/* <div className="col-6">
                                         <label>Clinic ID</label>
                                         <input className="form-control"
                                             type="text"
                                             onChange={(event) => setClinicID(event.target.value)}
                                             value={clinicID} />
-                                    </div>
+                                    </div> */}
                                 </>
                             )}
                         </div>

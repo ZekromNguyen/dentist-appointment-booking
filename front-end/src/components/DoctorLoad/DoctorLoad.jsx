@@ -288,7 +288,7 @@ const DoctorLoad = () => {
                             </div>
                             <div className='price-section'>
                                 <div className='price-section'>
-                                    <p>Total Cost (Total): {price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</p>
+                                    <p>Total Cost (Total): {(price * selectedTimes.length).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</p>
                                     {/* <p>Chi phí đặt lịch: {priceBooking.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</p> */}
                                 </div>
                             </div>

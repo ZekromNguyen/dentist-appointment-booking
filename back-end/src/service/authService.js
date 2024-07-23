@@ -140,15 +140,15 @@ class AccountService {
       throw error;
     }
   }
-  async createClinicOwner(clinicId, clinicOwnerName, accountId) {
+  async createClinicOwner(clinicOwnerName, accountId) {
     try {
       console.log("Create clinicOwner with data", {
-        clinicId,
+        // clinicId,
         clinicOwnerName,
         accountId,
       });
       const newClinicOwner = await ClinicOwner.create({
-        ClinicID: clinicId,
+        // ClinicID: clinicId,
         ClinicOwnerName: clinicOwnerName,
         AccountID: accountId,
       });
@@ -509,7 +509,7 @@ class AccountService {
           break;
         case 3: // Clinic Owner
           additionalEntity = await this.createClinicOwner(
-            additionalData.ClinicID,
+            // additionalData.ClinicID,
             additionalData.ClinicOwnerName,
             newAccount.AccountID
           );

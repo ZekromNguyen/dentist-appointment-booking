@@ -12,14 +12,14 @@ ClinicOwner.init(
       autoIncrement: true,
       allowNull: false,
     },
-    ClinicID: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: "Clinic",
-        key: "ClinicID",
-      },
-    },
+    // ClinicID: {
+    //   type: DataTypes.INTEGER,
+    //   allowNull: false,
+    //   references: {
+    //     model: "Clinic",
+    //     key: "ClinicID",
+    //   },
+    // },
     ClinicOwnerName: {
       type: DataTypes.STRING,
       allowNull: false,

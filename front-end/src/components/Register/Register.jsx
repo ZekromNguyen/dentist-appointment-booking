@@ -51,7 +51,7 @@ export default function Register() {
     };
 
     const validateEmail = (value) => {
-        let regEmail = /\S+@\S+\.\S+/;
+        let regEmail = /\S+@\gmail+\.\S+/;
         if (!value) {
             setCheckInput(prev => ({ ...prev, isValidEmail: false }));
             toast.error("Email is required");

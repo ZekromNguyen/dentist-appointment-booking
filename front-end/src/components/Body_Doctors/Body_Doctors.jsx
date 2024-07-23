@@ -167,7 +167,7 @@ export default function Body_Doctors() {
         <div className='slider-doctors'>
             <div className='header-doctor'>
                 <span className='header-title'>Dentist Information</span>
-                <button className='btn-doctors'>See More</button>
+                {/* <button className='btn-doctors'>See More</button> */}
             </div>
             <Slider {...settings}>
                 {dentists.map((dentist, index) => (

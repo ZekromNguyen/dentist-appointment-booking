@@ -114,6 +114,51 @@ button {
     }
 }
 
+.treatment-table-container {
+    max-height: 500px;
+    /* Set the max height for the container */
+    overflow-y: auto;
+    /* Add vertical scrollbar */
+    border: 1px solid $border-color;
+    /* Add border to the container */
+    padding: 10px;
+    /* Add padding to the container */
+    border-radius: 8px;
+    /* Optional: Add border radius to the container */
+}
+
+.treatment-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid $border-color;
+    /* Add border to the table */
+}
+
+.treatment-table th,
+.treatment-table td {
+    border: 1px solid $border-color;
+    /* Add border to the table cells */
+    padding: 10px;
+    text-align: left;
+}
+
+.treatment-table th {
+    background-color: blue;
+    /* Optional: Add background color to the table header */
+    position: sticky;
+    top: 0;
+}
+
+.treatment-title {
+    margin-top: 5%;
+    margin-bottom: 5%;
+    display: flex;
+    justify-content: center;
+    font-size: 40px;
+    font-weight: 600;
+}
+
+
 $treatment-table-width: 100%; // Định nghĩa chiều rộng của bảng
 $treatment-table-font-size: 16px; // Định nghĩa kích thước font chữ cho bảng
 
@@ -139,6 +184,7 @@ $treatment-table-font-size: 16px; // Định nghĩa kích thước font chữ ch
 
 .treatment-image {
     cursor: pointer;
+    width: 100px !important;
     /* Hiển thị con trỏ khi di chuột qua ảnh */
     border: 1px solid #ddd;
     border-radius: 4px;
@@ -146,13 +192,13 @@ $treatment-table-font-size: 16px; // Định nghĩa kích thước font chữ ch
 
 .modal-image {
     .modal-dialog {
-        max-width: 200% !important;
+        max-width: 500px !important;
         /* Điều chỉnh kích thước tối đa của modal */
     }
 
     .modal-content {
         img {
-            width: 200% !important;
+            width: 500px !important;
             /* Ảnh chiếm toàn bộ chiều rộng của modal */
             height: auto;
             /* Giữ tỉ lệ khung hình của ảnh */

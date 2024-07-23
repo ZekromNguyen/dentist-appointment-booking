@@ -85,9 +85,9 @@ export default function Header() {
                                     <NavDropdown.Item as={Link} to={`/profile/${account.id}`}>
                                         <FaUser /> Profile
                                     </NavDropdown.Item>
-                                    <NavDropdown.Item as={Link} to="/settings">
+                                    {/* <NavDropdown.Item as={Link} to="/settings">
                                         <FaCogs /> Settings
-                                    </NavDropdown.Item>
+                                    </NavDropdown.Item> */}
                                     <NavDropdown.Item onClick={handleLogout}>
                                         <FaSignOutAlt /> Logout
                                     </NavDropdown.Item>

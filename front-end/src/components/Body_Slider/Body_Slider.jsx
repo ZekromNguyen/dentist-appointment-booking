@@ -47,7 +47,7 @@ const BodySlider = () => {
         <div className="body-slider">
             <div className='body-slider-header'>
                 <span className='title'>Clinic Information</span>
-                <button className='btn-title'>See More</button>
+                {/* <button className='btn-title'>See More</button> */}
             </div>
             <div className='body-slider-content'>
                 <Swiper

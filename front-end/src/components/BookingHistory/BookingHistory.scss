@@ -1,94 +1,117 @@
+.booking-history-container {
+  .header-row {
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    height: 100% !important;
+  }
 
+  .table {
+
+    th,
+    td {
+      border: none;
+    }
+
+    th {
+      background-color: #f8f9fa;
+    }
+
+    tbody {
+      tr {
+        &:hover {
+          background-color: #e9ecef;
+        }
+      }
+    }
+  }
+}
+
+.table-scroll {
+  max-width: 100%;
+  overflow-y: auto;
+}
+
+/* For small screens (portrait tablets and large phones) */
+@media (max-height: 600px) {
+  .table-scroll {
+    max-height: 400px;
+  }
+}
+
+/* For medium screens (landscape tablets and small desktops) */
+@media (min-height: 601px) and (max-height: 900px) {
+  .table-scroll {
+    max-height: 400px;
+  }
+}
+
+/* For large screens (desktops and laptops) */
+@media (min-height: 901px) {
+  .table-scroll {
+    max-height: 500px;
+  }
+}
+
+
+.table {
+  margin-bottom: 0;
+}
+
+.table-bordered {
+  border: 1px solid #dee2e6;
+}
+
+.table-hover tbody tr:hover {
+  background-color: #f5f5f5;
+}
+
+
+
+/* BookingHistory.scss */
 
 .booking-history-container {
-    .header-row {
-      background-color: #007bff;
-      color: #fff;
-      padding: 10px;
-      margin-bottom: 10px;
-      border-radius: 5px;
-    }
-  
-    .table {
-      th,
-      td {
-        border: none;
-      }
-  
-      th {
-        background-color: #f8f9fa;
-      }
-  
-      tbody {
-        tr {
-          &:hover {
-            background-color: #e9ecef;
-          }
-        }
-      }
-    }
-  }
-  
+  padding: 0%;
+
   .table-scroll {
-    max-width: 100%;
-    max-height: 600px;
-    overflow-y: auto;
+    overflow-x: auto; // Đảm bảo bảng có thể cuộn ngang nếu quá rộng
   }
-  
-  .table {
-    margin-bottom: 0;
-  }
-  
-  .table-bordered {
-    border: 1px solid #dee2e6;
-  }
-  
-  .table-hover tbody tr:hover {
-    background-color: #f5f5f5;
-  }
-  
-  
-  
-  /* BookingHistory.scss */
-  
-  .booking-history-container {
-    padding: 0%;
-    .table-scroll {
-      overflow-x: auto; // Đảm bảo bảng có thể cuộn ngang nếu quá rộng
+
+  table {
+    width: 100%; // Đảm bảo bảng chiếm toàn bộ chiều rộng của phần tử chứa nó
+    border-collapse: collapse; // Kết hợp các đường viền của bảng
+    margin-bottom: 1rem; // Khoảng cách dưới bảng
+
+    th,
+    td {
+      padding: 0.75rem; // Khoảng cách bên trong các ô
+      text-align: center; // Căn giữa nội dung
+      vertical-align: middle; // Căn giữa nội dung theo chiều dọc
+      border: 1px solid #dee2e6; // Đường viền của bảng
+      white-space: nowrap; // Ngăn chặn các ô bị chia nhỏ thành nhiều dòng
     }
-  
-    table {
-      width: 100%; // Đảm bảo bảng chiếm toàn bộ chiều rộng của phần tử chứa nó
-      border-collapse: collapse; // Kết hợp các đường viền của bảng
-      margin-bottom: 1rem; // Khoảng cách dưới bảng
-  
-      th, td {
-        padding: 0.75rem; // Khoảng cách bên trong các ô
-        text-align: center; // Căn giữa nội dung
-        vertical-align: middle; // Căn giữa nội dung theo chiều dọc
-        border: 1px solid #dee2e6; // Đường viền của bảng
-        white-space: nowrap; // Ngăn chặn các ô bị chia nhỏ thành nhiều dòng
+
+    thead {
+      background-color: #f8f9fa; // Màu nền của tiêu đề bảng
+
+      th {
+        font-weight: bold; // Chữ đậm cho tiêu đề bảng
+        color: black;
       }
-  
-      thead {
-        background-color: #f8f9fa; // Màu nền của tiêu đề bảng
-        th {
-          font-weight: bold; // Chữ đậm cho tiêu đề bảng
-          color: black;
+    }
+
+    tbody {
+      tr {
+        &:nth-of-type(odd) {
+          background-color: #f2f2f2; // Màu nền của các hàng lẻ
         }
-      }
-  
-      tbody {
-        tr {
-          &:nth-of-type(odd) {
-            background-color: #f2f2f2; // Màu nền của các hàng lẻ
-          }
-          &:hover {
-            background-color: #e9ecef; // Màu nền khi di chuột qua hàng
-          }
+
+        &:hover {
+          background-color: #e9ecef; // Màu nền khi di chuột qua hàng
         }
       }
     }
   }
-  
-  
+}
