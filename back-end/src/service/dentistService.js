@@ -1,5 +1,4 @@
 import { Sequelize } from "sequelize";
-import Clinic from "../model/clinic"; // Điều chỉnh đường dẫn và tên file nếu cần thiết
 import moment from "moment";
 import { Op } from 'sequelize';
 
@@ -10,6 +9,7 @@ import {
   BookingDetail,
   Customer,
   Dentist,
+  Clinic,
 } from "../model/model";
 
 class DentistService {
@@ -52,9 +52,16 @@ class DentistService {
   }
 
   //Hàm lấy các lịch mà dentist đã tạo
-  async getDentistSchedules() {
+  async getDentistSchedules(OwnerId) {
     try {
+      const allDentist = await this.getAllDentistByOwner(OwnerId);
+    const allDentistIds = allDentist.map((dentist) => dentist.DentistID);
       const schedules = await DentistSchedule.findAll({
+        where: {
+          DentistID: {
+            [Sequelize.Op.in] : allDentistIds
+          }
+        },
         include: [
           {
             model: Dentist,
@@ -89,6 +96,74 @@ class DentistService {
       throw error;
     }
   }
+
+  async getAllDentistByOwner(OwnerId) {
+    try {
+      // Fetch all clinics owned by the specified owner
+      const allClinic = await Clinic.findAll({
+        where: {
+          ClinicOwnerID: OwnerId,
+        },
+        attributes: ["ClinicID"],
+      });
+  
+      // Map the results to an array of ClinicID values
+      const clinicIds = allClinic.map((clinic) => clinic.ClinicID);
+  
+      // If no clinics are found, return an empty array or handle accordingly
+      if (clinicIds.length === 0) {
+        return [];
+      }
+  
+      // Fetch all dentists associated with the clinics found
+      const allDentist = await Dentist.findAll({
+        where: {
+          ClinicID: {
+            [Sequelize.Op.in]: clinicIds,
+          },
+        },
+        include: {
+          model: Clinic,
+          attributes: ["ClinicName"],
+        },
+      });
+      const allDentists = allDentist.map((dentist) => dentist.toJSON());
+      return allDentists;
+    } catch (error) {
+      console.error("Error in getAllDentistByOwner:", error);
+      throw error;
+    }
+  }
+
+  async getOwnerIdByClinicId(DentistId) {
+    try {
+      // Find the dentist by primary key
+      const dentist = await Dentist.findByPk(DentistId);
+  
+      // Ensure dentist is found
+      if (!dentist) {
+        throw new Error(`Dentist with ID ${DentistId} not found`);
+      }
+  
+      // Get the ClinicID from the dentist
+      const clinicId = dentist.ClinicID;
+  
+      // Find the clinic by primary key
+      const clinic = await Clinic.findByPk(clinicId);
+  
+      // Ensure clinic is found
+      if (!clinic) {
+        throw new Error(`Clinic with ID ${clinicId} not found`);
+      }
+  
+      // Return the OwnerId
+      return clinic;
+    } catch (error) {
+      console.error("Error in getOwnerIdByClinicId:", error);
+      throw error;
+    }
+  }
+  
 
   async deleteUnbookedSchedules() {
     try {

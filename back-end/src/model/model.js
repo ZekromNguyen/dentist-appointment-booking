@@ -10,7 +10,11 @@ import Booking from "./booking";
 import BookingDetail from "./bookingDetail";
 import Clinic from "./clinic";
 import Treatment from "./treatment";
-import Location from "./location"
+import Location from "./location";
+
+Clinic.hasMany(Dentist, {foreignKey:"ClinicID"});
+Dentist.belongsTo(Clinic, {foreignKey:"ClinicID"});
+
 Clinic.belongsTo(ClinicOwner, { foreignKey: "ClinicOwnerID" });
 ClinicOwner.hasMany(Clinic, { foreignKey: "ClinicOwnerID" });
 

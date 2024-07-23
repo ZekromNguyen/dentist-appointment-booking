@@ -49,10 +49,11 @@ let initAllWebRoutes = (app) => {
   router.get("/getAllClinic", AccountController.getAllClinic);
   router.get("/getAllBooking", BookingController.getAllBooking);
   router.put("/booking/updateStatus", BookingController.updateBookingStatus);
-  router.put("/updateBookingStatus", BookingController.updateBookingStatusFromOwner);
+  router.put("/updateBookingDetailStatus", BookingController.updateBookingStatusFromOwner);
   router.post("/clinics", clinicController.createNewClinic);
   router.put('/clinics/:id', clinicController.updateClinic);
   router.get("/check/:bookingDetailId", BookingController.checkTreatmentExistence);
+  router.get("/getAllBookingByDentist",BookingController.getAllBookingByDentist);
 
 
   // User management routes
@@ -70,8 +71,10 @@ let initAllWebRoutes = (app) => {
   router.put("/editUser", AccountController.handleEditUser);
 
   // Dentist routes
+  router.get("/getAllDentistByOwner",dentistController.getAllDentistByClinicByOwner);
   router.get("/handleGetAllDentist", dentistController.handleGetAllDentist);
   router.get("/handleGetAllDentist/:id", dentistController.getAllDentist);
+  router.get("/getOwnerIdByClinicId", dentistController.getOwnerIdByClinicId);
   router.delete("/handleDeleteDentist", dentistController.handleDeleteDentist);
   router.put("/handleEditDentist", dentistController.handleEditDentist);
 

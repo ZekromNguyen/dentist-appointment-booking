@@ -19,7 +19,7 @@ const TreatmentUpload = () => {
     const [treatments, setTreatments] = useState([]);
     const [hasUploaded, setHasUploaded] = useState(false);
     const [dentistId, setDentistId] = useState(null);
-
+   
     useEffect(() => {
         const accountData = localStorage.getItem('account');
         if (accountData) {
@@ -30,6 +30,7 @@ const TreatmentUpload = () => {
             }
         }
     }, []);
+    
 
     useEffect(() => {
         if (dentistId) {
@@ -40,7 +41,7 @@ const TreatmentUpload = () => {
 
     const handleGetAllBookings = async (dentistId) => {
         try {
-            const response = await axios.get(`${BASE_URL}/getAllBooking`);
+            const response = await axios.get(`${BASE_URL}/getAllBookingByDentist?DentistId=${dentistId}`);
             if (response.data && response.data.bookings) {
                 const filteredBookings = response.data.bookings.filter(booking =>
                     booking.BookingDetails.some(detail => detail.DentistSchedule.DentistID === dentistId)
@@ -111,7 +112,7 @@ const TreatmentUpload = () => {
                 BookingID: selectedBookingId,
                 Status: selectedStatus,
             };
-            const response = await axios.put(`${BASE_URL}/updateBookingStatus`, updateStatus);
+            const response = await axios.put(`${BASE_URL}/updateBookingDetailStatus`, updateStatus);
             if (response.status === 200 && response.data.updateBooking !== null) {
                 // Cập nhật trạng thái bookings trong state
                 const updatedBookings = bookings.map(booking =>

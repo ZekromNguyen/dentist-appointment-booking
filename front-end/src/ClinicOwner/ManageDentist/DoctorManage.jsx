@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { getAllDentist, deleteDentist, handleEditDentist } from '../../Service/userService';
+import { getAllDentist, deleteDentist, handleEditDentist, getAllDentistByOwner } from '../../Service/userService';
 import ModelAddDentist from './ModelAddDentist';
 import ModelEditDentist from './ModelEditDentist';
 import './DoctorManage.scss'; // Ensure correct SCSS path
@@ -24,10 +24,12 @@ class DoctorManage extends Component {
 
   handleGetAllDentists = async () => {
     try {
-      const response = await getAllDentist('ALL');
-      if (response && response.errCode === 0) {
+      const data = JSON.parse(localStorage.getItem('account'));
+      const OwnerId = data.clinicOwnerId;
+      const response = await getAllDentistByOwner(OwnerId);
+      if (response && response.message === 'Success') {
         this.setState({
-          arrDentists: response.account,
+          arrDentists: response.allDentist,
         });
       } else {
         console.error('Error fetching dentists:', response);
@@ -120,7 +122,7 @@ class DoctorManage extends Component {
                 <th>DentistName</th>
                 <th>DentistImage</th>
                 <th>AccountID</th>
-                <th>ClinicID</th>
+                <th>ClinicName</th>
                 <th>Description</th>
                 <th>Action</th>
               </tr>
@@ -138,11 +140,11 @@ class DoctorManage extends Component {
                     />
                   </td>
                   <td>{item.AccountID}</td>
-                  <td>{item.ClinicID}</td>
+                  <td>{item.Clinic.ClinicName}</td>
                   <td>{item.Description}</td>
                   <td>
                     <button className='button-edit' style={{ fontSize: "15px" }} onClick={() => this.handleEditDoctor(item)}>Edit</button>
-                    <button className='button-delete' style={{ fontSize: "15px" }} onClick={() => this.handleDeleteDoctor(item)}>Delete</button>
+                    {/* <button className='button-delete' style={{ fontSize: "15px" }} onClick={() => this.handleDeleteDoctor(item)}>Delete</button> */}
                   </td>
                 </tr>
               ))}

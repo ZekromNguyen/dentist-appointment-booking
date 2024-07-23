@@ -80,17 +80,25 @@ class DentistController {
   }
 
   async getDentistSchedules(req, res) {
+    const { OwnerId } = req.query;
+    if(!OwnerId){
+      return res.status(400).json({message:"Parameter required"});
+    }
     try {
-      const schedules = await DentistService.getDentistSchedules();
-      res.json(schedules); // Hoặc res.render nếu bạn muốn render vào một template
+      const schedules = await DentistService.getDentistSchedules(OwnerId);
+      res.json(schedules); 
     } catch (err) {
       console.error("Error fetching dentist schedules:", err);
       res.status(500).send("Internal server error");
     }
   }
   async getAllDentist(req, res) {
+    const { OwnerId } = req.query;
+    if(!OwnerId){
+      return res.status(400).json({message:"Parameter required"});
+    }
     try {
-      const dentists = await DentistService.getAllDentist1();
+      const dentists = await DentistService.getAllDentistByOwner(OwnerId);
       console.log(dentists);
       if (!dentists || dentists.length === 0) {
         return res.status(404).json({ message: "No dentists found" });
@@ -103,6 +111,36 @@ class DentistController {
     }
   }
 
+  async getAllDentistByClinicByOwner(req,res){
+    const {OwnerId} = req.query;
+    if(!OwnerId){
+      return res.status(400).json({message:"Parameter required"});
+    }
+    console.log(OwnerId);
+    try {
+      const allDentist = await DentistService.getAllDentistByOwner(OwnerId);
+      if(!allDentist){
+        return res.status(404).json({message: "Not found"});
+      }
+      res.status(200).json({message:"Success", allDentist});
+    } catch (error) {
+      console.error("Error in getAllDentistByClinicByOwner:", error);
+    }
+  }
+
+  async getOwnerIdByClinicId(req,res){
+    const { DentistId } = req.query;
+    if(!DentistId){
+      return res.status(400).json({message:"Parameter required"});
+    }
+    console.log(DentistId);
+    try {
+      const OwnerID = await DentistService.getOwnerIdByClinicId(DentistId);
+      res.status(200).json({message:"Success", OwnerID});
+    } catch (error) {
+      console.error("Error in getOwnerIdByClinicId:", error);
+    }
+  }
 
   async handleGetAllDentist(req, res) {
     let DentistID = req.query.DentistID;

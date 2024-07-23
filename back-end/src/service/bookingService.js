@@ -224,8 +224,14 @@ class BookingService {
   }
 
   //hàm get all booking
-  async getAllBooking() {
+  async getAllBooking(OwnerId) {
     try {
+      const allDentist = await DentistService.getAllDentistByOwner(OwnerId);
+      const allDentistIds = allDentist.map((dentist) => dentist.DentistID);
+
+      if (allDentistIds.length === 0) {
+        return [];
+      }
       const bookings = await Booking.findAll({
         include: [
           {
@@ -237,6 +243,11 @@ class BookingService {
             include: [
               {
                 model: DentistSchedule,
+                where: {
+                  DentistID: {
+                    [Sequelize.Op.in]: allDentistIds,
+                  },
+                },
                 attributes: ["DentistID", "SlotID"],
                 include: [
                   {
@@ -253,11 +264,48 @@ class BookingService {
           },
         ],
       });
-      const bookingIDs = bookings.map((booking) => booking.toJSON());
-      return bookingIDs;
+      return bookings.map((booking) => booking.toJSON());
     } catch (error) {
       console.error("Error in getAllBooking method: ", error);
       throw error;
+    }
+  }
+
+  async getAllBookingByDentist(DentistId) {
+    try {
+      const bookings = await Booking.findAll({
+        include: [
+          {
+            model: Customer,
+            attributes: ["CustomerName", "CustomerID"],
+          },
+          {
+            model: BookingDetail,
+            include: [
+              {
+                model: DentistSchedule,
+                where: {
+                  DentistID: DentistId
+                },
+                attributes: ["DentistID", "SlotID"],
+                include: [
+                  {
+                    model: Dentist,
+                    attributes: ["DentistName"],
+                  },
+                  {
+                    model: AvailableSlot,
+                    attributes: ["Time"],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      });
+      return bookings.map((booking) => booking.toJSON());
+    } catch (error) {
+      
     }
   }
 
@@ -346,47 +394,23 @@ class BookingService {
   }
 
   //Hàm cập nhật trạng thái booking từ owner
-  async updateBookingStatusFromOwner(bookingId, status) {
+  async updateBookingStatusFromOwner(bookingDetailId, status) {
     const transaction = await sequelize.transaction();
     try {
-      // Update the Booking table
-      const [updated] = await Booking.update(
-        { Status: status },
-        {
-          where: { BookingID: bookingId },
-          transaction, // Ensure the update is part of the transaction
-        }
-      );
-
-      if (updated === 0) {
-        await transaction.rollback();
-        throw new Error("Booking update failed");
-      }
-
-      // Update the BookingDetail table
       const [detailUpdated] = await BookingDetail.update(
         { Status: status },
         {
-          where: { BookingID: bookingId },
-          transaction, // Ensure the update is part of the transaction
+          where: { BookingDetailID: bookingDetailId },
+          transaction,
         }
       );
-
       if (detailUpdated === 0) {
         await transaction.rollback();
         throw new Error("BookingDetail update failed");
       }
-
-      // Commit the transaction if both updates succeed
       await transaction.commit();
-
-      // Fetch the updated booking
-      const updatedBooking = await Booking.findOne({
-        where: { BookingID: bookingId },
-      });
-      return updatedBooking;
+      return detailUpdated;
     } catch (error) {
-      // Rollback the transaction in case of an error
       await transaction.rollback();
       console.error("Error updating booking status from Owner:", error);
       throw error;
