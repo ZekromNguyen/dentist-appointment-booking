@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { Modal, Button, Form, Alert } from 'react-bootstrap';
+import React, { useState, useEffect } from 'react';
+import { Modal, Button, Form } from 'react-bootstrap';
 import axios from 'axios';
-import { toast, ToastContainer } from 'react-toastify'; // Import ToastContainer
-import 'react-toastify/dist/ReactToastify.css'; // Import toastify CSS
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import BASE_URL from '../../ServiceSystem/axios';
 
 const AddClinicModal = ({ show, handleClose, onClinicAdded }) => {
@@ -13,13 +13,37 @@ const AddClinicModal = ({ show, handleClose, onClinicAdded }) => {
     CloseTime: '',
     LocationID: '',
     Description: '',
-    image: null
+    image: null,
   });
-
+  const [locations, setLocations] = useState([]);
   const [imagePreview, setImagePreview] = useState(null);
+  const [error, setError] = useState(null);
 
   const Data = JSON.parse(localStorage.getItem('account'));
   const clinicOwnerID = Data ? Data.clinicOwnerId : null;
+
+  useEffect(() => {
+    const fetchLocations = async () => {
+      try {
+        const response = await axios.get(`${BASE_URL}/handleGetAllLocation`, {
+          params: { LocationID: 'ALL' },
+        });
+
+        if (response.data && response.data.errCode === 0) {
+          setLocations(response.data.account); // Update this based on the response structure
+        } else {
+          console.error('Error fetching locations:', response.data);
+          setError('Error fetching locations.');
+        }
+      } catch (error) {
+        toast.error('Error fetching locations.');
+        console.error('Error fetching locations:', error);
+        setError('Error fetching locations.');
+      }
+    };
+
+    fetchLocations();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -64,15 +88,13 @@ const AddClinicModal = ({ show, handleClose, onClinicAdded }) => {
 
     try {
       const response = await axios.post(`${BASE_URL}/clinics`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
+        headers: { 'Content-Type': 'multipart/form-data' },
       });
 
       toast.success('Clinic added successfully!');
       onClinicAdded(response.data);
       handleClose();
-      window.location.reload(); // Refresh the list
+      window.location.reload();
     } catch (error) {
       toast.error('Error adding clinic. Please try again.');
       console.error('Error adding clinic:', error);
@@ -118,8 +140,8 @@ const AddClinicModal = ({ show, handleClose, onClinicAdded }) => {
                 onChange={(e) => setClinic({ ...clinic, OpenTime: `${e.target.value}:00` })}
               >
                 <option value="">Select hour</option>
-                {hours.map(hour => (
-                  <option key={hour} value={hour}>
+                {hours.map((hour, index) => (
+                  <option key={`open-${index}-${hour}`} value={hour}>
                     {hour}
                   </option>
                 ))}
@@ -134,22 +156,29 @@ const AddClinicModal = ({ show, handleClose, onClinicAdded }) => {
                 onChange={(e) => setClinic({ ...clinic, CloseTime: `${e.target.value}:00` })}
               >
                 <option value="">Select hour</option>
-                {hours.map(hour => (
-                  <option key={hour} value={hour}>
+                {hours.map((hour, index) => (
+                  <option key={`close-${index}-${hour}`} value={hour}>
                     {hour}
                   </option>
                 ))}
               </Form.Control>
             </Form.Group>
             <Form.Group>
-              <Form.Label>Location ID</Form.Label>
+              <Form.Label>Location</Form.Label>
               <Form.Control
-                type="number"
+                as="select"
                 name="LocationID"
-                value={clinic.LocationName}
+                value={clinic.LocationID}
                 onChange={handleChange}
                 required
-              />
+              >
+                <option>Select location</option>
+                {locations.map((location) => (
+                  <option key={`location-${location.LocationID}`} value={location.LocationID}>
+                    {location.LocationName} {/* Ensure this field exists in your data */}
+                  </option>
+                ))}
+              </Form.Control>
             </Form.Group>
             <Form.Group>
               <Form.Label>Description</Form.Label>
@@ -190,7 +219,7 @@ const AddClinicModal = ({ show, handleClose, onClinicAdded }) => {
           </Form>
         </Modal.Body>
       </Modal>
-      <ToastContainer /> {/* Ensure ToastContainer is included */}
+      <ToastContainer />
     </>
   );
 };

@@ -52,6 +52,8 @@ BookingDetail.hasOne(Treatment, { foreignKey: "BookingDetailID" });
 Location.hasMany(Clinic, { foreignKey: 'LocationID', as: 'location' });
 Clinic.belongsTo(Location, { foreignKey: 'LocationID', as: 'location' });
 
+
+
 export {
   sequelize,
   Account,

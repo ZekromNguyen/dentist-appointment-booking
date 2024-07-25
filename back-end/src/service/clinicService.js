@@ -6,6 +6,7 @@ import {
 class ClinicService {
     async createClinic(ClinicOwnerID, ClinicName, Address, OpenTime, CloseTime, LocationID, Description, ImagePath) {
         try {
+            // Tạo clinic mới
             const newClinic = await Clinic.create({
                 ClinicName: ClinicName,
                 Address: Address,
@@ -16,11 +17,23 @@ class ClinicService {
                 Description: Description,
                 ImagePath: ImagePath,
             });
-            return newClinic;
+
+            // Lấy thông tin LocationName từ bảng Location
+            const location = await Location.findOne({
+                where: { LocationID: LocationID },
+                attributes: ['LocationName']
+            });
+
+            // Trả về thông tin của clinic cùng với LocationName
+            return {
+                ...newClinic.toJSON(),
+                LocationName: location ? location.LocationName : null
+            };
         } catch (error) {
             console.error("Error creating clinic in service:", error);
         }
     }
+
     async updateClinic(ClinicID, ClinicName, Address, OpenTime, CloseTime, LocationID, Description) {
         try {
             const clinic = await Clinic.findByPk(ClinicID);
@@ -131,5 +144,41 @@ class ClinicService {
             throw e;
         }
     }
+
+
+
+
+    async getAllLocation(LocationID) {
+        try {
+            let clinics = "";
+            if (LocationID === "ALL") {
+                clinics = await Location.findAll({
+                    raw: true,
+                    attributes: [
+                        "LocationID",
+                        "LocationName",
+                    ],
+                });
+            } else if (LocationID) {
+                clinics = await Location.findOne({
+                    where: { LocationID: LocationID },
+                    raw: true,
+                    attributes: [
+                        "LocationID",
+                        "LocationName",
+                    ],
+                });
+            }
+            if (!clinics) {
+                console.log(`Clinic with ID ${LocationID} not found`);
+            }
+            return clinics;
+        } catch (e) {
+            console.error("Error in getAllClinicAdmin:", e);
+            throw e;
+        }
+    }
+
+
 }
 export default new ClinicService();

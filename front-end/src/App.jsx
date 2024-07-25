@@ -58,7 +58,6 @@ function App() {
 
 
           <Route path="/chat/:senderId/:receiverId" element={<Chat />} />
-          <Route path="/senders/:receiverId" element={<SenderList />} />
           {/* profile */}
           <Route path="/profile/:accountId" element={<Profile />} />
           <Route path="/editprofile/:accountId" element={<EditProfile />} />
@@ -80,13 +79,14 @@ function App() {
           </Route>
           {/* <Route path="dentistDetail" element={<DoctorLoad />}></Route> */}
           <Route path="/dentistDetail/:dentistId" element={<DoctorLoad />} />
-
+          <Route path="/senders/:receiverId" element={<SenderList />} />
           <Route path="/clinicDetail/:clinicID" element={<ClinicLoad />}></Route>
           <Route element={<ProtectedRoute allowedRoles={[4]} />}>
             <Route path="admin/*" element={<AdminRoutes />} />
           </Route>
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
+
       </div>
       <ToastContainer
         position="top-center"

@@ -96,5 +96,24 @@ class ClinicController {
         });
     }
 
+
+    async handleGetAllLocation(req, res) {
+        let LocationID = req.query.LocationID; // All, id
+        if (!LocationID) {
+            return res.status(200).json({
+                errCode: 1,
+                errMessage: "Missing required patameter",
+                account: [],
+            });
+        }
+        let account = await clinicService.getAllLocation(LocationID);
+
+        return res.status(200).json({
+            errCode: 0,
+            errMessage: "OK",
+            account,
+        });
+    }
+
 }
 export default new ClinicController();
