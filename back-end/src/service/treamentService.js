@@ -62,8 +62,49 @@ class TreatmentService {
     }
   }
 
-  async getTreatmentsByBookingDetailID() {
+  async getTreatmentByBookingDetailID(bookingDetailId) {
+    try {
+      const treatments = await Treatment.findOne({
+        where: {
+          BookingDetailID: bookingDetailId,
+        },
+      });
+      // const bookings = await Booking.findAll({
+      //   where: {
+      //     CustomerID: customerId,
+      //   },
+      //   include: {
+      //     model: BookingDetail,
+      //     include: {
+      //       model: Treatment,
+      //     },
+      //   },
+      // });
 
+      // // Extract treatments from the bookings
+      // const treatments = bookings.flatMap((booking) =>
+      //   booking.BookingDetails.flatMap((detail) => detail.Treatments)
+      // );
+
+      return treatments;
+    } catch (error) {
+      console.error("Error fetching treatments by customer ID:", error);
+      throw new Error("Error fetching treatments by customer ID");
+    }
+  }
+
+  async getTreatmentsByBookingDetailID(bookingDetailID) {
+    try {
+      const treatment = await Treatment.findOne({
+        where: {
+          BookingDetailID: bookingDetailID,
+        },
+      });
+      return treatment;
+    } catch (error) {
+      console.error("Error when get Treatment by Booking Detail ID:", error);
+      throw new Error("Error when get treatment by Boooking Detail ID");
+    }
   }
 }
 export default new TreatmentService();
