@@ -53,6 +53,8 @@ export default function Login() {
                     case 4: navigate("/Admin"); break;
                     default: navigate("/"); break;
                 }
+            } else if (response.data.message === "Role already logged in from another browser") {
+                toast.error("This role is already logged in from another browser.");
             } else {
                 toast.error(response.data.error || "Incorrect account or password. Please try again.");
             }

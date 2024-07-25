@@ -59,6 +59,7 @@ const ModelUser = (props) => {
 
     const toggle = () => {
         props.toggleFromParent();
+        window.location.reload();
     };
 
     const validateField = (name, value) => {

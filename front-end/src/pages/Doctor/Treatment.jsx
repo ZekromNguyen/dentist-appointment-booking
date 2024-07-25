@@ -230,10 +230,11 @@ const TreatmentUpload = () => {
                     <thead>
                         <tr>
                             <th>Customer Name</th>
-                            <th>Booking Date</th>
+                            {/* <th>Booking Date</th> */}
                             <th>Status</th>
-                            <th>Treatment Date</th>
+                            <th>Medical Date</th>
                             <th>Time</th>
+                            <th>Treatment Date</th>
                             <th>Note</th>
                             <th>Result Image</th>
                             <th>Action</th>
@@ -247,10 +248,13 @@ const TreatmentUpload = () => {
                                 return (
                                     <tr key={detail.BookingDetailID}>
                                         <td>{booking.Customer.CustomerName}</td>
-                                        <td>{new Date(detail.DateBook).toLocaleString('vi-VN')}</td>
+                                        {/* <td>{new Date(detail.DateBook).toLocaleString('vi-VN')}</td> */}
                                         <td>{detail.Status}</td>
+                                        <td>{new Date(detail.MedicalDay).toLocaleDateString('vi-VN')}</td>
+                                        <td>{detail.DentistSchedule?.AvailableSlot?.Time}</td>
                                         <td>{treatment ? new Date(treatment.TreatmentDate).toLocaleDateString('vi-VN') : '-'}</td>
-                                        <td>{new Date(detail.DateBook).toLocaleTimeString('vi-VN')}</td>
+
+                                        {/* <td>{new Date(detail.DateBook).toLocaleTimeString('vi-VN')}</td> */}
                                         <td>{treatment ? treatment.Note : '-'}</td>
                                         <td>
                                             {treatment && treatment.Result ? (
@@ -262,8 +266,12 @@ const TreatmentUpload = () => {
                                         </td>
                                         <td>
                                             <Button variant='primary' onClick={() => handleOpenModal(detail.BookingID, detail.Status)}>Change Status</Button>
-                                            <Button variant="primary" onClick={() => handleOpenEditModal(treatment)}>Edit</Button>
-                                            <Button variant="danger" onClick={() => handleDelete(treatment.TreatmentID)}>Delete</Button>
+                                            {treatment && (
+                                                <>
+                                                    <Button variant='success' onClick={() => handleOpenEditModal(treatment)}>Edit</Button>
+                                                    <Button variant='danger' onClick={() => handleDelete(treatment.TreatmentID)}>Delete</Button>
+                                                </>
+                                            )}
                                         </td>
                                         <td>
                                             <Button variant='secondary' onClick={() => handleOpenUploadModal(detail.BookingDetailID)}>Upload Result</Button>
@@ -287,8 +295,8 @@ const TreatmentUpload = () => {
                             <Form.Control as="select" value={selectedStatus} onChange={(e) => setSelectedStatus(e.target.value)}>
                                 <option value="">Select...</option>
                                 <option value="Confirmed">Confirmed</option>
-                                <option value="Pending">Pending</option>
                                 <option value="Cancelled">Cancelled</option>
+                                <option value="Completed">Completed</option>
                             </Form.Control>
                         </Form.Group>
                         <Button variant="primary" onClick={handleChangeStatus}>

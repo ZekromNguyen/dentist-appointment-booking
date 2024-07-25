@@ -62,8 +62,8 @@ class TreatmentService {
     }
   }
 
-  async getTreatmentsByBookingDetailID(){
-    
+  async getTreatmentsByBookingDetailID() {
+
   }
 }
 export default new TreatmentService();

@@ -7,6 +7,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { checkSession } from '../../Service/userService';
 import axios from 'axios';
 import BASE_URL from '../../ServiceSystem/axios';
+import { toast } from 'react-toastify';
 
 
 const DoctorLoad = () => {
@@ -144,7 +145,7 @@ const DoctorLoad = () => {
     const handleConfirmBooking = async (e) => {
         e.preventDefault();
         if (!loggedIn) {
-            alert('Please log in to make a booking.');
+            toast.warn('Please log in to make a booking.');
             return;
         }
 
@@ -206,7 +207,7 @@ const DoctorLoad = () => {
     const handleChatClick = () => {
         console.log('userAccountId before navigate:', userAccountId); // Log the userAccountId before navigation
         if (!loggedIn) {
-            alert('Please log in to chat with the dentist.');
+            toast.warn('Please log in to chat with the dentist.');
             return;
         }
 
