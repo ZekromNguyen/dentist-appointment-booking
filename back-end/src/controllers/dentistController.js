@@ -82,7 +82,7 @@ class DentistController {
   async getDentistSchedulesForCustomer(req, res) {
     try {
       const schedules = await DentistService.getDentistSchedulesForCustomer();
-      res.json(schedules); 
+      res.json(schedules);
     } catch (err) {
       console.error("Error fetching dentist schedules:", err);
       res.status(500).send("Internal server error");
@@ -91,12 +91,12 @@ class DentistController {
 
   async getDentistSchedules(req, res) {
     const { OwnerId } = req.query;
-    if(!OwnerId){
-      return res.status(400).json({message:"Parameter required"});
+    if (!OwnerId) {
+      return res.status(400).json({ message: "Parameter required" });
     }
     try {
       const schedules = await DentistService.getDentistSchedules(OwnerId);
-      res.json(schedules); 
+      res.json(schedules);
     } catch (err) {
       console.error("Error fetching dentist schedules:", err);
       res.status(500).send("Internal server error");
@@ -119,8 +119,8 @@ class DentistController {
 
   async getAllDentist(req, res) {
     const { OwnerId } = req.query;
-    if(!OwnerId){
-      return res.status(400).json({message:"Parameter required"});
+    if (!OwnerId) {
+      return res.status(400).json({ message: "Parameter required" });
     }
     try {
       const dentists = await DentistService.getAllDentistByOwner(OwnerId);
@@ -136,32 +136,32 @@ class DentistController {
     }
   }
 
-  async getAllDentistByClinicByOwner(req,res){
-    const {OwnerId} = req.query;
-    if(!OwnerId){
-      return res.status(400).json({message:"Parameter required"});
+  async getAllDentistByClinicByOwner(req, res) {
+    const { OwnerId } = req.query;
+    if (!OwnerId) {
+      return res.status(400).json({ message: "Parameter required" });
     }
     console.log(OwnerId);
     try {
       const allDentist = await DentistService.getAllDentistByOwner(OwnerId);
-      if(!allDentist){
-        return res.status(404).json({message: "Not found"});
+      if (!allDentist) {
+        return res.status(404).json({ message: "Not found" });
       }
-      res.status(200).json({message:"Success", allDentist});
+      res.status(200).json({ message: "Success", allDentist });
     } catch (error) {
       console.error("Error in getAllDentistByClinicByOwner:", error);
     }
   }
 
-  async getOwnerIdByClinicId(req,res){
+  async getOwnerIdByClinicId(req, res) {
     const { DentistId } = req.query;
-    if(!DentistId){
-      return res.status(400).json({message:"Parameter required"});
+    if (!DentistId) {
+      return res.status(400).json({ message: "Parameter required" });
     }
     console.log(DentistId);
     try {
       const OwnerID = await DentistService.getOwnerIdByClinicId(DentistId);
-      res.status(200).json({message:"Success", OwnerID});
+      res.status(200).json({ message: "Success", OwnerID });
     } catch (error) {
       console.error("Error in getOwnerIdByClinicId:", error);
     }
@@ -242,7 +242,7 @@ class DentistController {
       const schedule = await DentistSchedule.findByPk(id);
 
       if (!schedule) {
-        return res.status(404).json({ error: 'Schedule not found.' });
+        return res.status(404).json({ error: "Schedule not found." });
       }
 
       const currentDate = new Date();
@@ -250,15 +250,19 @@ class DentistController {
 
       // Check if the schedule date is today or in the future
       if (scheduleDate <= currentDate) {
-        return res.status(400).json({ error: 'Cannot delete past or current schedules.' });
+        return res
+          .status(400)
+          .json({ error: "Cannot delete past or current schedules." });
       }
 
       await schedule.destroy();
 
-      return res.status(200).json({ message: 'Schedule deleted successfully.' });
+      return res
+        .status(200)
+        .json({ message: "Schedule deleted successfully." });
     } catch (error) {
-      console.error('Error deleting schedule:', error);
-      return res.status(500).json({ error: 'Failed to delete schedule.' });
+      console.error("Error deleting schedule:", error);
+      return res.status(500).json({ error: "Failed to delete schedule." });
     }
   }
 }

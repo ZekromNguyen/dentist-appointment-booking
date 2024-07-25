@@ -70,8 +70,15 @@ class BookingController {
       }
       const results = [];
       for (const booking of bookings) {
-        const { priceBooking, status, typeBook, date, scheduleId, recurringType, recurringEndDate } =
-          booking;
+        const {
+          priceBooking,
+          status,
+          typeBook,
+          date,
+          scheduleId,
+          recurringType,
+          recurringEndDate,
+        } = booking;
         const currentDateTime = new Date(); // Lấy thời gian hiện tại
         const currentDateTimeGMT7 = new Date(
           currentDateTime.getTime() + 7 * 60 * 60 * 1000
@@ -86,7 +93,7 @@ class BookingController {
           newBooking.BookingID,
           scheduleId,
           recurringType,
-          recurringEndDate,
+          recurringEndDate
         );
         if (!newBookingDetail) {
           return res
@@ -137,8 +144,8 @@ class BookingController {
 
   async getAllBooking(req, res) {
     const { OwnerId } = req.query;
-    if(!OwnerId){
-      return res.status(400).json({message:"Parameter required"});
+    if (!OwnerId) {
+      return res.status(400).json({ message: "Parameter required" });
     }
     try {
       const bookings = await BookingService.getAllBooking(OwnerId);
@@ -151,10 +158,10 @@ class BookingController {
       res.status(500).json({ message: "Internal Server Error" });
     }
   }
-  async getAllBookingByDentist(req,res){
+  async getAllBookingByDentist(req, res) {
     const { DentistId } = req.query;
-    if(!DentistId){
-      return res.status(400).json({message:"Parameter required"});
+    if (!DentistId) {
+      return res.status(400).json({ message: "Parameter required" });
     }
     try {
       const bookings = await BookingService.getAllBookingByDentist(DentistId);
@@ -188,7 +195,9 @@ class BookingController {
       const { bookingId } = req.params;
 
       // Gọi service để lấy thông tin chi tiết đặt chỗ
-      const bookingDetails = await BookingService.getAllBookingDetails(bookingId);
+      const bookingDetails = await BookingService.getAllBookingDetails(
+        bookingId
+      );
 
       if (!bookingDetails || bookingDetails.length === 0) {
         return res.status(404).json({ message: "Booking details not found" });
@@ -205,9 +214,12 @@ class BookingController {
       const updateStatus = req.body;
       console.log(updateStatus);
       const { DetailID, Status } = updateStatus;
-      const updateBooking = await BookingService.updateBookingStatusFromOwner(DetailID, Status);
+      const updateBooking = await BookingService.updateBookingStatusFromOwner(
+        DetailID,
+        Status
+      );
       if (!updateBooking) {
-        res.status(400).json({ message: "Failed" })
+        res.status(400).json({ message: "Failed" });
       }
       res.status(200).json({ message: "Success", updateBooking });
     } catch (error) {
@@ -220,9 +232,12 @@ class BookingController {
       const updateStatus = req.body;
       console.log(updateStatus);
       const { BookingID, Status } = updateStatus;
-      const updateBooking = await BookingService.updateBookingStatus(BookingID, Status);
+      const updateBooking = await BookingService.updateBookingStatus(
+        BookingID,
+        Status
+      );
       if (!updateBooking) {
-        res.status(400).json({ message: "Failed" })
+        res.status(400).json({ message: "Failed" });
       }
       res.status(200).json({ message: "Success", updateBooking });
     } catch (error) {
@@ -230,7 +245,6 @@ class BookingController {
       res.status(500).json({ error: "Error update Booking status" });
     }
   }
-
 
   async showPaymentPage(req, res) {
     try {
@@ -274,15 +288,16 @@ class BookingController {
     }
   }
 
-
   checkTreatmentExistence = async (req, res) => {
     const { bookingDetailId } = req.params;
     try {
-      const exists = await BookingService.checkIfTreatmentExists(bookingDetailId);
+      const exists = await BookingService.checkIfTreatmentExists(
+        bookingDetailId
+      );
       res.json({ exists });
     } catch (error) {
-      console.error('Error checking treatment existence in controller:', error);
-      res.status(500).json({ error: 'Error checking treatment existence' });
+      console.error("Error checking treatment existence in controller:", error);
+      res.status(500).json({ error: "Error checking treatment existence" });
     }
   };
 }
