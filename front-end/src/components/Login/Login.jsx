@@ -86,6 +86,7 @@ export default function Login() {
         <div className="body">
             <div className="back-ground col-12 col-sm-4">
                 <div className="all">
+                    
                     <h3 className="title">Login Page</h3>
 
                     <div className="div-email">
@@ -100,35 +101,35 @@ export default function Login() {
                     </div>
 
                     <div className="div-password">
-                        <input
-                            type={isShowPassword ? 'text' : 'password'}
-                            className={checkInputLogin.isValidPassword ? 'password form-control' : 'is-invalid password form-control'}
-                            placeholder="Enter your password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            onKeyPress={handleKeyPress}
-                        />
-                        <div onClick={() => setIsShowPassword(!isShowPassword)} className="icon-container">
-                            {isShowPassword ? <FaEye className="icon-open-eye-login" /> : <FaEyeSlash className="icon-open-eye-login" />}
+                        <div className="password-container">
+                            <input
+                                type={isShowPassword ? 'text' : 'password'}
+                                className={`password form-control ${checkInputLogin.isValidPassword ? '' : 'is-invalid'}`}
+                                placeholder="Enter your password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                onKeyPress={handleKeyPress}
+                            />
+                            <div onClick={() => setIsShowPassword(!isShowPassword)} className="icon-container">
+                                {isShowPassword ? <FaEye className="icon-open-eye-login" /> : <FaEyeSlash className="icon-open-eye-login" />}
+                            </div>
                         </div>
                     </div>
-
-                    <div className="div-login">
+                    <a className="text-link" href="/forgotPassword">Forgot password?</a>
+                    <div className="button-group">
                         <button className="btn btn-primary" onClick={handleLogin}>Login</button>
-                        <button className="button-reset" onClick={handleReset}>Reset</button>
+                        <button className="btn btn-secondary" onClick={handleReset}>Reset</button>
                     </div>
 
-                    <div className="shift"></div>
+                    
 
-                    <a className="text-forget" href="/forgotPassword">Forgot password?</a>
-
-                    <div className="button-create-div">
-                        <button className="create-buttonn" onClick={() => navigate("/Register")}>Create Account</button>
+                    <div className="button-group">
+                        <button className="btn btn-success" onClick={() => navigate("/Register")}>Create Account</button>
                     </div>
 
-                    <div className="back">
+                    <div className="back-link">
                         <Link to='/'>
-                            <FaChevronLeft className="icon-arrow-left" /> Go back
+                            <FaChevronLeft className="icon-arrow-left" /> Go Back
                         </Link>
                     </div>
                 </div>

@@ -146,6 +146,12 @@ const DoctorLoad = () => {
         e.preventDefault();
         if (!loggedIn) {
             toast.warn('Please log in to make a booking.');
+
+            // Navigate to the login page after 2 seconds
+            setTimeout(() => {
+                navigate('/login');
+            }, 2000);
+
             return;
         }
 
@@ -208,6 +214,9 @@ const DoctorLoad = () => {
         console.log('userAccountId before navigate:', userAccountId); // Log the userAccountId before navigation
         if (!loggedIn) {
             toast.warn('Please log in to chat with the dentist.');
+            setTimeout(() => {
+                navigate('/login');
+            }, 2000);
             return;
         }
 

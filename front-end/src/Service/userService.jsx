@@ -257,9 +257,7 @@ const registerDentist = async (
 const getAllDentistByOwner = async (OwnerId) => {
   try {
     const response = await axios.get(
-      `${BASE_URL}/getAllDentistByOwner?OwnerId=${OwnerId}`,
-      { params: { OwnerId: OwnerId } }
-    );
+      `${BASE_URL}/getAllDentistByOwner?OwnerId=${OwnerId}`);
     return response.data;
   } catch (error) {
     throw new Error("Error getting Dentist from Owner: " + error.message);

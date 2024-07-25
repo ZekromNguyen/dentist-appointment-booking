@@ -142,17 +142,19 @@ let initAllWebRoutes = (app) => {
 
 
   ////////chat
-  router.get('/chat/:senderId/:receiverId', chatController.getMessages);
-  router.post('/chat', chatController.sendMessage);
-  router.get('/senders/:receiverId', chatController.getAllSenderDetails);
-  router.get('/api/messages/clinicowner/:clinicOwnerId', async (req, res) => {
+  router.get("/chat/:senderId/:receiverId", chatController.getMessages);
+  router.post("/chat", chatController.sendMessage);
+  router.get("/senders/:receiverId", chatController.getAllSenderDetails);
+  router.get("/api/messages/clinicowner/:clinicOwnerId", async (req, res) => {
     try {
       const clinicOwnerId = req.params.clinicOwnerId;
-      const messages = await chatService.getMessagesForClinicOwner(clinicOwnerId);
+      const messages = await chatService.getMessagesForClinicOwner(
+        clinicOwnerId
+      );
       res.json(messages);
     } catch (error) {
-      console.error('Error fetching messages for clinic owner:', error);
-      res.status(500).send('Error fetching messages');
+      console.error("Error fetching messages for clinic owner:", error);
+      res.status(500).send("Error fetching messages");
     }
   });
 
@@ -160,3 +162,4 @@ let initAllWebRoutes = (app) => {
 };
 
 module.exports = initAllWebRoutes;
+
