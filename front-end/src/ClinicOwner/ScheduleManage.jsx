@@ -441,7 +441,7 @@ export default function ScheduleManage(props) {
                         <th scope="col">Date</th>
                         <th scope="col">Slot Time</th>
                         <th scope="col">Status</th>
-                        <th scope="col">Action</th>
+                        {!isDentistLoggedIn && <th scope="col">Action</th>}
                       </tr>
                     </thead>
                     <tbody>
@@ -453,14 +453,16 @@ export default function ScheduleManage(props) {
                             <td>{new Date(schedule.Date).toLocaleDateString('vi-VN')}</td>
                             <td>{slots.find(availableslot => availableslot.SlotID === schedule.SlotID)?.Time}</td>
                             <td>{schedule.Status}</td>
-                            <td>
-                              <button
-                                className="btn btnn-danger"
-                                onClick={() => handleDeleteSchedule(schedule.ScheduleID)}
-                              >
-                                Delete
-                              </button>
-                            </td> {/* Added Delete button */}
+                            {!isDentistLoggedIn && (
+                              <td>
+                                <button
+                                  className="btn btn-danger"
+                                  onClick={() => handleDeleteSchedule(schedule.ScheduleID)}
+                                >
+                                  Delete
+                                </button>
+                              </td>
+                            )}
                           </tr>
                         )
                       ))}
@@ -486,7 +488,7 @@ export default function ScheduleManage(props) {
                         <th scope="col">Date</th>
                         <th scope="col">Slot Time</th>
                         <th scope="col">Customer Name</th>
-                        <th scope="col">Status</th>
+                        {!isDentistLoggedIn && <th scope="col">Action</th>}
                       </tr>
                     </thead>
                     <tbody>
@@ -499,6 +501,16 @@ export default function ScheduleManage(props) {
                             <td>{slots.find(availableslot => availableslot.SlotID === schedule.SlotID)?.Time}</td>
                             <td>{schedule.BookingDetail?.Booking?.Customer?.CustomerName || 'N/A'}</td>
                             <td>{schedule.Status}</td>
+                            {!isDentistLoggedIn && (
+                              <td>
+                                <button
+                                  className="btn btn-danger"
+                                  onClick={() => handleDeleteSchedule(schedule.ScheduleID)}
+                                >
+                                  Delete
+                                </button>
+                              </td>
+                            )}
                           </tr>
                         )
                       ))}

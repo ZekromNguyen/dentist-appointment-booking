@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 
@@ -24,13 +25,12 @@ const ProtectedRoute = ({ allowedRoles }) => {
     console.log(userRole);
 
     if (!userRole || !allowedRoles.includes(userRole)) {
-        const fallbackPath = roleFallbackPaths[userRole] || '/';
-        return <Navigate to={fallbackPath} replace />;
+        return <Navigate to="/error" replace />;
     }
 
     return <Outlet />;
 };
 
-
 export default ProtectedRoute;
+
 

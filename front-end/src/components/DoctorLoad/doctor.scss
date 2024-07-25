@@ -1,257 +1,265 @@
 .DoctorLoad {
-    // Styles for the main container of DoctorLoad component
+  // Styles for the main container of DoctorLoad component
 }
 
 .header {
-    // Styles for the header component within DoctorLoad
+  // Styles for the header component within DoctorLoad
 }
 
 .doctor {
-    margin-top: 20px;
-    border: 1px solid black;
-    display: flex;
+  margin-top: 20px;
+  border: 1px solid black;
+  display: flex;
 
-    &-img {
-        margin-top: 10px;
-        margin-left: 3%;
-        height: 200px;
-        width: 200px;
-        border-radius: 100px;
-        background-size: cover;
-        background-position: center;
-    }
+  &-img {
+      margin-top: 10px;
+      margin-left: 3%;
+      height: 200px;
+      width: 200px;
+      border-radius: 100px;
+      background-size: cover;
+      background-position: center;
+  }
 
-    &-detail {
-        margin-top: 1%;
-        margin-left: 2%;
-        width: 80%;
+  &-detail {
+      margin-top: 1%;
+      margin-left: 2%;
+      width: 80%;
 
-        .doctor-infor {
-            font-size: 20px;
-            font-weight: 700;
-        }
+      .doctor-infor {
+          font-size: 20px;
+          font-weight: 700;
+      }
 
-        .doctor-description {
-            margin-top: 5px;
-        }
+      .doctor-description {
+          margin-top: 5px;
+      }
 
-        .doctor-Clinic {
-            margin-top: 5px;
-            font-size: 15px;
-            font-weight: 600;
-        }
+      .doctor-Clinic {
+          margin-top: 5px;
+          font-size: 15px;
+          font-weight: 600;
+      }
 
-        .clinic-address {
-            margin-top: 10px;
-        }
+      .clinic-address {
+          margin-top: 10px;
+      }
 
-        .time-Clinic {
-            margin-top: 20px;
-            font-size: 20px;
-            margin-left: 3%;
-            font-weight: 600;
-        }
-    }
+      .time-Clinic {
+          margin-top: 20px;
+          font-size: 20px;
+          margin-left: 3%;
+          font-weight: 600;
+      }
+  }
 }
 
 .booking-section {
-    margin-top: 20px;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+  margin-top: 20px;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
 
-    label {
-        font-size: 18px;
-        font-weight: 600;
-    }
+  label {
+      font-size: 18px;
+      font-weight: 600;
+  }
 
-    input[type="date"] {
-        margin-bottom: 10px;
-        padding: 8px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        font-size: 16px;
-        width: 100%;
-        max-width: 300px;
-    }
+  input[type="date"] {
+      margin-bottom: 10px;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 16px;
+      width: 100%;
+      max-width: 300px;
+  }
 
-    .time-slots {
-        margin-top: 10px;
-        display: flex;
-        flex-wrap: wrap;
+  .time-slots {
+      margin-top: 10px;
+      display: flex;
+      flex-wrap: wrap;
 
-        .hour-slot {
-            cursor: pointer;
-            padding: 10px;
-            margin-bottom: 5px;
-            background-color: #f0f0f0;
-            border: 1px solid #ccc;
-            transition: border-color 0.3s ease;
+      .hour-slot {
+          cursor: pointer;
+          padding: 10px;
+          margin-bottom: 5px;
+          background-color: #f0f0f0;
+          border: 1px solid #ccc;
+          transition: border-color 0.3s ease;
 
-            &:hover {
-                border-color: #66b3ff;
-            }
+          &:hover {
+              border-color: #66b3ff;
+          }
 
-            &.selected {
-                border: 5px solid #66b3ff;
-            }
-        }
-    }
+          &.selected {
+              border: 5px solid #66b3ff;
+          }
+      }
+  }
 
-    .booking-details {
-        margin-top: 20px;
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
+  .booking-details {
+      margin-top: 20px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
 
-        h3 {
-            font-size: 20px;
-            font-weight: 600;
-        }
+      h3 {
+          font-size: 20px;
+          font-weight: 600;
+      }
 
-        p {
-            margin-top: 10px;
-            font-size: 16px;
+      p {
+          margin-top: 10px;
+          font-size: 16px;
 
-            &:last-child {
-                margin-bottom: 0;
-            }
-        }
-    }
+          &:last-child {
+              margin-bottom: 0;
+          }
+      }
+  }
 
-    .btn {
-        margin-top: 20px;
-        padding: 10px 20px;
-        font-size: 18px;
-        font-weight: 600;
-        background-color: #007bff;
-        color: #fff;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
+  .btn {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 18px;
+      font-weight: 600;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
 
-        &:hover {
-            background-color: #0056b3;
-        }
+      &:hover {
+          background-color: #0056b3;
+      }
 
-        &:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-    }
+      &:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+      }
+  }
 }
 
 .scrollable-calendar {
-    display: flex;
-    overflow-x: auto;
-    gap: 10px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    max-width: 100%;
-    white-space: nowrap;
-    margin-bottom: 10px;
+  display: flex;
+  overflow-x: auto;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  max-width: 100%;
+  white-space: nowrap;
+  margin-bottom: 10px;
 
-    .calendar-date {
-        padding: 5px 10px;
-        cursor: pointer;
-        border-radius: 5px;
-        transition: background-color 0.3s ease;
+  .calendar-date {
+      padding: 5px 10px;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: background-color 0.3s ease;
 
-        &.selected {
-            background-color: #f0f0f0;
-        }
-    }
+      &.selected {
+          background-color: #f0f0f0;
+      }
+  }
 }
 
 .schedule-list {
-    display: flex;
-    margin-left: 3%;
+  display: flex;
+  margin-left: 3%;
 
-    .schedule-item {
-        border: 1px solid #ccc;
-        padding: 10px;
-        margin-bottom: 10px;
-        background-color: #fff;
-        cursor: pointer;
+  .schedule-item {
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin-bottom: 10px;
+      background-color: #fff;
+      cursor: pointer;
 
-        &.available {
-            background-color: #c7e5c3;
-            width: 150px;
-            text-align: center;
-        }
-    }
+      &.available {
+          background-color: #c7e5c3;
+          width: 150px;
+          text-align: center;
+      }
+  }
 }
 
 .schedule_date {
-    margin-top: 2%;
-    margin-left: 5%;
+  margin-top: 2%;
+  margin-left: 5%;
 }
 
 .clinic-time-title {
-    margin-left: 5%;
-    margin-top: 10px;
-    font-size: 25px;
-    font-weight: 600;
+  margin-left: 5%;
+  margin-top: 10px;
+  font-size: 25px;
+  font-weight: 600;
 }
 
 .booking-section {
-    .time-slots {
-        .hour-slot {
-            cursor: pointer;
-            padding: 10px;
-            margin-bottom: 5px;
-            background-color: greenyellow;
-            border: 1px solid #ccc;
-            transition: border-color 0.3s ease;
+  .time-slots {
+      .hour-slot {
+          cursor: pointer;
+          padding: 10px;
+          margin-bottom: 5px;
+          background-color: greenyellow;
+          border: 1px solid #ccc;
+          transition: border-color 0.3s ease;
 
-            &:hover {
-                border-color: #66b3ff;
-            }
+          &:hover {
+              border-color: #66b3ff;
+          }
 
-            &.selected {
-                border: 5px solid #66b3ff;
-                color: black;
-            }
+          &.selected {
+              border: 5px solid #66b3ff;
+              color: black;
+          }
 
-            &.available {
-                background-color: #c7e5c3; // Đổi màu nền thành xanh nhạt cho các slot available
-            }
-        }
-    }
+          &.available {
+              background-color: #c7e5c3; // Đổi màu nền thành xanh nhạt cho các slot available
+          }
+      }
+  }
 }
 
 .time-Clinic {
-    margin-top: 20px;
-    font-size: 20px;
-    margin-left: 3%;
-    font-weight: 600;
+  margin-top: 20px;
+  font-size: 20px;
+  margin-left: 3%;
+  font-weight: 600;
 
-    .clinic-icon {
-        margin-right: 10px;
-        color: #007bff; // Màu sắc cho icon
-    }
+  .clinic-icon {
+      margin-right: 10px;
+      color: #007bff; // Màu sắc cho icon
+  }
 
-    &-detail {
-        margin-top: 5px;
-        font-size: 16px;
-        display: flex;
-        align-items: center;
+  &-detail {
+      margin-top: 5px;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
 
-        .clinic-icon {
-            margin-right: 10px;
-            color: #007bff; // Màu sắc cho icon
-        }
-    }
+      .clinic-icon {
+          margin-right: 10px;
+          color: #007bff; // Màu sắc cho icon
+      }
+  }
 }
 
 .time-Clinic-detail {
-    margin-left: 5%;
-    display: flex;
-    justify-content: center;
-    box-shadow: 2px 4px 8px rgba(0, 0, 0, 0.1);
-    width: 150px;
-    height: 50px;
-    background-color: aquamarine;
-    /* Thêm box-shadow */
+  margin-left: 5%;
+  display: flex;
+  justify-content: center;
+  box-shadow: 2px 4px 8px rgba(0, 0, 0, 0.1);
+  width: 150px;
+  height: 50px;
+  background-color: aquamarine;
+  /* Thêm box-shadow */
+}
+.DoctorLoad {
+  max-width: 100%;
+  border: 1px solid #ddd; /* Light gray border */
+  border-radius: 8px; /* Rounded corners */
+  padding: 20px; /* Add some padding inside the border */
+  background-color: #fff; /* Optional: Background color inside the border */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional: Add shadow for a slight elevation effect */
 }

@@ -66,17 +66,6 @@ const BookingDetails = ({
         { withCredentials: true }
       );
 
-      // Hiển thị thông báo thành công
-      toast.success("Booking appointment successful!", {
-        position: "top-right",
-        autoClose: 2000, // Thời gian hiển thị 2 giây
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
-
       // Redirect to the payment URL
       window.location.href = response.data; // Giả sử backend gửi lại một URL để chuyển hướng đến
     } catch (error) {
