@@ -23,7 +23,7 @@ const BookingResult = () => {
             setError(null);
 
             try {
-                const response = await axios.get(`${BASE_URL}/treatment`, {
+                const response = await axios.get(`${BASE_URL}/treatmentCus`, {
                     params: {
                         customerId: customerID
                     }
