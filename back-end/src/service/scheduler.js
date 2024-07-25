@@ -13,6 +13,14 @@ cron.schedule("1 * * * *", async () => {
     console.error("Lỗi khi chạy tác vụ cập nhật khung giờ khám:", error);
   }
 });
+cron.schedule('*/30 * * * * *', async () => {
+  try {
+    await bookingService.cancelPendingBookings();
+    console.log('Successfully updated pending bookings and slots');
+  } catch (error) {
+    console.error('Error updating pending bookings and slots:', error);
+  }
+});
 
 cron.schedule("*/2 * * * *", async () => {
   try {
