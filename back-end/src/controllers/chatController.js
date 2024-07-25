@@ -1,11 +1,17 @@
-import ChatService from '../service/chatService.js'; // Đảm bảo đường dẫn đúng đến file chatService.js
-import ChatMessage from '../model/messageModel.js'; // Đảm bảo đường dẫn đúng đến file messageModel.js
+import { Router } from 'express';
+import ChatService from '../service/chatService.js';
+import ChatMessage from '../model/messageModel.js';
+import Customer from '../model/customer.js';
+import Dentist from '../model/dentist.js';
+
+const router = Router();
 
 class ChatController {
     constructor(chatService) {
         this.chatService = chatService;
         this.getMessages = this.getMessages.bind(this);
         this.sendMessage = this.sendMessage.bind(this);
+        this.getAllSenderDetails = this.getAllSenderDetails.bind(this);
     }
 
     async getMessages(req, res) {
@@ -31,6 +37,21 @@ class ChatController {
             res.status(500).json({ error: 'Failed to send message' });
         }
     }
+
+    async getAllSenderDetails(req, res) {
+        const receiverId = req.params.receiverId;
+
+        try {
+            const senderDetails = await this.chatService.getAllSenderDetails(receiverId);
+            res.status(200).json(senderDetails);
+        } catch (error) {
+            console.error('Error in ChatController:', error);
+            res.status(500).json({ message: error.message });
+        }
+    }
+
 }
 
-export default new ChatController(new ChatService(ChatMessage));
+const chatController = new ChatController(new ChatService(ChatMessage, Customer, Dentist));
+
+export default chatController;

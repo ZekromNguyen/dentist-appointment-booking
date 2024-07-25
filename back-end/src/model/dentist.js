@@ -2,6 +2,8 @@ import { Model, DataTypes } from 'sequelize';
 import sequelize from '../config/database';
 import Clinic from './clinic'; // Import model Clinic
 import DentistSchedule from './dentistSchedule'
+import ChatMessage from './messageModel';
+
 class Dentist extends Model { }
 Dentist.init(
   {
@@ -59,5 +61,8 @@ Dentist.belongsTo(DentistSchedule, {
   foreignKey: 'DentistID',
   as: 'schedules',
 });
+
+Dentist.hasMany(ChatMessage, { foreignKey: 'ReceiverID' }); // Adjust if needed
+ChatMessage.belongsTo(Dentist, { foreignKey: 'ReceiverID' });
 
 export default Dentist;

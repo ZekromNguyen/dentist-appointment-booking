@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import axios from 'axios';
 import BASE_URL from '../../ServiceSystem/axios';
+import { toast } from 'react-toastify'; // Đảm bảo bạn đã cài đặt react-toastify
 
 const EditClinicModal = ({ show, handleClose, clinic, onClinicUpdated }) => {
   const [updatedClinic, setUpdatedClinic] = useState(clinic);
@@ -14,8 +15,24 @@ const EditClinicModal = ({ show, handleClose, clinic, onClinicUpdated }) => {
     setUpdatedClinic({ ...updatedClinic, [e.target.name]: e.target.value });
   };
 
+  const validateTimes = (openTime, closeTime) => {
+    const [openHour] = openTime.split(':').map(Number);
+    const [closeHour] = closeTime.split(':').map(Number);
+
+    if (openHour > closeHour) {
+      return false;
+    }
+    return true;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!validateTimes(updatedClinic.OpenTime, updatedClinic.CloseTime)) {
+      toast.error('Open time must be before close time');
+      return;
+    }
+
     try {
       const response = await axios.put(`${BASE_URL}/clinics/${updatedClinic.ClinicID}`, updatedClinic, {
         headers: { 'Content-Type': 'application/json' },
@@ -24,8 +41,12 @@ const EditClinicModal = ({ show, handleClose, clinic, onClinicUpdated }) => {
       handleClose();
     } catch (error) {
       console.error('Error updating clinic:', error);
+      toast.error('Error updating clinic');
     }
   };
+
+  // Generate hour options from 00 to 23
+  const hours = Array.from({ length: 24 }, (_, i) => i.toString().padStart(2, '0'));
 
   return (
     <Modal show={show} onHide={handleClose}>
@@ -57,20 +78,34 @@ const EditClinicModal = ({ show, handleClose, clinic, onClinicUpdated }) => {
           <Form.Group>
             <Form.Label>Open Time</Form.Label>
             <Form.Control
-              type="time"
+              as="select"
               name="OpenTime"
-              value={updatedClinic.OpenTime}
-              onChange={handleChange}
-            />
+              value={updatedClinic.OpenTime.split(':')[0]} // Display only hours
+              onChange={(e) => setUpdatedClinic({ ...updatedClinic, OpenTime: `${e.target.value}:00:00` })}
+            >
+              <option value="">Select hour</option>
+              {hours.map(hour => (
+                <option key={hour} value={hour}>
+                  {hour}
+                </option>
+              ))}
+            </Form.Control>
           </Form.Group>
           <Form.Group>
             <Form.Label>Close Time</Form.Label>
             <Form.Control
-              type="time"
+              as="select"
               name="CloseTime"
-              value={updatedClinic.CloseTime}
-              onChange={handleChange}
-            />
+              value={updatedClinic.CloseTime.split(':')[0]} // Display only hours
+              onChange={(e) => setUpdatedClinic({ ...updatedClinic, CloseTime: `${e.target.value}:00:00` })}
+            >
+              <option value="">Select hour</option>
+              {hours.map(hour => (
+                <option key={hour} value={hour}>
+                  {hour}
+                </option>
+              ))}
+            </Form.Control>
           </Form.Group>
           <Form.Group>
             <Form.Label>Location ID</Form.Label>

@@ -269,7 +269,7 @@ const TreatmentUpload = () => {
                                             {treatment && (
                                                 <>
                                                     <Button variant='success' onClick={() => handleOpenEditModal(treatment)}>Edit</Button>
-                                                    <Button variant='danger' onClick={() => handleDelete(treatment.TreatmentID)}>Delete</Button>
+                                                    {/* <Button variant='danger' onClick={() => handleDelete(treatment.TreatmentID)}>Delete</Button> */}
                                                 </>
                                             )}
                                         </td>

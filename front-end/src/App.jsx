@@ -28,8 +28,12 @@ import Body_Youtube from './components/Body_Youtube/Body_Youtube';
 import BodySlider from './components/Body_Slider/Body_Slider';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 import VerifyAccount from './components/verify/VerifyAccount';
+
 import Policy from './components/Policy/Policy';
 import ErrorPage from './components/ErrorPage/ErrorPage';
+
+
+import SenderList from './components/chatbox/SenderList';
 
 
 function App() {
@@ -63,6 +67,7 @@ function App() {
 
 
           <Route path="/chat/:senderId/:receiverId" element={<Chat />} />
+          <Route path="/senders/:receiverId" element={<SenderList />} />
           {/* profile */}
           <Route path="/profile/:accountId" element={<Profile />} />
           <Route path="/editprofile/:accountId" element={<EditProfile />} />

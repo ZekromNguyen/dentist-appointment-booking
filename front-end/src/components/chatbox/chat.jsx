@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import io from "socket.io-client";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -6,9 +6,7 @@ import { faHome } from '@fortawesome/free-solid-svg-icons';
 import './Chat.scss';
 import { checkSession } from '../../Service/userService';
 
-const socket = io('http://localhost:3000', {
-    withCredentials: true,
-});
+const socket = io('http://localhost:3000', { withCredentials: true });
 
 const Chat = () => {
     const { senderId, receiverId } = useParams();
@@ -16,11 +14,13 @@ const Chat = () => {
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
     const [username, setUsername] = useState('');
+    const [roleId, setRoleId] = useState('');
+    const messagesEndRef = useRef(null); // Ref for the end of the messages container
 
     useEffect(() => {
         console.log('Component mounted', { senderId, receiverId });
 
-        // Fetch the username
+        // Fetch the username         
         const fetchUsername = async () => {
             try {
                 const customer = await checkSession();
@@ -33,10 +33,10 @@ const Chat = () => {
 
         fetchUsername();
 
-        // Fetch existing messages
+        // Fetch existing messages         
         fetchMessages();
 
-        // Listen for new messages
+        // Listen for new messages         
         socket.on('newMessage', (message) => {
             console.log('New message received:', message);
             setMessages((prevMessages) => [...prevMessages, message]);
@@ -47,6 +47,19 @@ const Chat = () => {
         };
     }, [senderId, receiverId]);
 
+    useEffect(() => {
+        const fetchSession = async () => {
+            const account = await checkSession();
+            setRoleId(account.RoleID);
+        };
+        fetchSession();
+    }, [navigate]);
+
+    // Scroll to the bottom whenever messages state updates
+    useEffect(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, [messages]);
+
     const fetchMessages = () => {
         console.log('Fetching messages for', { senderId, receiverId });
         try {
@@ -55,12 +68,12 @@ const Chat = () => {
                     console.error('Error retrieving messages:', response.error);
                 } else {
                     console.log('Messages received:', response);
-                    // Ensure the messages have the right keys as per your front-end expectation
-                    // Adjust 'SenderID' and 'MessageText' if needed
+                    // Ensure the messages have the right keys as per your front-end expectation                     
+                    // Adjust 'SenderID' and 'MessageText' if needed                     
                     setMessages(response.map(msg => ({
                         SenderID: msg.senderId,
                         MessageText: msg.messageText,
-                        ...msg // Any additional properties you might have
+                        ...msg // Any additional properties you might have                     
                     })));
                 }
             });
@@ -96,7 +109,23 @@ const Chat = () => {
     };
 
     const handleBackToHome = () => {
-        navigate('/');
+        if (roleId === 2) {
+            navigate('/Doctor');
+        } else if (roleId === 1) {
+            navigate('/');
+        }
+    };
+
+    // New function to navigate to the SenderList page     
+    const handleNavigateToSenderList = () => {
+        navigate(`/senders/${senderId}`);
+    };
+
+    // Function to handle key press in input field     
+    const handleKeyPress = (event) => {
+        if (event.key === 'Enter') {
+            handleSendMessage();
+        }
     };
 
     return (
@@ -108,6 +137,11 @@ const Chat = () => {
                 <div className="username-display">
                     {username}
                 </div>
+                {roleId === 2 && (
+                    <button onClick={handleNavigateToSenderList} className="senderlist-button">
+                        Go to Sender List
+                    </button>
+                )}
             </div>
             <div className="messages">
                 {messages.map((msg, index) => (
@@ -118,12 +152,14 @@ const Chat = () => {
                         {msg.MessageText}
                     </div>
                 ))}
+                <div ref={messagesEndRef} />
             </div>
             <div className="message-input">
                 <input
                     type="text"
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
+                    onKeyPress={handleKeyPress}  // Add this line to handle key press                     
                     placeholder="Type a message"
                 />
                 <button onClick={handleSendMessage}>Send</button>
