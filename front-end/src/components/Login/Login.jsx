@@ -109,7 +109,7 @@ export default function Login() {
                             onKeyPress={handleKeyPress}
                         />
                         <div onClick={() => setIsShowPassword(!isShowPassword)} className="icon-container">
-                            {isShowPassword ? <FaEye className="icon-open-eye" /> : <FaEyeSlash className="icon-open-eye" />}
+                            {isShowPassword ? <FaEye className="icon-open-eye-login" /> : <FaEyeSlash className="icon-open-eye-login" />}
                         </div>
                     </div>
 

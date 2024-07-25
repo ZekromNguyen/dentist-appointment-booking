@@ -186,3 +186,23 @@ button {
         /* optional border color change */
     }
 }
+
+
+.password-label {
+    display: flex;
+    align-items: center;
+}
+
+.password {
+    flex: 1;
+    padding: 0.5rem;
+}
+
+.icon-container {
+    cursor: pointer;
+    margin-left: 0.5rem;
+}
+
+.icon-open-eye-login {
+    font-size: 1.2rem;
+}

@@ -188,6 +188,7 @@ export default function Register() {
         });
     };
 
+
     return (
         <div className="back-ground col-12 col-sm-4">
             <ToastContainer />
@@ -217,7 +218,7 @@ export default function Register() {
                         onBlur={() => handleBlur('password')}
                     />
                     <div onClick={() => setIsShowPassword(!isShowPassword)} className="icon-container">
-                        {isShowPassword ? <FaEye className="icon-open-eye-register col-12 col-sm-4" /> : <FaEyeSlash className="icon-open-eye-register col-12 col-sm-4" />}
+                        {isShowPassword ? <FaEye className="icon-open-eye-register-password col-12 col-sm-4" /> : <FaEyeSlash className="icon-open-eye-register-password col-12 col-sm-4" />}
                     </div>
                 </div>
 
@@ -232,7 +233,7 @@ export default function Register() {
                         onBlur={() => handleBlur('confirmPassword')}
                     />
                     <div onClick={() => setIsShowConfirmPassword(!isShowConfirmPassword)} className="icon-container">
-                        {isShowConfirmPassword ? <FaEye className="icon-open-eye-register col-12 col-sm-4" /> : <FaEyeSlash className="icon-open-eye-register col-12 col-sm-4" />}
+                        {isShowConfirmPassword ? <FaEye className="icon-open-eye-register-confirmPassword col-12 col-sm-4" /> : <FaEyeSlash className="icon-open-eye-register-confirmPassword col-12 col-sm-4" />}
                     </div>
                 </div>
 
@@ -249,10 +250,10 @@ export default function Register() {
                 </div>
 
                 {/* phone */}
-                <div className="div-phone">
+                <div className="div-sdt">
                     <input
                         type="text"
-                        className={checkInput.isValidPhone || !touched.phone ? "phone form-control" : "phone form-control is-invalid"}
+                        className={checkInput.isValidPhone || !touched.phone ? "sdt form-control" : "sdt form-control is-invalid"}
                         placeholder="Enter your phone number..."
                         value={phone}
                         onChange={(event) => handleInputChange(event, setPhone, 'Phone')}
@@ -261,28 +262,29 @@ export default function Register() {
                 </div>
 
                 {/* name */}
-                <div className="div-name">
+                <div className="div-sdt">
                     <input
                         type="text"
-                        className={checkInput.isValidName || !touched.name ? "name form-control" : "name form-control is-invalid"}
-                        placeholder="Enter your name..."
+                        className={checkInput.isValidName || !touched.name ? "username form-control" : "username form-control is-invalid"}
+                        placeholder="Enter your full name..."
                         value={name}
                         onChange={(event) => handleInputChange(event, setName, 'Name')}
                         onBlur={() => handleBlur('name')}
                     />
                 </div>
 
-                <div className="div-button">
-                    <button
-                        className="btn-register"
-                        onClick={handleRegister}
-                        disabled={isLoading}
-                    >
-                        {isLoading ? 'Registering...' : 'Register'}
-                    </button>
-                    <button className="btn-reset" onClick={handleReset}>Reset</button>
+                {/* nút đăng ký */}
+                <button className="btn-register" onClick={handleRegister} disabled={isLoading}>
+                    {isLoading ? 'Loading...' : 'Register'}
+                </button>
+
+                <button className="btn-register" onClick={handleReset}>Reset</button>
+
+                <div className="to-login-page">
+                    <span>
+                        If you have an account, please <Link to="/login">Login</Link>
+                    </span>
                 </div>
-                <Link to="/login">Already have an account? Login</Link>
             </div>
         </div>
     );
