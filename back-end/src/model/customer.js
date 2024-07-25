@@ -1,8 +1,9 @@
 import { Model, DataTypes } from "sequelize";
 import sequelize from "../config/database";
 import Account from "./account";
+import ChatMessage from './messageModel';
 
-class Customer extends Model {}
+class Customer extends Model { }
 Customer.init(
   {
     CustomerID: {
@@ -33,7 +34,9 @@ Customer.init(
 );
 
 // thiết lập mối quan hệ
-Account.hasOne(Customer, {foreignKey :"AccountID"});
-Customer.belongsTo(Account, { foreignKey :"AccountID"});
+Account.hasOne(Customer, { foreignKey: "AccountID" });
+Customer.belongsTo(Account, { foreignKey: "AccountID" });
+Customer.hasMany(ChatMessage, { foreignKey: 'SenderID' }); // Adjust if needed
+ChatMessage.belongsTo(Customer, { foreignKey: 'SenderID' });
 
 export default Customer;

@@ -93,7 +93,6 @@ app.on('clientError', (err, socket) => {
 io.on('connection', (socket) => {
   console.log(`Socket connected: ${socket.id}`);
 
-  // Listen for sendMessage event from client
   socket.on('sendMessage', async (data) => {
     try {
       const { senderId, receiverId, messageText } = data;
@@ -119,7 +118,6 @@ io.on('connection', (socket) => {
     }
   });
 
-  // Listen for getMessages event to retrieve chat history
   socket.on('getMessages', async (data, callback) => {
     try {
       const { senderId, receiverId } = data;
@@ -145,7 +143,31 @@ io.on('connection', (socket) => {
     }
   });
 
-  // Handle client disconnect event
+  socket.on('getConversations', async (data, callback) => {
+    try {
+      const { dentistId } = data;
+      console.log(`Received getConversations event with data: ${JSON.stringify(data)}`);
+
+      // Mock req and res objects
+      const req = { params: { dentistId } };
+      const res = {
+        json: (conversations) => {
+          console.log(`Conversations retrieved successfully: ${JSON.stringify(conversations)}`);
+          callback(conversations); // Send result back to client
+        },
+        status: (statusCode) => ({
+          json: (error) => {
+            console.error(`Error retrieving conversations: ${statusCode}, ${error}`);
+          }
+        })
+      };
+
+      await chatController.getConversations(req, res);
+    } catch (error) {
+      console.error('Error retrieving conversations:', error);
+    }
+  });
+
   socket.on('disconnect', () => {
     console.log(`Socket disconnected: ${socket.id}`);
   });

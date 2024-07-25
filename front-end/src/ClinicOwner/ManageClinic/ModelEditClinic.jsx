@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import axios from 'axios';
 import BASE_URL from '../../ServiceSystem/axios';
+import { toast } from 'react-toastify'; // Đảm bảo bạn đã cài đặt react-toastify
 
 const EditClinicModal = ({ show, handleClose, clinic, onClinicUpdated }) => {
   const [updatedClinic, setUpdatedClinic] = useState(clinic);
@@ -14,8 +15,24 @@ const EditClinicModal = ({ show, handleClose, clinic, onClinicUpdated }) => {
     setUpdatedClinic({ ...updatedClinic, [e.target.name]: e.target.value });
   };
 
+  const validateTimes = (openTime, closeTime) => {
+    const [openHour] = openTime.split(':').map(Number);
+    const [closeHour] = closeTime.split(':').map(Number);
+
+    if (openHour > closeHour) {
+      return false;
+    }
+    return true;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!validateTimes(updatedClinic.OpenTime, updatedClinic.CloseTime)) {
+      toast.error('Open time must be before close time');
+      return;
+    }
+
     try {
       const response = await axios.put(`${BASE_URL}/clinics/${updatedClinic.ClinicID}`, updatedClinic, {
         headers: { 'Content-Type': 'application/json' },
@@ -24,6 +41,7 @@ const EditClinicModal = ({ show, handleClose, clinic, onClinicUpdated }) => {
       handleClose();
     } catch (error) {
       console.error('Error updating clinic:', error);
+      toast.error('Error updating clinic');
     }
   };
 

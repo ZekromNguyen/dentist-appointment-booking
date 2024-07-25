@@ -41,6 +41,27 @@
     margin-right: 8px;
 }
 
+.senderlist-button {
+    padding: 10px 20px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+    display: flex;
+    align-items: center;
+}
+
+.senderlist-button:hover {
+    background-color: #0056b3;
+}
+
+.senderlist-button {
+    margin-left: 8px;
+}
+
 .username-display {
     font-size: 16px;
     color: #333;
