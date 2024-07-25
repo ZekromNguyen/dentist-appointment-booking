@@ -6,6 +6,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify';
 import { login } from "../../Service/userService";
 
+const MAX_LENGTH = 50;
+
 export default function Login() {
     const navigate = useNavigate();
     const [email, setEmail] = useState("");
@@ -15,6 +17,7 @@ export default function Login() {
         isValidEmail: true,
         isValidPassword: true
     });
+
     const handleLogin = async () => {
         const trimmedEmail = email.trim(); // Trim only email
         const enteredPassword = password; // Keep password as entered
@@ -28,8 +31,16 @@ export default function Login() {
             toast.error("Please enter your account");
             return;
         }
+        if (trimmedEmail.length > MAX_LENGTH) {
+            toast.error("Account exceeds maximum length of 50 characters");
+            return;
+        }
         if (!enteredPassword) {
             toast.error("Please enter your password");
+            return;
+        }
+        if (enteredPassword.length > MAX_LENGTH) {
+            toast.error("Password exceeds maximum length of 50 characters");
             return;
         }
 
@@ -61,7 +72,6 @@ export default function Login() {
             toast.error("External error.");
         }
     };
-
 
     const handleKeyPress = (event) => {
         if (event.key === 'Enter') handleLogin();

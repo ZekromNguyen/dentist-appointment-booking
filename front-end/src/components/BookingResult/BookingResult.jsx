@@ -7,17 +7,15 @@ import BASE_URL from '../../ServiceSystem/axios';
 const BookingResult = () => {
     const [treatments, setTreatments] = useState([]);
     const [customerID, setCustomerID] = useState('');
-    const [bookingID, setBookingID] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
     useEffect(() => {
         const account = JSON.parse(localStorage.getItem('account') || '{}');
         const parsedCustomerID = account.customerId;
-        const parsedBookingID = localStorage.getItem('bookingID');
         setCustomerID(parsedCustomerID);
-        setBookingID(parsedBookingID);
     }, []);
+    console.log(customerID);
 
     useEffect(() => {
         const fetchTreatments = async () => {
@@ -27,8 +25,7 @@ const BookingResult = () => {
             try {
                 const response = await axios.get(`${BASE_URL}/treatment`, {
                     params: {
-                        customerId: customerID,
-                        bookingId: bookingID
+                        customerId: customerID
                     }
                 });
 
@@ -46,10 +43,10 @@ const BookingResult = () => {
             }
         };
 
-        if (customerID && bookingID) {
+        if (customerID) {
             fetchTreatments();
         }
-    }, [customerID, bookingID]);
+    }, [customerID]);
 
     if (loading) {
         return <p>Loading treatments...</p>;

@@ -9,7 +9,7 @@ import TreatmentController, {
 } from "../controllers/treatmentController";
 import clinicController from "../controllers/clinicController";
 import profileController from "../controllers/profileController";
-import chatController from '../controllers/chatController.js';
+import chatController from "../controllers/chatController.js";
 // init all web routes
 
 let router = express.Router();
@@ -34,46 +34,74 @@ let initAllWebRoutes = (app) => {
   router.get("/pageOwner", AccountController.showOwnerPage);
   router.get("/pageDentist", AccountController.showDentistPage);
   router.post("/logout", AccountController.logout);
-  router.get("/get-session", AccountController.getSessionMiddleware, AccountController.getSession);
+  router.get(
+    "/get-session",
+    AccountController.getSessionMiddleware,
+    AccountController.getSession
+  );
 
   // Booking and schedule routes
   router.get("/schedule", DentistController.getAvailableSlot);
   router.post("/schedule", DentistController.createScheduleForDentist);
-  router.delete('/schedule/:id', DentistController.deleteScheduleById);
+  router.delete("/schedule/:id", DentistController.deleteScheduleById);
   router.get("/booking", BookingController.getDentistSchedules);
   router.post("/booking", BookingController.createBooking);
   router.get("/slotsByDate", BookingController.getSlotsByDateByDentistService);
-  router.get("/getDentistSchedule", DentistController.getDentistScheduleByDentistId);
-  router.get("/getBookingDetail", BookingController.getDentistNameByBookingDetail);
-  router.get("/getAllBookingByCustomerId", BookingController.getAllBookingByCustomerId);
+  router.get(
+    "/getDentistSchedule",
+    DentistController.getDentistScheduleByDentistId
+  );
+  router.get(
+    "/getBookingDetail",
+    BookingController.getDentistNameByBookingDetail
+  );
+  router.get(
+    "/getAllBookingByCustomerId",
+    BookingController.getAllBookingByCustomerId
+  );
   router.get("/getAllClinic", AccountController.getAllClinic);
   router.get("/getAllBooking", BookingController.getAllBooking);
   router.put("/booking/updateStatus", BookingController.updateBookingStatus);
-  router.put("/updateBookingDetailStatus", BookingController.updateBookingStatusFromOwner);
+  router.put(
+    "/updateBookingDetailStatus",
+    BookingController.updateBookingStatusFromOwner
+  );
   router.post("/clinics", clinicController.createNewClinic);
-  router.put('/clinics/:id', clinicController.updateClinic);
-  router.get("/check/:bookingDetailId", BookingController.checkTreatmentExistence);
-  router.get("/getAllBookingByDentist",BookingController.getAllBookingByDentist);
-
+  router.put("/clinics/:id", clinicController.updateClinic);
+  router.get(
+    "/check/:bookingDetailId",
+    BookingController.checkTreatmentExistence
+  );
+  router.get(
+    "/getAllBookingByDentist",
+    BookingController.getAllBookingByDentist
+  );
 
   // User management routes
   router.post("/handleCreateUser", AccountController.handleCreateUser);
   router.get("/getAllUser", AccountController.handleGetAllUser);
   router.delete("/deleteUser", AccountController.handleDeleteUser);
   router.get("/handleGetAllCustomer", AccountController.handleGetAllCustomer);
-  router.get('/chat/:senderId/:receiverId', chatController.getMessages);
-  router.post('/chat', chatController.sendMessage);
-
-
+  router.get("/chat/:senderId/:receiverId", chatController.getMessages);
+  router.post("/chat", chatController.sendMessage);
 
   // Customer routes
   router.put("/editCustomer", AccountController.handleUpdateCustomer);
   router.put("/editUser", AccountController.handleEditUser);
-  router.get("/scheduleDentistForCustomer", DentistController.getDentistSchedulesForCustomer);
-  router.get("/getAllDentistsForCustomer", DentistController.getAllDentistForCustomer);
+  router.get(
+    "/scheduleDentistForCustomer",
+    DentistController.getDentistSchedulesForCustomer
+  );
+  router.get(
+    "/getAllDentistsForCustomer",
+    DentistController.getAllDentistForCustomer
+  );
 
   // Dentist routes
-  router.get("/getAllDentistByOwner",dentistController.getAllDentistByClinicByOwner);
+  router.get(
+    "/getAllDentistByOwner",
+    dentistController.getAllDentistByClinicByOwner
+  );
   router.get("/handleGetAllDentist", dentistController.handleGetAllDentist);
   router.get("/handleGetAllDentist/:id", dentistController.getAllDentist);
   router.get("/getOwnerIdByClinicId", dentistController.getOwnerIdByClinicId);
@@ -92,12 +120,20 @@ let initAllWebRoutes = (app) => {
   router.get("/payment/:bookingId", BookingController.showPaymentPage);
   router.post("/payment", BookingController.processPayment);
   router.get("/treatment", TreatmentController.getAllTreatments);
-  router.post("/treatments", upload.single("Result"), TreatmentController.createTreatment);
-  router.delete('/treatments/:id', TreatmentController.deleteTreatment);
-  router.patch('/treatments/:id', upload.single('Result'), TreatmentController.updateTreatment);
+  router.post(
+    "/treatments",
+    upload.single("Result"),
+    TreatmentController.createTreatment
+  );
+  router.delete("/treatments/:id", TreatmentController.deleteTreatment);
+  router.patch(
+    "/treatments/:id",
+    upload.single("Result"),
+    TreatmentController.updateTreatment
+  );
   router.get("/treatmentCus", TreatmentController.getTreatments);
-  router.get('/profile/:accountId', profileController.viewProfile);
-  router.get('/editprofile/:accountId', profileController.editProfileForm); // Form chỉnh sửa profile
+  router.get("/profile/:accountId", profileController.viewProfile);
+  router.get("/editprofile/:accountId", profileController.editProfileForm); // Form chỉnh sửa profile
   router.post("/profile/:accountId", profileController.updateProfile);
   return app.use("/", router);
 };
