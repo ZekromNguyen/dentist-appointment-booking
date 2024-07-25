@@ -271,6 +271,9 @@ const DoctorLoad = () => {
                     {loading && <p>Loading schedules...</p>}
 
                     {error && <p>{error}</p>}
+                    {schedules.length === 0 && !loading && (
+                        <p>No available slots for the selected date.</p>
+                    )}
                     {schedules.length > 0 && (
                         <>
                             <div className='slot-time'>

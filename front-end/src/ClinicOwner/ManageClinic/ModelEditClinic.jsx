@@ -27,6 +27,9 @@ const EditClinicModal = ({ show, handleClose, clinic, onClinicUpdated }) => {
     }
   };
 
+  // Generate hour options from 00 to 23
+  const hours = Array.from({ length: 24 }, (_, i) => i.toString().padStart(2, '0'));
+
   return (
     <Modal show={show} onHide={handleClose}>
       <Modal.Header closeButton>
@@ -57,20 +60,34 @@ const EditClinicModal = ({ show, handleClose, clinic, onClinicUpdated }) => {
           <Form.Group>
             <Form.Label>Open Time</Form.Label>
             <Form.Control
-              type="time"
+              as="select"
               name="OpenTime"
-              value={updatedClinic.OpenTime}
-              onChange={handleChange}
-            />
+              value={updatedClinic.OpenTime.split(':')[0]} // Display only hours
+              onChange={(e) => setUpdatedClinic({ ...updatedClinic, OpenTime: `${e.target.value}:00:00` })}
+            >
+              <option value="">Select hour</option>
+              {hours.map(hour => (
+                <option key={hour} value={hour}>
+                  {hour}
+                </option>
+              ))}
+            </Form.Control>
           </Form.Group>
           <Form.Group>
             <Form.Label>Close Time</Form.Label>
             <Form.Control
-              type="time"
+              as="select"
               name="CloseTime"
-              value={updatedClinic.CloseTime}
-              onChange={handleChange}
-            />
+              value={updatedClinic.CloseTime.split(':')[0]} // Display only hours
+              onChange={(e) => setUpdatedClinic({ ...updatedClinic, CloseTime: `${e.target.value}:00:00` })}
+            >
+              <option value="">Select hour</option>
+              {hours.map(hour => (
+                <option key={hour} value={hour}>
+                  {hour}
+                </option>
+              ))}
+            </Form.Control>
           </Form.Group>
           <Form.Group>
             <Form.Label>Location ID</Form.Label>
