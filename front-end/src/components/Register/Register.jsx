@@ -14,17 +14,22 @@ export default function Register() {
     const [phone, setPhone] = useState("");
     const [name, setName] = useState("");
     const [isShowPassword, setIsShowPassword] = useState(false);
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [isShowConfirmPassword, setIsShowConfirmPassword] = useState(false);
+
     const [checkInput, setCheckInput] = useState({
         isValidUsername: true,
         isValidPassword: true,
         isValidEmail: true,
         isValidPhone: true,
-        isValidName: true
+        isValidName: true,
+        isValidConfirmPassword: true
     });
     const [isLoading, setIsLoading] = useState(false);
     const [touched, setTouched] = useState({
         username: false,
         password: false,
+        confirmPassword: false,
         email: false,
         phone: false,
         name: false
@@ -34,6 +39,10 @@ export default function Register() {
         if (!value) {
             setCheckInput(prev => ({ ...prev, isValidUsername: false }));
             toast.error("Username is required");
+            require(50)
+        } else if (value.length > 50) {
+            setCheckInput(prev => ({ ...prev, isValidUsername: false }));
+            toast.error("Username exceeds maximum length of 50 characters ")
         } else {
             setCheckInput(prev => ({ ...prev, isValidUsername: true }));
         }
@@ -48,6 +57,16 @@ export default function Register() {
             toast.error("Password must be at least 8 characters long");
         } else {
             setCheckInput(prev => ({ ...prev, isValidPassword: true }));
+        }
+    };
+
+
+    const validateConfirmPassword = (value) => {
+        if (value !== password) {
+            setCheckInput(prev => ({ ...prev, isValidConfirmPassword: false }));
+            toast.error("Passwords do not match");
+        } else {
+            setCheckInput(prev => ({ ...prev, isValidConfirmPassword: true }));
         }
     };
 
@@ -99,6 +118,9 @@ export default function Register() {
             case 'password':
                 validatePassword(password);
                 break;
+            case 'confirmPassword':
+                validateConfirmPassword(confirmPassword);
+                break;
             case 'email':
                 validateEmail(email);
                 break;
@@ -114,7 +136,7 @@ export default function Register() {
     };
 
     const isFormFilled = () => {
-        return username && password && email && phone && name;
+        return username && password && confirmPassword && email && phone && name;
     };
 
     const handleRegister = async () => {
@@ -147,15 +169,18 @@ export default function Register() {
         }
     };
 
+
     const handleReset = () => {
         setUsername("");
         setPassword("");
+        setConfirmPassword("");
         setEmail("");
         setPhone("");
         setName("");
         setCheckInput({
             isValidUsername: true,
             isValidPassword: true,
+            isValidConfirmPassword: true,
             isValidEmail: true,
             isValidPhone: true,
             isValidName: true
@@ -163,6 +188,7 @@ export default function Register() {
         setTouched({
             username: false,
             password: false,
+            confirmPassword: false,
             email: false,
             phone: false,
             name: false
@@ -203,6 +229,26 @@ export default function Register() {
                         )}
                     </div>
                 </div>
+
+                {/* confirm password */}
+                <div className="div-confirm-password">
+                    <input type={isShowConfirmPassword ? 'text' : 'password'}
+                        className={checkInput.isValidConfirmPassword || !touched.confirmPassword ? "confirm-password form-control" : "confirm-password form-control is-invalid"}
+                        placeholder="Confirm your password..."
+                        value={confirmPassword}
+                        onChange={(event) => setConfirmPassword(event.target.value)}
+                        onBlur={() => handleBlur('confirmPassword')}
+                    />
+                    <div onClick={() => setIsShowConfirmPassword(!isShowConfirmPassword)} className="icon-container">
+                        {/* {isShowConfirmPassword ? (
+                            <FaEye className="icon-open-eye-confirm col-12 col-sm-4" />
+                        ) : (
+                            <FaEyeSlash className="icon-open-eye-confirm col-12 col-sm-4" />
+                        )} */}
+                    </div>
+                </div>
+
+
 
                 {/* email */}
                 <div className="div-email">
@@ -254,9 +300,9 @@ export default function Register() {
                         Login
                     </Link>
                 </div>
-                
+
             </div>
-            
+
         </div>
     );
 }

@@ -3,10 +3,10 @@ export const adminMenu = [
     {
         name: 'menu.admin.User',
         menus: [
-            {
-                name: 'menu.admin.user-manage',
-                link: '/ClinicOwner/system/user-manage'
-            },
+            // {
+            //     name: 'menu.admin.user-manage',
+            //     link: '/ClinicOwner/system/user-manage'
+            // },
             {
                 name: 'menu.admin.manage-doctor',
                 link: '/ClinicOwner/system/doctor-manage'

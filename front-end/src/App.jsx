@@ -62,7 +62,7 @@ function App() {
             <Route path="/bookingpage" element={<BookingPage />} />
             <Route path="/policy" element={<Policy />} />
             <Route path="/error" element={<ErrorPage />} />
-            
+
           </Route>
 
 

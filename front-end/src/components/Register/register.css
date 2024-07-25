@@ -21,7 +21,7 @@
 }
 
 .all-register {
-    height: 600px;
+    height: 650px;
     margin: 20px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25) inset;
     width: 500px;
@@ -149,4 +149,8 @@
 
 .button-reset:hover {
     background-color: #d32f2f;
+}
+
+.div-confirm-password {
+    margin-bottom: 15px;
 }

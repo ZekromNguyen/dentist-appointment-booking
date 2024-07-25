@@ -31,18 +31,18 @@ export default function Login() {
             toast.error("Please enter your account");
             return;
         }
-        if (trimmedEmail.length > MAX_LENGTH) {
-            toast.error("Account exceeds maximum length of 50 characters");
-            return;
-        }
+        // if (trimmedEmail.length > MAX_LENGTH) {
+        //     toast.error("Account exceeds maximum length of 50 characters");
+        //     return;
+        // }
         if (!enteredPassword) {
             toast.error("Please enter your password");
             return;
         }
-        if (enteredPassword.length > MAX_LENGTH) {
-            toast.error("Password exceeds maximum length of 50 characters");
-            return;
-        }
+        // if (enteredPassword.length > MAX_LENGTH) {
+        //     toast.error("Password exceeds maximum length of 50 characters");
+        //     return;
+        // }
 
         try {
             const response = await login(trimmedEmail, enteredPassword); // Pass the original password
@@ -86,7 +86,7 @@ export default function Login() {
         <div className="body">
             <div className="back-ground col-12 col-sm-4">
                 <div className="all">
-                    
+
                     <h3 className="title">Login Page</h3>
 
                     <div className="div-email">
@@ -121,7 +121,7 @@ export default function Login() {
                         <button className="btn btn-secondary" onClick={handleReset}>Reset</button>
                     </div>
 
-                    
+
 
                     <div className="button-group">
                         <button className="btn btn-success" onClick={() => navigate("/Register")}>Create Account</button>

@@ -78,6 +78,8 @@ const DoctorLoad = () => {
         fetchCustomerID();
     }, []);
 
+
+
     useEffect(() => {
         const fetchSchedules = async () => {
             if (dentist && treatmentDate) {
@@ -144,6 +146,12 @@ const DoctorLoad = () => {
 
     const handleConfirmBooking = async (e) => {
         e.preventDefault();
+
+        // Check if any slots are selected
+        if (selectedTimes.length === 0) {
+            toast.warn('Please select at least one time slot to make a booking.');
+            return;
+        }
         if (!loggedIn) {
             toast.warn('Please log in to make a booking.');
 
