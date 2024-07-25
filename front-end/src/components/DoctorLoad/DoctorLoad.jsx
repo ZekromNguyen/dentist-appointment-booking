@@ -156,9 +156,9 @@ const DoctorLoad = () => {
             toast.warn('Please log in to make a booking.');
 
             // Navigate to the login page after 2 seconds
-            setTimeout(() => {
-                navigate('/login');
-            }, 2000);
+            // setTimeout(() => {
+            //     navigate('/login');
+            // }, 2000);
 
             return;
         }

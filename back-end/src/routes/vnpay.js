@@ -53,7 +53,7 @@ router.post("/create_payment_url", (req, res) => {
     // vnp_OrderInfo: `Thanh toan cho ma GD: ${moment(currentDate).format(
     //   "DDHHmmss"
     // )}`, // Thông tin đơn hàng
-    vnp_OrderInfo:`Thanh toan cho booking so: ${BookingID}`,
+    vnp_OrderInfo: `Thanh toan cho booking so: ${BookingID}`,
     vnp_OrderType: "other",
     vnp_Amount: amount * 100, // Số tiền thanh toán, chuyển đổi sang đơn vị VNĐ
     vnp_ReturnUrl: returnUrl,
@@ -85,6 +85,7 @@ router.post("/create_payment_url", (req, res) => {
 
   // Chuyển hướng người dùng đến URL thanh toán của VNPay
   //   res.redirect(vnpUrl);
+  console.log(vnpUrl);
   res.send(vnpUrl);
 });
 
@@ -115,7 +116,7 @@ router.post("/create_payment_url", (req, res) => {
 //   // So sánh mã hash từ VNPay và mã hash được tính toán
 //   if (secureHash === calculatedHash) {
 //     // Xác thực thành công
-    
+
 //     const orderInfo = vnpParams["vnp_OrderInfo"];
 //     const responseCode = vnpParams["vnp_ResponseCode"];
 //     if (responseCode === "00") {

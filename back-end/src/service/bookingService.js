@@ -308,6 +308,80 @@ class BookingService {
       
     }
   }
+  async updateBookingDetail(id, updates) {
+    try {
+      const result = await BookingDetail.update(updates, {
+        where: { BookingDetailID: id },
+      });
+      if (result[0] === 0) {
+        throw new Error("Update failed");
+      }
+      return result;
+    } catch (error) {
+      console.error("Error in updateBookingDetail method:", error);
+      throw error;
+    }
+  }
+  async deleteBooking(id) {
+    try {
+      const result = await Booking.destroy({
+        where: { BookingID: id },
+      });
+      if (result === 0) {
+        throw new Error("Delete failed");
+      }
+      return result;
+    } catch (error) {
+      console.error("Error in deleteBooking method:", error);
+      throw error;
+    }
+  }
+  async updateSlotStatus(scheduleId, status) {
+    try {
+      const result = await DentistSchedule.update(
+        { Status: status },
+        { where: { ScheduleID: scheduleId } }
+      );
+      if (result[0] === 0) {
+        throw new Error("Update failed");
+      }
+      return result;
+    } catch (error) {
+      console.error("Error in updateSlotStatus method:", error);
+      throw error;
+    }
+  }
+  async getBookingDetailById(id) {
+    try {
+      const bookingDetail = await BookingDetail.findByPk(id, {
+        include: [
+          {
+            model: Booking,
+          },
+          {
+            model: DentistSchedule,
+            include: [
+              {
+                model: AvailableSlot,
+                attributes: ["Time"],
+              },
+              {
+                model: Dentist,
+                attributes: ["DentistName"],
+              },
+            ],
+          },
+        ],
+      });
+      if (!bookingDetail) {
+        throw new Error("BookingDetail not found");
+      }
+      return bookingDetail.toJSON();
+    } catch (error) {
+      console.error("Error in getBookingDetailById method:", error);
+      throw error;
+    }
+  }
 
   async getAllBookingByCustomerId(CustomerId) {
     try {
@@ -462,6 +536,70 @@ class BookingService {
       throw error;
     }
   }
+  async cancelPendingBookings() {
+    try {
+      const now = new Date();
+      const utcOffset = 7 * 60; // UTC+7 = 7 giờ * 60 phút = 420 phút
+      const nowUtcPlus7 = new Date(now.getTime() + (utcOffset * 60000)); // Cộng thêm thời gian UTC+7
+
+      // Lấy thời gian hai phút trước
+      const twoMinutesAgo = new Date(nowUtcPlus7.getTime() - (5 * 60000)); // Trừ đi 2 phút (2 phút * 60000 ms/phút)
+
+      console.log('Current time in UTC+7:', nowUtcPlus7.toISOString());
+      console.log('2 minutes ago in UTC+7:', twoMinutesAgo.toISOString());
+
+
+      // Update BookingDetail statuses
+      const [updatedCount] = await BookingDetail.update(
+        { Status: "Cancelled" },
+        {
+          where: {
+            Status: "Pending",
+            DateBook: {
+              [Sequelize.Op.lt]: twoMinutesAgo,
+            },
+          },
+        }
+      );
+
+      console.log('Number of bookings updated:', updatedCount);
+
+      if (updatedCount > 0) {
+        // Find cancelled bookings
+        const cancelledBookings = await BookingDetail.findAll({
+          where: {
+            Status: "Cancelled",
+            DateBook: {
+              [Sequelize.Op.lt]: twoMinutesAgo,
+            },
+          },
+          attributes: ["ScheduleID"],
+        });
+
+        const cancelledScheduleIDs = cancelledBookings.map(
+          (booking) => booking.ScheduleID
+        );
+
+        console.log('Cancelled Schedule IDs:', cancelledScheduleIDs);
+
+        // Update DentistSchedule statuses
+        await DentistSchedule.update(
+          { Status: "Available" },
+          {
+            where: {
+              ScheduleID: {
+                [Sequelize.Op.in]: cancelledScheduleIDs,
+              },
+            },
+          }
+        );
+      }
+    } catch (error) {
+      console.error('Error in cancelPendingBookings method:', error);
+      throw error;
+    }
+  }
+
   async getAllBookingTodayToSendEmail() {
     try {
       const timeNow = moment().format("HH:mm");

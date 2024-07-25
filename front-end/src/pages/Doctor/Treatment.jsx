@@ -77,12 +77,21 @@ const TreatmentUpload = () => {
 
     const handleChangeStatus = async () => {
         try {
+            if (!selectedBookingId || !selectedStatus) {
+                alert('Please select both booking ID and status.');
+                return;
+            }
+
             const updateStatus = {
                 BookingID: selectedBookingId,
                 Status: selectedStatus,
             };
-            const response = await axios.put(`${BASE_URL}/updateBookingStatus`, updateStatus);
-            if (response.status === 200 && response.data.updateBooking !== null) {
+            console.log('Payload for status update:', updateStatus);
+
+            const response = await axios.put(`${BASE_URL}/booking/updateStatus`, updateStatus);
+            console.log('Response from status update:', response);
+
+            if (response.status === 200 && response.data.updateBooking) {
                 const updatedBookings = bookings.map(booking =>
                     booking.BookingID === selectedBookingId ? { ...booking, Status: selectedStatus } : booking
                 );
@@ -90,12 +99,14 @@ const TreatmentUpload = () => {
                 setShowModal(false);
                 handleGetAllBookings(dentistId);
             } else {
-                alert('Error updating status');
+                alert('Error updating status: No update received');
             }
         } catch (error) {
-            console.error('Error updating status:', error);
+            console.error('Detailed error:', error);
+            alert(`Error updating status: ${error.response?.data?.message || error.message}`);
         }
     };
+
 
     const fetchTreatments = async () => {
         try {
@@ -217,13 +228,13 @@ const TreatmentUpload = () => {
         <div className='treatment-booking'>
             <div className='treatment-title mt-100'>Treatment Patients</div>
             <div className='search-bar mt-30 mx-10'>
-                <Form.Control
+                <Form.Control className='searchf'
                     type="text"
                     placeholder="Search by Customer Name"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                 />
-                <Button className='btn-search mt-2' onClick={() => filterBookings(searchTerm)}>Search</Button>
+                {/* <Button className='btn-search mt-2' onClick={() => filterBookings(searchTerm)}>Search</Button> */}
             </div>
             <div className='treatment-table-as mt-30 mx-10'>
                 <table>
@@ -274,7 +285,7 @@ const TreatmentUpload = () => {
                                             )}
                                         </td>
                                         <td>
-                                            <Button variant='secondary' onClick={() => handleOpenUploadModal(detail.BookingDetailID)}>Upload Result</Button>
+                                            <Button variant='primary' onClick={() => handleOpenUploadModal(detail.BookingDetailID)}>Upload Result</Button>
                                         </td>
                                     </tr>
                                 );
@@ -294,7 +305,6 @@ const TreatmentUpload = () => {
                             <Form.Label>Select Status</Form.Label>
                             <Form.Control as="select" value={selectedStatus} onChange={(e) => setSelectedStatus(e.target.value)}>
                                 <option value="">Select...</option>
-                                <option value="Confirmed">Confirmed</option>
                                 <option value="Cancelled">Cancelled</option>
                                 <option value="Completed">Completed</option>
                             </Form.Control>

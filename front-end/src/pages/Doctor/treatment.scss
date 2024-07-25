@@ -161,7 +161,6 @@ $treatment-table-font-size: 20px; // Định nghĩa kích thước font chữ ch
 
 .search-bar .form-control {
     display: flex;
-    justify-content: flex-end;
     margin-left: 20%;
     border-radius: 4px;
     border: 2px solid black;
@@ -184,4 +183,8 @@ $treatment-table-font-size: 20px; // Định nghĩa kích thước font chữ ch
 
 .search-bar .btn-search:active {
     transform: scale(0.98);
+}
+
+.searchf {
+    margin-right: 370px;
 }

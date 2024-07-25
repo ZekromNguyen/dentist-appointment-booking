@@ -1,5 +1,4 @@
-reset css lại từ đầu
-*,
+reset css lại từ đầu *,
 *::before,
 *::after {
     box-sizing: border-box;
@@ -135,18 +134,21 @@ button {
 .div-password {
     .password-container {
         position: relative;
+
         .form-control {
-            padding-right: 2.5rem; 
+            padding-right: 2.5rem;
         }
+
         .icon-container {
             position: absolute;
-            right: 10px; 
+            right: 10px;
             top: 50%;
             transform: translateY(-50%);
             cursor: pointer;
         }
+
         .icon-open-eye-login {
-            font-size: 1.2rem; 
+            font-size: 1.2rem;
         }
     }
 }
@@ -219,6 +221,7 @@ button {
 .icon-open-eye-login {
     font-size: 1.2rem;
 }
+
 .button-group {
     display: flex;
     padding-top: 5px;
@@ -287,7 +290,7 @@ button {
         }
     }
 }
-.all{
-    background-color: rgb(199, 198, 206);
-}
 
+.all {
+    background-color: rgba(255, 255, 255, 0.5);
+}

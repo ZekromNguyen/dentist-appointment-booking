@@ -1,3 +1,4 @@
+import DentistSchedule from "../model/dentistSchedule";
 import BookingService from "../service/bookingService";
 import DentistService from "../service/dentistService";
 class BookingController {
@@ -58,27 +59,23 @@ class BookingController {
       if (!Array.isArray(bookings) || !booking) {
         return res.status(400).json({ message: "Invalid data format" });
       }
-      const { customerId, status, totalPrice } = booking;
+      const { customerId, totalPrice } = booking;
+
+      // Tạo booking mới với trạng thái ban đầu là "Pending"
       const newBooking = await BookingService.createBooking(
         customerId,
-        status,
+        "Pending",
         totalPrice
       );
-      console.log(booking);
       if (!newBooking) {
         return res.status(400).json({ message: "Failed to create Booking" });
       }
+
       const results = [];
+      const scheduleIds = []; // Lưu danh sách các ScheduleID để cập nhật sau
+
       for (const booking of bookings) {
-        const {
-          priceBooking,
-          status,
-          typeBook,
-          date,
-          scheduleId,
-          recurringType,
-          recurringEndDate,
-        } = booking;
+        const { priceBooking, status, typeBook, date, scheduleId, recurringType, recurringEndDate } = booking;
         const currentDateTime = new Date(); // Lấy thời gian hiện tại
         const currentDateTimeGMT7 = new Date(
           currentDateTime.getTime() + 7 * 60 * 60 * 1000
@@ -104,7 +101,46 @@ class BookingController {
         results.push({
           bookingDetail: newBookingDetail,
         });
+        scheduleIds.push(scheduleId); // Thêm scheduleId vào danh sách
+
+        // Cập nhật trạng thái của lịch thành "Booked" khi booking là "Pending"
+        await DentistSchedule.update(
+          { Status: 'Booked' },
+          {
+            where: {
+              ScheduleID: scheduleId,
+              Status: 'Available', // Đảm bảo lịch hiện tại đang ở trạng thái "Available"
+            },
+          }
+        );
       }
+
+      // Đặt thời gian kiểm tra và cập nhật trạng thái sau 15 phút
+      setTimeout(async () => {
+        try {
+          const booking = await BookingService.getBookingById(newBooking.BookingID);
+          if (booking && booking.Status === "Pending") {
+            await BookingService.updateBookingStatus(newBooking.BookingID, "Cancelled");
+            console.log(`BookingID ${newBooking.BookingID} has been cancelled due to no payment.`);
+
+            // Khôi phục trạng thái của các lịch từ "Booked" thành "Available"
+            await DentistSchedule.update(
+              { Status: 'Available' },
+              {
+                where: {
+                  ScheduleID: {
+                    [Sequelize.Op.in]: scheduleIds,
+                  },
+                  Status: 'Booked', // Đảm bảo lịch hiện tại đang ở trạng thái "Booked"
+                },
+              }
+            );
+            console.log(`Schedules with IDs ${scheduleIds.join(', ')} have been updated to Available.`);
+          }
+        } catch (error) {
+          console.error(`Error updating booking status for BookingID ${newBooking.BookingID}:`, error);
+        }
+      }, 15 * 60 * 1000); // 15 phút
 
       res.status(200).json({
         message: "All bookings created successfully",
@@ -245,6 +281,20 @@ class BookingController {
       res.status(500).json({ error: "Error update Booking status" });
     }
   }
+  async updateBookingStatusCancelled(req, res) {
+    const { bookingId } = req.body;
+    console.log(bookingId);
+    try {
+      const booking = await BookingService.updateBookingStatus(bookingId, 'Cancelled');
+      if (!booking) {
+        return res.status(400).json({ message: "Failed to update booking status" });
+      }
+      res.status(200).json({ message: "Booking status updated to Cancelled", booking });
+    } catch (error) {
+      console.error("Error updating booking status to Cancelled:", error);
+      res.status(500).json({ message: "Internal Server Error" });
+    }
+  }
 
   async showPaymentPage(req, res) {
     try {
@@ -285,6 +335,23 @@ class BookingController {
     } catch (error) {
       console.error("Error processing payment:", error);
       res.status(500).send("Internal Server Error");
+    }
+  }
+  async cancelPayment(req, res) {
+    try {
+      const { bookingId } = req.body;
+
+      // Cập nhật trạng thái booking thành "Cancelled"
+      const updatedBooking = await BookingService.updateBookingStatus(bookingId, 'Cancelled');
+
+      if (!updatedBooking) {
+        return res.status(404).json({ message: "Booking not found" });
+      }
+
+      res.status(200).json({ message: "Payment cancelled successfully", booking: updatedBooking });
+    } catch (error) {
+      console.error("Error cancelling payment:", error);
+      res.status(500).json({ error: "Internal Server Error" });
     }
   }
 
