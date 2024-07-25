@@ -59,6 +59,12 @@ export default function Header() {
     const toggleMenu = () => {
         setShowMenu(!showMenu); // Toggle showMenu state
     };
+    const handleBookingClick = (event) => {
+        if (!account) {
+            event.preventDefault();
+            navigate('/login');
+        }
+    };
 
     return (
         <div className="home-header-container">
@@ -69,15 +75,8 @@ export default function Header() {
                     <Navbar.Collapse id="responsive-navbar-nav">
                         <Nav className="me-auto">
                             <Nav.Link className='nav-header' as={Link} to="/">Home</Nav.Link>
-                            <Nav.Link className='nav-header' as={Link} to="/booking">Book Appointment</Nav.Link>
-                            <Nav.Link className='nav-header' as={Link} to="/booking">Appointments</Nav.Link>
-                            <Nav.Link className='nav-header' as={Link} to="/booking">Support</Nav.Link>
-                            <NavDropdown title="Dropdown" id="collapsible-nav-dropdown">
-                                <NavDropdown.Item as={Link} to="/somewhere">Somewhere</NavDropdown.Item>
-                                <NavDropdown.Item as={Link} to="/else">Else</NavDropdown.Item>
-                                <NavDropdown.Divider />
-                                <NavDropdown.Item as={Link} to="/somewhere">Separated link</NavDropdown.Item>
-                            </NavDropdown>
+                            <Nav.Link className='nav-header' as={Link} to="/booking" onClick={handleBookingClick}>Book Appointment</Nav.Link>
+                            <Nav.Link className='nav-header' as={Link} to="/policy">Policy</Nav.Link>
                         </Nav>
                         <Nav>
                             {account ? (

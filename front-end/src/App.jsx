@@ -28,6 +28,9 @@ import Body_Youtube from './components/Body_Youtube/Body_Youtube';
 import BodySlider from './components/Body_Slider/Body_Slider';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 import VerifyAccount from './components/verify/VerifyAccount';
+import Policy from './components/Policy/Policy';
+import ErrorPage from './components/ErrorPage/ErrorPage';
+
 
 function App() {
 
@@ -53,6 +56,9 @@ function App() {
             <Route path="/booking" element={<Booking />} />
             <Route path="/bookinghistory" element={<BookingHistory />} />
             <Route path="/bookingpage" element={<BookingPage />} />
+            <Route path="/policy" element={<Policy />} />
+            <Route path="/error" element={<ErrorPage />} />
+            
           </Route>
 
 

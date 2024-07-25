@@ -1,4 +1,4 @@
-/* reset css lại từ đầu*/
+reset css lại từ đầu
 *,
 *::before,
 *::after {
@@ -13,7 +13,7 @@
     justify-content: center;
     padding: 20px;
     background-image: url(../../assets/Clinic-IMG.jpg);
-    background-color: antiquewhite;
+    background-color: rgb(67, 46, 19);
     background-size: cover;
     /* Thêm thuộc tính này để đảm bảo hình ảnh phủ đầy */
     background-position: center;
@@ -133,9 +133,22 @@ button {
 }
 
 .div-password {
-    display: flex;
-    justify-content: center;
-
+    .password-container {
+        position: relative;
+        .form-control {
+            padding-right: 2.5rem; 
+        }
+        .icon-container {
+            position: absolute;
+            right: 10px; 
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+        }
+        .icon-open-eye-login {
+            font-size: 1.2rem; 
+        }
+    }
 }
 
 .div-login {
@@ -206,3 +219,75 @@ button {
 .icon-open-eye-login {
     font-size: 1.2rem;
 }
+.button-group {
+    display: flex;
+    padding-top: 5px;
+    justify-content: space-between;
+    padding-bottom: 10px;
+
+    .btn {
+        flex: 1;
+        margin: 0 0.25rem;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        font-size: 1rem;
+        transition: background-color 0.3s, color 0.3s;
+
+        &.btn-primary {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+
+            &:hover {
+                background-color: #0056b3;
+            }
+        }
+
+        &.btn-secondary {
+            background-color: #6c757d;
+            color: #fff;
+            border: none;
+
+            &:hover {
+                background-color: #5a6268;
+            }
+        }
+
+        &.btn-success {
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+
+            &:hover {
+                background-color: #218838;
+            }
+        }
+    }
+}
+
+.text-link {
+    margin-top: 1rem;
+    color: #007bff;
+    text-decoration: none;
+
+    &:hover {
+        text-decoration: underline;
+    }
+}
+
+.back-link {
+    font-size: 0.875rem;
+
+    a {
+        color: #6c757d;
+        text-decoration: none;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}
+.all{
+    background-color: rgb(199, 198, 206);
+}
+
