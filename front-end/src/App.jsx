@@ -27,6 +27,7 @@ import Chat from './components/chatbox/chat';
 import Body_Youtube from './components/Body_Youtube/Body_Youtube';
 import BodySlider from './components/Body_Slider/Body_Slider';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
+import VerifyAccount from './components/verify/VerifyAccount';
 
 function App() {
 
@@ -38,6 +39,7 @@ function App() {
           <Route path="/Info" element={<Body_Youtube />} />
           <Route path="/Clinic" element={<BodySlider />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/verify" element={<VerifyAccount />} /> {/* Định tuyến cho VerifyAccount */}
           <Route path="/register" element={<Register />} />
           <Route path="/loginDentist" element={<LoginDentist />} />
           <Route path="/forgotPassword" element={<ForgotPassword />} />

@@ -9,7 +9,7 @@ const register = async (username, password, email, phone, name) => {
       password,
       email,
       phone,
-      name,
+      name
     });
     return response;
   } catch (error) {
@@ -17,6 +17,7 @@ const register = async (username, password, email, phone, name) => {
     throw error;
   }
 };
+
 
 // Đăng nhập
 const login = async (email, password) => {
@@ -56,7 +57,7 @@ const resetPassword = async (token, password, confirmPassword) => {
   } catch (error) {
     throw new Error(
       "Error resetting password: " +
-        (error.response ? error.response.data.message : error.message)
+      (error.response ? error.response.data.message : error.message)
     );
   }
 };
@@ -99,7 +100,7 @@ const resetEmail = async (token) => {
   } catch (error) {
     throw new Error(
       "Error verifying email: " +
-        (error.response ? error.response.data.message : error.message)
+      (error.response ? error.response.data.message : error.message)
     );
   }
 };

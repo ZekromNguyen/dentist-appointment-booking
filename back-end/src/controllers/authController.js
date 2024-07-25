@@ -128,54 +128,48 @@ class AccountController {
     const roleID = 1;
 
     try {
-      // Kiểm tra các trường bắt buộc
       if (!username || !password || !email || !phone || !name) {
         return res.status(400).json({ message: "All fields are required" });
       }
 
-      // Băm mật khẩu
       const hashedPassword = bcrypt.hashSync(password, 10);
-
-      // Tạo mã xác nhận ngẫu nhiên
       const verificationToken = crypto.randomBytes(32).toString("hex");
 
-      // Tạo tài khoản khách hàng mới
-      const newAccount = await AccountService.createAccountCustomer(
-        username,
-        hashedPassword,
-        phone,
-        email,
-        roleID,
-        verificationToken
-      );
-
-      // Xử lý lỗi nếu tài khoản không được tạo thành công
+      const newAccount = await AccountService.createAccountCustomer(username, hashedPassword, phone, email, roleID, verificationToken);
       if (newAccount.error) {
         return res.status(400).json({ error: newAccount.error });
       }
 
-      // Tạo thông tin khách hàng mới
       const newCustomer = await AccountService.createCustomer(name, newAccount.AccountID);
 
-      // Kiểm tra xác nhận và gửi email
       if (newAccount.verificationToken && newCustomer) {
-        const verificationLink = `http://localhost:3000/verify?token=${verificationToken}`;
-
-        // Gửi email xác nhận
+        const verificationLink = `http://localhost:5173/verify?token=${verificationToken}`;
         await sendVerificationEmail(email, verificationLink);
-
-        // Trả về phản hồi thành công
-        return res.status(200).json({
-          message: "A verification email has been sent to: " + email,
-        });
+        return res.status(200).json({ message: "A verification email has been sent to: " + email });
       } else {
-        // Xử lý lỗi nếu không tạo được khách hàng
         return res.status(500).json({ message: "Failed to create customer" });
       }
     } catch (err) {
-      // Xử lý lỗi nếu có lỗi xảy ra
       console.error("Error in registering customer:", err);
       return res.status(500).send("Lỗi hệ thống");
+    }
+  }
+  async verifyAccount(req, res) {
+    const { token } = req.query;
+
+    try {
+      const account = await AccountService.getTokenVerify(token);
+      if (!account) {
+        return res.status(400).json({ message: 'Invalid or expired token' });
+      }
+
+      // Kích hoạt tài khoản của người dùng hoặc thực hiện hành động khác
+      await AccountService.activateAccount(account.AccountID);
+
+      // Chuyển hướng đến trang đăng nhập hoặc trang chính
+      res.redirect('http://localhost:5173/login');
+    } catch (error) {
+      res.status(500).send('Internal Server Error');
     }
   }
 

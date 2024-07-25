@@ -1,7 +1,7 @@
 import { Model, DataTypes } from "sequelize";
 import sequelize from "../config/database";
 
-class Account extends Model {}
+class Account extends Model { }
 Account.init(
   {
     AccountID: {

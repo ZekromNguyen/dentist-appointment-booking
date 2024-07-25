@@ -292,24 +292,8 @@ export default function ScheduleManage(props) {
   };
 
 
-  const confirmDelete = (callback) => {
-    toast.warn(
-      <div>
-        <p>Are you sure you want to delete this schedule?</p>
-        <button onClick={callback} className="btn btn-danger">Yes</button>
-        <button onClick={() => toast.dismiss()} className="btn btn-secondary">No</button>
-      </div>,
-      {
-        position: "top-right",
-        autoClose: false,
-        closeOnClick: false,
-        draggable: false,
-        closeButton: false,
-        toastId: "confirm-toast",
-        autoClose: 2000,
-      }
-    );
-  };
+
+
 
   const handleDeleteSchedule = async (scheduleId) => {
     confirmDelete(async () => {

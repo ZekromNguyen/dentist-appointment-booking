@@ -60,6 +60,16 @@ class AccountService {
       throw error;
     }
   }
+  async verifyToken(token) {
+    const account = await Account.findOne({ where: { verificationToken: token } });
+    if (!account) {
+      return { error: "Invalid verification token" };
+    }
+    account.IsActive = true;
+    account.verificationToken = null;
+    await account.save();
+    return { success: true };
+  }
   async createAccountDentistOrOwner(
     username,
     hashedPassword,
