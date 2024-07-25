@@ -15,27 +15,26 @@ export default function Login() {
         isValidEmail: true,
         isValidPassword: true
     });
-
     const handleLogin = async () => {
-        const trimmedEmail = email.trim();
-        const trimmedPassword = password.trim();
+        const trimmedEmail = email.trim(); // Trim only email
+        const enteredPassword = password; // Keep password as entered
 
         setCheckInputLogin({
             isValidEmail: !!trimmedEmail,
-            isValidPassword: !!trimmedPassword
+            isValidPassword: !!enteredPassword
         });
 
         if (!trimmedEmail) {
             toast.error("Please enter your account");
             return;
         }
-        if (!trimmedPassword) {
+        if (!enteredPassword) {
             toast.error("Please enter your password");
             return;
         }
 
         try {
-            const response = await login(trimmedEmail, trimmedPassword);
+            const response = await login(trimmedEmail, enteredPassword); // Pass the original password
             if (response && response.data && response.data.message === "Login successfully") {
                 const user = response.data.user;
                 if (user.IsActive === false) {
@@ -48,9 +47,9 @@ export default function Login() {
 
                 switch (role) {
                     case 1: navigate("/"); break;
-                    case 2: navigate("/Doctor"); break;
-                    case 3: navigate("/ClinicOwner"); break;
-                    case 4: navigate("/Admin"); break;
+                    case 2: navigate("/doctor"); break; // Use correct paths
+                    case 3: navigate("/ClinicOwner"); break; // Use correct paths
+                    case 4: navigate("/admin"); break; // Use correct paths
                     default: navigate("/"); break;
                 }
             } else if (response.data.message === "Role already logged in from another browser") {
@@ -62,6 +61,7 @@ export default function Login() {
             toast.error("External error.");
         }
     };
+
 
     const handleKeyPress = (event) => {
         if (event.key === 'Enter') handleLogin();

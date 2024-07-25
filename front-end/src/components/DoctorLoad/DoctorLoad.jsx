@@ -252,7 +252,7 @@ const DoctorLoad = () => {
                         value={recurringType}
                         onChange={handleTypeChange}
                     >
-                        <option value='None'>None</option>
+                        <option value='None'>Slot</option>
                         <option value='Weekly'>Weekly</option>
                         <option value='Monthly'>Monthly</option>
                     </select>
