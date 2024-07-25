@@ -6,19 +6,19 @@ import dentistService from "./dentistService";
 
 const sentBookingDetailIDs = new Set();
 
-cron.schedule("1 * * * *", async () => {
+cron.schedule("*/30 * * * * *", async () => {
   try {
     await dentistService.updateExpiredSlots();
   } catch (error) {
     console.error("Lỗi khi chạy tác vụ cập nhật khung giờ khám:", error);
   }
 });
-cron.schedule('*/30 * * * * *', async () => {
+cron.schedule("*/30 * * * * *", async () => {
   try {
     await bookingService.cancelPendingBookings();
-    console.log('Successfully updated pending bookings and slots');
+    console.log("Successfully updated pending bookings and slots");
   } catch (error) {
-    console.error('Error updating pending bookings and slots:', error);
+    console.error("Error updating pending bookings and slots:", error);
   }
 });
 
@@ -44,11 +44,8 @@ cron.schedule("*/2 * * * *", async () => {
       console.log(
         "Đã thực hiện kiểm tra và gửi email nhắc nhở cho các đặt chỗ hôm nay."
       );
-    }
-    else{
-      console.log(
-        "Danh sách booking ko có để gửi email."
-      );
+    } else {
+      console.log("Danh sách booking ko có để gửi email.");
     }
   } catch (error) {
     console.error(

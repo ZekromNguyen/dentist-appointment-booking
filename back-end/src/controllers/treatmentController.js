@@ -216,24 +216,8 @@ class TreatmentController {
 
   async getAllTreatments(req, res) {
     try {
-      const { customerId } = req.query;
-      const allBookings = await bookingService.getAllBookingByCustomerId(
-        customerId
-      );
-
-      const treatments = [];
-      for (const booking of allBookings) {
-        for (const detail of booking.BookingDetails) {
-          const treatment = await treamentService.getTreatmentByBookingDetailID(
-            detail.BookingDetailID
-          );
-          if (treatment) {
-            treatments.push(treatment);
-          }
-        }
-      }
-
-      res.json({ treatments });
+      const treatments = await Treatment.findAll();
+      res.json({ treatments: treatments });
     } catch (error) {
       console.error("Error fetching treatments:", error);
       res.status(500).send("Error fetching treatments");
@@ -262,35 +246,29 @@ class TreatmentController {
 
   // Method to get treatments with associated booking details
   async getTreatments(req, res) {
-    const { customerId, bookingId } = req.query;
+    const { customerId } = req.query;
+    const allBookings = await bookingService.getAllBookingByCustomerId(
+      customerId
+    );
 
-    try {
-      const treatments = await Treatment.findAll({
-        include: [
-          {
-            model: BookingDetail,
-            as: "BookingDetail",
-            include: [
-              {
-                model: Booking,
-                as: "Booking",
-                where: {
-                  CustomerID: customerId,
-                  BookingID: bookingId,
-                },
-              },
-            ],
-          },
-        ],
-      });
-
-      res.status(200).json({ treatments });
-    } catch (error) {
-      console.error("Error fetching treatments:", error);
-      res.status(500).json({ message: "Internal server error" });
+    const treatments = [];
+    for (const booking of allBookings) {
+      for (const detail of booking.BookingDetails) {
+        const treatment = await treamentService.getTreatmentByBookingDetailID(
+          detail.BookingDetailID
+        );
+        if (treatment) {
+          treatments.push(treatment);
+        }
+      }
     }
-  }
 
+    res.status(200).json({ treatments });
+  }
+  catch(error) {
+    console.error("Error fetching treatments:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
 }
 
 export default new TreatmentController();
